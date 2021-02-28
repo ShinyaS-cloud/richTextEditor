@@ -1,0 +1,47 @@
+// import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+// const initialState = {
+
+// }
+
+// const INGREDIENT_PRICES = { salad: 0.5, bacon: 0.4, cheese: 1.3, meat: 0.7 }
+
+// export const initIngredients = createAsyncThunk('burgerBuilder/initIngredients', async () => {
+//   const response = await axios.get('https://react-my-burger-aff0a-default-rtdb.firebaseio.com/')
+//   return response
+// })
+
+// const Reducer = createSlice({
+//   name: 'burgerBuilder',
+//   initialState: initialState,
+//   reducers: {
+//     addIngredient: (state, action: PayloadAction<Keys>) => ({
+//       ...state,
+//       ingredients: {
+//         ...state.ingredients,
+//         [action.payload]: state.ingredients[action.payload] + 1
+//       },
+//       totalPrice: state.totalPrice + INGREDIENT_PRICES[action.payload]
+//     }),
+//     removeIngredient: (state, action: PayloadAction<Keys>) => ({
+//       ...state,
+//       ingredients: {
+//         ...state.ingredients,
+//         [action.payload]: state.ingredients[action.payload] - 1
+//       },
+//       totalPrice: state.totalPrice - INGREDIENT_PRICES[action.payload]
+//     })
+//   },
+//   extraReducers: (builder) =>
+//     builder
+//       .addCase(initIngredients.fulfilled, (state, response) => ({
+//         ...state,
+//         ingredients: {
+//           ...state.ingredients,
+//           ...response
+//         }
+//       }))
+//       .addCase(initIngredients.rejected, (state) => ({ ...state, error: true }))
+// })
+
+// export default burgerBuilder
