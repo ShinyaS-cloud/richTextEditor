@@ -55,7 +55,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: '0'
   },
   mainPanel: {
-    flex: 1
+    flex: '1 1 0',
+    overflowX: 'scroll'
   }
 }))
 
