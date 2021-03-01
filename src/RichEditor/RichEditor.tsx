@@ -1,23 +1,26 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState, useRef } from 'react'
-import Editor from '@draft-js-plugins/editor'
-import { EditorState } from 'draft-js'
+import React, { useRef } from 'react'
+import buttonReducer, { contentToEditor, editorToContent } from '../store/buttonReducer'
+import { Editor, EditorState, convertFromRaw, convertToRaw } from 'draft-js'
 import { makeStyles } from '@material-ui/core'
-import createToolbarPlugin from '@draft-js-plugins/static-toolbar'
-const toolbarPlugin = createToolbarPlugin()
-const { Toolbar } = toolbarPlugin
-const plugins = [toolbarPlugin]
+import { useSelector, useDispatch } from 'react-redux'
+import BoldButton from './Buttons/BoldButton'
 
 const RichEditor = () => {
-  const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
   const classes = useStyle()
+  const dispatch = useDispatch()
   const ref = useRef<Editor>(null)
-
+  const contentState = useSelector((state) => convertFromRaw(state.buttonReducer.contentState))
+  const editorState = contentToEditor(contentState)
+  const setEditorState = (editorState: EditorState) => {
+    const setContent = convertToRaw(editorToContent(editorState))
+    dispatch(buttonReducer.actions.newEditorState(setContent))
+  }
   return (
     <div>
       <div className={classes.root} onClick={() => ref.current?.focus()}>
-        <Editor editorState={editorState} onChange={setEditorState} plugins={plugins} ref={ref} />
-        <Toolbar />
+        <Editor editorState={editorState} onChange={setEditorState} ref={ref} />
+        <BoldButton />
       </div>
     </div>
   )

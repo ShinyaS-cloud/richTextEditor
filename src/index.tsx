@@ -3,22 +3,23 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 // import { BrowserRouter } from 'react-router-dom'
-// import { Provider } from 'react-redux'
+import { Provider } from 'react-redux'
 import * as serviceWorker from './serviceWorker'
-// import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
+import buttonReducer from './store/buttonReducer'
 
-// const reducer = {
+const reducer = {
+  buttonReducer: buttonReducer.reducer
+}
 
-// }
-
-// const store = configureStore({ reducer })
+const store = configureStore({ reducer })
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <Provider store={store}> */}
-    {/* <BrowserRouter></BrowserRouter> */}
-    <App />
-    {/* </Provider> */}
+    <Provider store={store}>
+      {/* <BrowserRouter></BrowserRouter> */}
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 )
