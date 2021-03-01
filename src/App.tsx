@@ -1,11 +1,14 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import RichEditor from './RichEditor/RichEditor'
+import { CssBaseline } from '@material-ui/core'
 
-const App:React.FC = () => {
+import Layout from './components/Layout/Layout'
+
+const App: React.FC = () => {
   return (
     <div>
-      <RichEditor/>
+      <CssBaseline/>
+      <Layout />
     </div>
   )
 }

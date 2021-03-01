@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import Draft, { EditorState, RichUtils, ContentState, convertToRaw, convertFromRaw } from 'draft-js'
+import Draft, { EditorState, ContentState, convertToRaw } from 'draft-js'
 
 const initialState = { contentState: convertToRaw(ContentState.createFromText('')) }
 export const contentToEditor = (content: ContentState) => {
@@ -15,17 +15,6 @@ const buttonReducer = createSlice({
     newEditorState: (state, action: PayloadAction<Draft.RawDraftContentState>) => ({
       ...state,
       contentState: action.payload
-    }),
-    inlineChangeButton: (state, action: PayloadAction<string>) => ({
-      ...state,
-      editorState: convertToRaw(
-        editorToContent(
-          RichUtils.toggleInlineStyle(
-            contentToEditor(convertFromRaw(state.contentState)),
-            action.payload
-          )
-        )
-      )
     })
   }
 })
