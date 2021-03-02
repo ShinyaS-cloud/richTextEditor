@@ -40,26 +40,6 @@ const a11yProps = (index: any) => {
   }
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    height: '100vh'
-  },
-  tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`
-  },
-  tabPanels: {
-    margin: '0',
-    padding: '0'
-  },
-  mainPanel: {
-    flex: '1 1 0',
-    overflowX: 'scroll'
-  }
-}))
-
 const VerticalTabs = () => {
   const classes = useStyles()
   const [value, setValue] = React.useState(0)
@@ -111,4 +91,24 @@ const VerticalTabs = () => {
   )
 }
 
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    height: '100vh'
+  },
+  tabs: {
+    borderRight: `1px solid ${theme.palette.divider}`
+  },
+  tabPanels: {
+    margin: '0',
+    padding: '0'
+  },
+  mainPanel: {
+    flex: '1 1 0',
+    overflowY: 'scroll',
+    height: '100vh'
+  }
+}))
 export default VerticalTabs

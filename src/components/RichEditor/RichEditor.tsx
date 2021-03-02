@@ -1,54 +1,17 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useRef, useState } from 'react'
-import { Editor, EditorState, RichUtils, Modifier } from 'draft-js'
-import { Button, makeStyles } from '@material-ui/core'
-
-// import BoldButton from './Buttons/BoldButton'
+import { Editor, EditorState } from 'draft-js'
+import { makeStyles } from '@material-ui/core'
+import StyleButtons from './Buttons/StyleButtons'
+import BlockTagButtons from './Buttons/BlockTagButtons'
+import ColorButtons from './Buttons/ColorButtons'
 
 const RichEditor = () => {
   const classes = useStyle()
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const ref = useRef<Editor>(null)
 
-  /// inlineの文字変形
-  const inlineChangeButton = (type: string) => {
-    setEditorState(RichUtils.toggleInlineStyle(editorState, type))
-  }
-  const inlineTypes = ['BOLD', 'CODE', 'ITALIC', 'STRIKETHROUGH', 'UNDERLINE']
-  const Buttons = inlineTypes.map((b) => {
-    return (
-      <Button key={b} onClick={() => inlineChangeButton(b)}>
-        {b}
-      </Button>
-    )
-  })
-
-  /// ブロックタグの変形
-  const blockChangeButton = (type: string) => {
-    setEditorState(RichUtils.toggleBlockType(editorState, type))
-  }
-  const blockTypes = [
-    'header-one',
-    'header-two',
-    'header-three',
-    'header-four',
-    'header-five',
-    'header-six',
-    'blockquote',
-    'code-block',
-    'unordered-list-item',
-    'ordered-list-item'
-  ]
-
-  const BlockButtons = blockTypes.map((b) => {
-    return (
-      <Button key={b} onClick={() => blockChangeButton(b)}>
-        {b}
-      </Button>
-    )
-  })
-  /// 色変形
-
+  // const ColorChange = colorControls()
   const colorStyleMap = {
     red: {
       color: 'rgba(255, 0, 0, 1.0)'
@@ -72,70 +35,12 @@ const RichEditor = () => {
       color: 'rgba(127, 0, 255, 1.0)'
     }
   }
-
-  const toggleColor = (toggledColor: string) => {
-    const selection = editorState.getSelection()
-
-    // 選択されている部分にcolorStyleMapから一つずつ当てはめて全部の種類の色を取り除く操作
-    const nextContentState = Object.keys(colorStyleMap).reduce((contentState, color) => {
-      return Modifier.removeInlineStyle(contentState, selection, color)
-    }, editorState.getCurrentContent())
-
-    let nextEditorState = EditorState.push(editorState, nextContentState, 'change-inline-style')
-
-    const currentStyle = editorState.getCurrentInlineStyle()
-    // Unset style override for current color.
-    if (selection.isCollapsed()) {
-      nextEditorState = RichUtils.toggleInlineStyle(nextEditorState, toggledColor)
-    }
-
-    // 上で取り除いたけどもともと色がなかったら色を付ける操作
-    if (!currentStyle.has(toggledColor)) {
-      nextEditorState = RichUtils.toggleInlineStyle(nextEditorState, toggledColor)
-    }
-    setEditorState(nextEditorState)
-  }
-
-  const COLORS = [
-    { label: 'Red', style: 'red' },
-    { label: 'Orange', style: 'orange' },
-    { label: 'Yellow', style: 'yellow' },
-    { label: 'Green', style: 'green' },
-    { label: 'Blue', style: 'blue' },
-    { label: 'Indigo', style: 'indigo' },
-    { label: 'Violet', style: 'violet' }
-  ]
-
-  const colorControls = () => {
-    // const currentStyle = editorState.getCurrentInlineStyle()
-    const onToggle = (event: any, type: string) => {
-      event.preventDefault() // ボタンにフォーカスさせないために必要
-      toggleColor(type)
-      return false
-    }
-    return (
-      <div className={classes.controls}>
-        {COLORS.map((type) => (
-          <Button
-            key={type.label}
-            // disabled={currentStyle.has(type.style)}
-            onMouseDown={(e) => onToggle(e, type.style)}
-          >
-            {type.label}
-          </Button>
-        ))}
-      </div>
-    )
-  }
-
-  const ColorChange = colorControls()
-
   return (
     <div className={classes.root}>
       <div className={classes.buttons}>
-        {Buttons}
-        {BlockButtons}
-        {ColorChange}
+        <StyleButtons editorState={editorState} setEditorState={setEditorState} />
+        <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
+        <ColorButtons editorState={editorState} setEditorState={setEditorState} />
       </div>
       <div className={classes.editor} onClick={() => ref.current?.focus()}>
         <Editor
@@ -155,34 +60,23 @@ const useStyle = makeStyles({
     backgroundColor: '#f2ecd8',
     backgroundAttachment: 'fixed',
     margin: '0 auto',
+    width: '100%',
     height: '100vh',
-    width: '100%'
+    overflowY: 'auto'
   },
   buttons: {
     margin: '0 auto',
     textAlign: 'center'
   },
   editor: {
-    height: '90vh',
-    width: '90%',
+    width: '80%',
     backgroundColor: 'white',
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
+    marginBottom: '20px',
     padding: '10px 10px',
     fontSize: ' 18px ',
     cursor: 'text'
-  },
-  controls: {
-    fontFamily: "'Helvetica', sans-serif",
-    fontSize: 14,
-    marginBottom: 10,
-    userSelect: 'none'
-  },
-  styleButton: {
-    color: '#999',
-    cursor: 'pointer',
-    marginRight: 16,
-    padding: '2px 0'
   }
 })
 
