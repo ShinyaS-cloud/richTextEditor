@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useRef, useState } from 'react'
 import { Editor, EditorState, RichUtils, Modifier } from 'draft-js'
-import { Button, ButtonGroup, makeStyles } from '@material-ui/core'
+import { Button, makeStyles } from '@material-ui/core'
 
 // import BoldButton from './Buttons/BoldButton'
 
@@ -36,7 +36,6 @@ const RichEditor = () => {
     'header-six',
     'blockquote',
     'code-block',
-    'atomic',
     'unordered-list-item',
     'ordered-list-item'
   ]
@@ -77,7 +76,7 @@ const RichEditor = () => {
   const toggleColor = (toggledColor: string) => {
     const selection = editorState.getSelection()
 
-    // Let's just allow one color at a time. Turn off all active colors.
+    // 選択されている部分にcolorStyleMapから一つずつ当てはめて全部の種類の色を取り除く操作
     const nextContentState = Object.keys(colorStyleMap).reduce((contentState, color) => {
       return Modifier.removeInlineStyle(contentState, selection, color)
     }, editorState.getCurrentContent())
@@ -85,19 +84,15 @@ const RichEditor = () => {
     let nextEditorState = EditorState.push(editorState, nextContentState, 'change-inline-style')
 
     const currentStyle = editorState.getCurrentInlineStyle()
-
     // Unset style override for current color.
-    // if (selection.isCollapsed()) {
-    //   nextEditorState = currentStyle.reduce((state, color) => {
-    //     return RichUtils.toggleInlineStyle(state, color)
-    //   }, nextEditorState)
-    // }
-
-    // If the color is being toggled on, apply it.
-    if (!currentStyle.has(toggledColor)) {
+    if (selection.isCollapsed()) {
       nextEditorState = RichUtils.toggleInlineStyle(nextEditorState, toggledColor)
     }
 
+    // 上で取り除いたけどもともと色がなかったら色を付ける操作
+    if (!currentStyle.has(toggledColor)) {
+      nextEditorState = RichUtils.toggleInlineStyle(nextEditorState, toggledColor)
+    }
     setEditorState(nextEditorState)
   }
 
@@ -112,14 +107,19 @@ const RichEditor = () => {
   ]
 
   const colorControls = () => {
-    const currentStyle = editorState.getCurrentInlineStyle()
+    // const currentStyle = editorState.getCurrentInlineStyle()
+    const onToggle = (event: any, type: string) => {
+      event.preventDefault() // ボタンにフォーカスさせないために必要
+      toggleColor(type)
+      return false
+    }
     return (
       <div className={classes.controls}>
         {COLORS.map((type) => (
           <Button
             key={type.label}
-            disabled={currentStyle.has(type.style)}
-            onClick={() => toggleColor(type.style)}
+            // disabled={currentStyle.has(type.style)}
+            onMouseDown={(e) => onToggle(e, type.style)}
           >
             {type.label}
           </Button>
@@ -133,14 +133,17 @@ const RichEditor = () => {
   return (
     <div className={classes.root}>
       <div className={classes.buttons}>
-        <ButtonGroup size="large" aria-label="contained primary button group">
-          {Buttons}
-          {BlockButtons}
-          {ColorChange}
-        </ButtonGroup>
+        {Buttons}
+        {BlockButtons}
+        {ColorChange}
       </div>
       <div className={classes.editor} onClick={() => ref.current?.focus()}>
-        <Editor editorState={editorState} onChange={setEditorState} ref={ref} />
+        <Editor
+          customStyleMap={colorStyleMap}
+          editorState={editorState}
+          onChange={setEditorState}
+          ref={ref}
+        />
       </div>
     </div>
   )
