@@ -5,15 +5,15 @@ import { makeStyles } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
+import blockRender from './Buttons/ExtraStyleButton'
 
 const RichEditor = () => {
   const classes = useStyle()
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const ref = useRef<Editor>(null)
-  const contentState = editorState.getCurrentContent()
-  const startKey = editorState.getSelection().getStartKey()
-  console.log(contentState.toJS())
-  console.log(contentState.getBlockForKey(startKey).toJS())
+
+  // const contentState = editorState.getCurrentContent()
+  // console.log(contentState.toJS())
 
   return (
     <div className={classes.root}>
@@ -27,6 +27,7 @@ const RichEditor = () => {
           customStyleMap={customStyleMap}
           editorState={editorState}
           onChange={setEditorState}
+          blockRendererFn={blockRender}
           ref={ref}
         />
       </div>
@@ -57,13 +58,13 @@ const customStyleMap: DraftStyleMap = {
   violet: {
     color: 'rgba(127, 0, 255, 1.0)'
   },
-  right: {
+  RIGHT: {
     textAlign: 'right'
   },
-  center: {
+  CENTER: {
     textAlign: 'center'
   },
-  left: {
+  LEFT: {
     textAlign: 'left'
   }
 }
