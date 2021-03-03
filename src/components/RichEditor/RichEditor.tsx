@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useRef, useState } from 'react'
-import { Editor, EditorState } from 'draft-js'
+import { DraftStyleMap, Editor, EditorState } from 'draft-js'
 import { makeStyles } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
@@ -10,31 +10,11 @@ const RichEditor = () => {
   const classes = useStyle()
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const ref = useRef<Editor>(null)
+  const contentState = editorState.getCurrentContent()
+  const startKey = editorState.getSelection().getStartKey()
+  console.log(contentState.toJS())
+  console.log(contentState.getBlockForKey(startKey).toJS())
 
-  // const ColorChange = colorControls()
-  const colorStyleMap = {
-    red: {
-      color: 'rgba(255, 0, 0, 1.0)'
-    },
-    orange: {
-      color: 'rgba(255, 127, 0, 1.0)'
-    },
-    yellow: {
-      color: 'rgba(180, 180, 0, 1.0)'
-    },
-    green: {
-      color: 'rgba(0, 180, 0, 1.0)'
-    },
-    blue: {
-      color: 'rgba(0, 0, 255, 1.0)'
-    },
-    indigo: {
-      color: 'rgba(75, 0, 130, 1.0)'
-    },
-    violet: {
-      color: 'rgba(127, 0, 255, 1.0)'
-    }
-  }
   return (
     <div className={classes.root}>
       <div className={classes.buttons}>
@@ -44,7 +24,7 @@ const RichEditor = () => {
       </div>
       <div className={classes.editor} onClick={() => ref.current?.focus()}>
         <Editor
-          customStyleMap={colorStyleMap}
+          customStyleMap={customStyleMap}
           editorState={editorState}
           onChange={setEditorState}
           ref={ref}
@@ -54,6 +34,39 @@ const RichEditor = () => {
   )
 }
 
+/// customStyleMap
+const customStyleMap: DraftStyleMap = {
+  red: {
+    color: 'rgba(255, 0, 0, 1.0)'
+  },
+  orange: {
+    color: 'rgba(255, 127, 0, 1.0)'
+  },
+  yellow: {
+    color: 'rgba(180, 180, 0, 1.0)'
+  },
+  green: {
+    color: 'rgba(0, 180, 0, 1.0)'
+  },
+  blue: {
+    color: 'rgba(0, 0, 255, 1.0)'
+  },
+  indigo: {
+    color: 'rgba(75, 0, 130, 1.0)'
+  },
+  violet: {
+    color: 'rgba(127, 0, 255, 1.0)'
+  },
+  right: {
+    textAlign: 'right'
+  },
+  center: {
+    textAlign: 'center'
+  },
+  left: {
+    textAlign: 'left'
+  }
+}
 /// style
 const useStyle = makeStyles({
   root: {
@@ -73,8 +86,9 @@ const useStyle = makeStyles({
     backgroundColor: 'white',
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
-    marginBottom: '20px',
-    padding: '10px 10px',
+    marginBottom: '5rem',
+    minHeight: '50rem',
+    padding: '1rem 1rem',
     fontSize: ' 18px ',
     cursor: 'text'
   }
