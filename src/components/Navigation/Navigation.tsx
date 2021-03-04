@@ -3,35 +3,7 @@ import React from 'react'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
-import Box from '@material-ui/core/Box'
-import RichEditor from '../RichEditor/RichEditor'
 
-interface TabPanelProps {
-  children?: React.ReactNode
-  index: any
-  value: any
-}
-
-const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props
-  const classes = useStyles()
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      className={classes.mainPanel}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3} className={classes.tabPanels}>
-          {children}
-        </Box>
-      )}
-    </div>
-  )
-}
 // Typography使うときはcomponentのタグに注意
 const a11yProps = (index: any) => {
   return {
@@ -66,27 +38,6 @@ const VerticalTabs = () => {
         <Tab label="Item Six" {...a11yProps(5)} />
         <Tab label="Item Seven" {...a11yProps(6)} />
       </Tabs>
-      <TabPanel value={value} index={0}>
-        <RichEditor />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        Item Four
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        Item Five
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
-      </TabPanel>
     </div>
   )
 }

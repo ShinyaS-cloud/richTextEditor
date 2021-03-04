@@ -11,8 +11,6 @@ import { makeStyles } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
-// import blockRender from './Buttons/ExtraStyleButton'
-// import { myBlockStyleFn, extendedBlockRenderMap } from './Buttons/ExtraStyleButton'
 import Immutable from 'immutable'
 
 const myCustomBlock = Immutable.Map({

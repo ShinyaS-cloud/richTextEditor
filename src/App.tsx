@@ -3,13 +3,21 @@ import React from 'react'
 import { CssBaseline } from '@material-ui/core'
 
 import Layout from './components/Layout/Layout'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import RichEditor from './components/RichEditor/RichEditor'
 
 const App: React.FC = () => {
   return (
-    <div>
-      <CssBaseline/>
-      <Layout />
-    </div>
+    <BrowserRouter>
+      <div>
+        <CssBaseline />
+        <Layout>
+          <Switch>
+            <Route path="/" exact component={RichEditor} />
+          </Switch>
+        </Layout>
+      </div>
+    </BrowserRouter>
   )
 }
 

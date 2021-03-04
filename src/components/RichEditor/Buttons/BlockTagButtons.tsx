@@ -1,9 +1,12 @@
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment } from 'react'
 import { EditorState, RichUtils } from 'draft-js'
-import { Button, IconButton, Menu, MenuItem } from '@material-ui/core'
+import { IconButton, Menu, MenuItem } from '@material-ui/core'
 import {
   Code,
+  FormatAlignCenter,
+  FormatAlignLeft,
+  FormatAlignRight,
   FormatListBulleted,
   FormatListNumbered,
   FormatQuote,
@@ -86,15 +89,15 @@ const BlockTagButtons: React.FC<Props> = (props) => {
       >
         <FormatListNumbered />
       </IconButton>
-      <Button key="right" onMouseDown={(e) => blockChangeButton(e, 'right')}>
-        right
-      </Button>
-      <Button key="center" onMouseDown={(e) => blockChangeButton(e, 'center')}>
-        center
-      </Button>
-      <Button key="left" onMouseDown={(e) => blockChangeButton(e, 'left')}>
-        left
-      </Button>
+      <IconButton key="left" onMouseDown={(e) => blockChangeButton(e, 'left')}>
+        <FormatAlignLeft />
+      </IconButton>
+      <IconButton key="center" onMouseDown={(e) => blockChangeButton(e, 'center')}>
+        <FormatAlignCenter />
+      </IconButton>
+      <IconButton key="right" onMouseDown={(e) => blockChangeButton(e, 'right')}>
+        <FormatAlignRight />
+      </IconButton>
     </Fragment>
   )
 }
