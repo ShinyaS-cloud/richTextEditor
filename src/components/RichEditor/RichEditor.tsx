@@ -1,16 +1,56 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useRef, useState } from 'react'
-import { DraftStyleMap, Editor, EditorState } from 'draft-js'
+import {
+  DefaultDraftBlockRenderMap,
+  DraftStyleMap,
+  Editor,
+  EditorState,
+  ContentBlock
+} from 'draft-js'
 import { makeStyles } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
-import blockRender from './Buttons/ExtraStyleButton'
+// import blockRender from './Buttons/ExtraStyleButton'
+// import { myBlockStyleFn, extendedBlockRenderMap } from './Buttons/ExtraStyleButton'
+import Immutable from 'immutable'
+
+const myCustomBlock = Immutable.Map({
+  right: {
+    element: 'div'
+  },
+  center: {
+    element: 'div'
+  },
+  left: {
+    element: 'div'
+  }
+})
+
+const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
 const RichEditor = () => {
   const classes = useStyle()
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const ref = useRef<Editor>(null)
+
+  const myBlockStyleFn = (contentBlock: ContentBlock) => {
+    const type = contentBlock.getType()
+    switch (type) {
+      case 'right':
+        return classes[type]
+      case 'center':
+        return classes[type]
+      case 'left':
+        return classes[type]
+      default:
+        return type
+    }
+  }
+
+  // const selectState = editorState.getSelection()
+  // console.log(selectState.toJS())
+  // console.log(editorState.toJS())
 
   // const contentState = editorState.getCurrentContent()
   // console.log(contentState.toJS())
@@ -27,7 +67,8 @@ const RichEditor = () => {
           customStyleMap={customStyleMap}
           editorState={editorState}
           onChange={setEditorState}
-          blockRendererFn={blockRender}
+          blockRenderMap={extendedBlockRenderMap}
+          blockStyleFn={myBlockStyleFn}
           ref={ref}
         />
       </div>
@@ -57,15 +98,6 @@ const customStyleMap: DraftStyleMap = {
   },
   violet: {
     color: 'rgba(127, 0, 255, 1.0)'
-  },
-  RIGHT: {
-    textAlign: 'right'
-  },
-  CENTER: {
-    textAlign: 'center'
-  },
-  LEFT: {
-    textAlign: 'left'
   }
 }
 /// style
@@ -92,6 +124,15 @@ const useStyle = makeStyles({
     padding: '1rem 1rem',
     fontSize: ' 18px ',
     cursor: 'text'
+  },
+  right: {
+    textAlign: 'right'
+  },
+  center: {
+    textAlign: 'center'
+  },
+  left: {
+    textAlign: 'left'
   }
 })
 

@@ -26,13 +26,15 @@ const BlockTagButtons: React.FC<Props> = (props) => {
     setAnchorEl(null)
   }
 
-  const blockChangeButton = (type: string) => {
+  const blockChangeButton = (event: any, type: string) => {
+    event.preventDefault() // ボタンにフォーカスさせないために必要
     props.setEditorState(RichUtils.toggleBlockType(props.editorState, type))
+    return false
   }
 
-  const blockChangeButtonOpen = (type: string) => {
+  const blockChangeButtonOpen = (event: any, type: string) => {
     handleClose()
-    blockChangeButton(type)
+    blockChangeButton(event, type)
   }
 
   return (
@@ -47,47 +49,50 @@ const BlockTagButtons: React.FC<Props> = (props) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem key="header-one" onClick={() => blockChangeButtonOpen('header-one')}>
+        <MenuItem key="header-one" onClick={(e) => blockChangeButtonOpen(e, 'header-one')}>
           h1
         </MenuItem>
-        <MenuItem key="header-two" onClick={() => blockChangeButtonOpen('header-two')}>
+        <MenuItem key="header-two" onClick={(e) => blockChangeButtonOpen(e, 'header-two')}>
           h2
         </MenuItem>
-        <MenuItem key="header-three" onClick={() => blockChangeButtonOpen('header-three')}>
+        <MenuItem key="header-three" onClick={(e) => blockChangeButtonOpen(e, 'header-three')}>
           h3
         </MenuItem>
-        <MenuItem key="header-four" onClick={() => blockChangeButtonOpen('header-four')}>
+        <MenuItem key="header-four" onClick={(e) => blockChangeButtonOpen(e, 'header-four')}>
           h4
         </MenuItem>
-        <MenuItem key="header-five" onClick={() => blockChangeButtonOpen('header-five')}>
+        <MenuItem key="header-five" onClick={(e) => blockChangeButtonOpen(e, 'header-five')}>
           h5
         </MenuItem>
-        <MenuItem key="header-six" onClick={() => blockChangeButtonOpen('header-six')}>
+        <MenuItem key="header-six" onClick={(e) => blockChangeButtonOpen(e, 'header-six')}>
           h6
         </MenuItem>
       </Menu>
-      <IconButton key="blockquote" onClick={() => blockChangeButton('blockquote')}>
+      <IconButton key="blockquote" onMouseDown={(e) => blockChangeButton(e, 'blockquote')}>
         <FormatQuote />
       </IconButton>
-      <IconButton key="code-block" onClick={() => blockChangeButton('code-block')}>
+      <IconButton key="code-block" onMouseDown={(e) => blockChangeButton(e, 'code-block')}>
         <Code />
       </IconButton>
       <IconButton
         key="unordered-list-item"
-        onClick={() => blockChangeButton('unordered-list-item')}
+        onMouseDown={(e) => blockChangeButton(e, 'unordered-list-item')}
       >
         <FormatListBulleted />
       </IconButton>
-      <IconButton key="ordered-list-item" onClick={() => blockChangeButton('ordered-list-item')}>
+      <IconButton
+        key="ordered-list-item"
+        onMouseDown={(e) => blockChangeButton(e, 'ordered-list-item')}
+      >
         <FormatListNumbered />
       </IconButton>
-      <Button key="right" onClick={() => blockChangeButton('right')}>
+      <Button key="right" onMouseDown={(e) => blockChangeButton(e, 'right')}>
         right
       </Button>
-      <Button key="center" onClick={() => blockChangeButton('center')}>
+      <Button key="center" onMouseDown={(e) => blockChangeButton(e, 'center')}>
         center
       </Button>
-      <Button key="left" onClick={() => blockChangeButton('left')}>
+      <Button key="left" onMouseDown={(e) => blockChangeButton(e, 'left')}>
         left
       </Button>
     </Fragment>
