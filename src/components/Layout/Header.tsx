@@ -1,23 +1,41 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import { AppBar, Button, IconButton, makeStyles, Theme, Typography } from '@material-ui/core'
+import {
+  AppBar,
+  Button,
+  IconButton,
+  makeStyles,
+  Theme,
+  Toolbar,
+  Typography
+} from '@material-ui/core'
 import { MenuOpen } from '@material-ui/icons'
 
-const Header:React.FC = () => {
+const Header: React.FC = () => {
   const classes = useStyles()
   return (
-    <AppBar position="fixed">
-        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-          <MenuOpen />
-        </IconButton>
-        <Typography variant="h6" className={classes.title}>
-          News
-        </Typography>
-        <Button color="inherit">Login</Button>
+    <div className={classes.root}>
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+            <MenuOpen />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            News
+          </Typography>
+          <Button color="inherit">Login</Button>
+        </Toolbar>
       </AppBar>
+    </div>
   )
 }
 const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    flexGrow: 1
+  },
+  appBar: {
+    backgroundColor: '#bf0426'
+  },
   menuButton: {
     marginRight: theme.spacing(2)
   },

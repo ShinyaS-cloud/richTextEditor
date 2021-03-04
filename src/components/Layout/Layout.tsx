@@ -1,39 +1,51 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import Navigation from '../Navigation/Navigation'
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
 import Header from './Header'
-import { Box } from '@material-ui/core'
+import { Box, Toolbar } from '@material-ui/core'
 
 type Props = { children: React.ReactNode }
 
 const Layout: React.FC<Props> = (props) => {
   const classes = useStyles()
   return (
-    <div className={classes.root}>
-      <Header />
-      <Navigation />
-      <Box className={classes.mainPanel}>{props.children}</Box>
-    </div>
+    <Box className={classes.root}>
+      <Box className={classes.header}>
+        <Header />
+      </Box>
+      <Toolbar />
+      <Box className={classes.mainContainer}>
+        <Navigation />
+        <main className={classes.mainPanel}>{props.children}</main>
+      </Box>
+    </Box>
   )
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    height: '100vh'
-  },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  mainPanel: {
-    flex: '1 1 0',
-    overflowY: 'scroll',
-    height: '100vh'
-  }
-}))
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+      backgroundColor: theme.palette.background.paper,
+      height: '100vh'
+    },
+    header: {
+      zIndex: 10
+    },
+    mainContainer: {
+      flexGrow: 1,
+      display: 'flex',
+      height: '100%',
+      zIndex: 1
+    },
+
+    mainPanel: {
+      flexGrow: 1,
+      overflow: 'auto'
+    }
+  })
+)
 
 export default Layout

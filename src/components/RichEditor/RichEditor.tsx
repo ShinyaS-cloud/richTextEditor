@@ -105,8 +105,8 @@ const useStyle = makeStyles({
     backgroundAttachment: 'fixed',
     margin: '0 auto',
     width: '100%',
-    height: '100vh',
-    overflowY: 'auto'
+    overflowY: 'scroll',
+    height: '100%'
   },
   buttons: {
     margin: '0 auto',
@@ -118,7 +118,7 @@ const useStyle = makeStyles({
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
     marginBottom: '5rem',
-    minHeight: '50rem',
+    minHeight: '30rem',
     padding: '1rem 1rem',
     fontSize: ' 18px ',
     cursor: 'text'
