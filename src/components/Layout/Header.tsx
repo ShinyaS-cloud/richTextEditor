@@ -2,7 +2,6 @@
 import React from 'react'
 import {
   AppBar,
-  Button,
   IconButton,
   makeStyles,
   Theme,
@@ -10,12 +9,13 @@ import {
   Typography
 } from '@material-ui/core'
 import { MenuOpen } from '@material-ui/icons'
+import LoginModal from '../LoginModal'
 
 const Header: React.FC = () => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position="fixed" elevation={0} className={classes.appBar}>
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <MenuOpen />
@@ -23,7 +23,7 @@ const Header: React.FC = () => {
           <Typography variant="h6" className={classes.title}>
             News
           </Typography>
-          <Button color="inherit">Login</Button>
+          <LoginModal />
         </Toolbar>
       </AppBar>
     </div>

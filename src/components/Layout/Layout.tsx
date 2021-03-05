@@ -43,7 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
     mainPanel: {
       flexGrow: 1,
-      overflow: 'auto'
+      overflow: 'auto',
+      backgroundColor: '#f2ecd8'
     }
   })
 )

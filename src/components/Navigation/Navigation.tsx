@@ -2,6 +2,7 @@
 import React from 'react'
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import { Drawer, List, ListItem, ListItemText, Toolbar } from '@material-ui/core'
+import { Link } from 'react-router-dom'
 
 const VerticalTabs = () => {
   const classes = useStyles()
@@ -17,13 +18,13 @@ const VerticalTabs = () => {
       <Toolbar />
       <div className={classes.drawerContainer}>
         <List>
-          <ListItem button>
+          <ListItem button component={Link} to="/">
             <ListItemText primary="Item One" />
           </ListItem>
-          <ListItem button>
+          <ListItem button component={Link} to="/signup">
             <ListItemText primary="Item Two" />
           </ListItem>
-          <ListItem button>
+          <ListItem button component={Link} to="/posts">
             <ListItemText primary="Item Three" />
           </ListItem>
         </List>
@@ -31,7 +32,7 @@ const VerticalTabs = () => {
     </Drawer>
   )
 }
-const drawerWidth = 240
+const drawerWidth = 180
 const useStyles = makeStyles((theme: Theme) => ({
   drawer: {
     width: drawerWidth,
