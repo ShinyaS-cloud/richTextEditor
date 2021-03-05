@@ -2,6 +2,7 @@
 import React from 'react'
 import {
   AppBar,
+  Button,
   IconButton,
   makeStyles,
   Theme,
@@ -9,21 +10,35 @@ import {
   Typography
 } from '@material-ui/core'
 import { MenuOpen } from '@material-ui/icons'
-import LoginModal from '../LoginModal'
 
-const Header: React.FC = () => {
+import { Link } from 'react-router-dom'
+
+interface Props {
+  open: boolean
+  openHandler: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Header: React.FC<Props> = (props) => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
       <AppBar position="fixed" elevation={0} className={classes.appBar}>
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+          <IconButton
+            onClick={() => props.openHandler(!props.open)}
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+          >
             <MenuOpen />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
             News
           </Typography>
-          <LoginModal />
+          <Button component={Link} to={'/login'}>
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
     </div>

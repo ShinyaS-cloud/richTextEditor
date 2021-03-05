@@ -1,164 +1,144 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState } from 'react'
-import {
-  Box,
-  createStyles,
-  fade,
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-  makeStyles,
-  OutlinedInputProps,
-  TextField,
-  TextFieldProps,
-  Theme
-} from '@material-ui/core'
-import { Visibility, VisibilityOff } from '@material-ui/icons'
+import React from 'react'
+import Avatar from '@material-ui/core/Avatar'
+import Button from '@material-ui/core/Button'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import TextField from '@material-ui/core/TextField'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Checkbox from '@material-ui/core/Checkbox'
 
-interface State {
-  name: string
-  email: string
-  password: string
-  valiantPassword: string
-}
+import Grid from '@material-ui/core/Grid'
+import Box from '@material-ui/core/Box'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import Typography from '@material-ui/core/Typography'
+import { makeStyles } from '@material-ui/core/styles'
+import Container from '@material-ui/core/Container'
+import { Link } from 'react-router-dom'
 
-const Signup = () => {
-  const [showPassword, setShowPassword] = useState(false)
-  const [values, setValues] = useState({
-    name: '',
-    email: '',
-    password: '',
-    valiantPassword: ''
-  })
-  const classes = useStylesReddit()
-  const rootclasses = useStyle()
-
-  const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-  }
-
-  const RedditTextField = (props: TextFieldProps) => {
-    return (
-      <TextField
-        InputProps={{ classes, disableUnderline: true } as Partial<OutlinedInputProps>}
-        {...props}
-      />
-    )
-  }
-
+const Copyright = () => {
   return (
-    <Box className={rootclasses.root}>
-      <RedditTextField
-        label="名前"
-        variant="filled"
-        id="reddit-name"
-        placeholder="名前"
-        value={values.name}
-        onChange={handleChange('name')}
-      />
-      <RedditTextField
-        label="e-mail"
-        variant="filled"
-        id="reddit-email"
-        placeholder="e-mail"
-        type="email"
-        value={values.email}
-        onChange={handleChange('email')}
-      />
-      <FormControl className={classes.root}>
-        <InputLabel className={classes.password} htmlFor="standard-adornment-password">
-          パスワード
-        </InputLabel>
-        <Input
-          className={classes.password}
-          id="standard-adornment-password"
-          type={showPassword ? 'text' : 'password'}
-          value={values.password}
-          onChange={handleChange('password')}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
-              >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </FormControl>
-      <FormControl className={classes.root}>
-        <InputLabel className={classes.password} htmlFor="standard-adornment-password">
-          確認用パスワード
-        </InputLabel>
-        <Input
-          className={classes.password}
-          id="standard-adornment-valiantpassword"
-          type={showPassword ? 'text' : 'password'}
-          value={values.valiantPassword}
-          error={values.password !== values.valiantPassword}
-          onChange={handleChange('valiantPassword')}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
-              >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </FormControl>
-    </Box>
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <a href="#">
+        Your Website
+      </a>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
   )
 }
-const useStylesReddit = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      border: '1px solid #e2e2e1',
-      overflow: 'hidden',
-      borderRadius: 4,
-      backgroundColor: '#fcfcfb',
-      transition: theme.transitions.create(['border-color', 'box-shadow']),
-      width: '20rem',
-      height: '4rem',
-      '&:hover': {
-        backgroundColor: '#fff'
-      },
-      '&$focused': {
-        backgroundColor: '#fff',
-        boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
-        borderColor: theme.palette.primary.main
-      }
-    },
-    focused: {},
-    password: {
-      paddingRight: '12px',
-      paddingLeft: '12px'
-    }
-  })
-)
 
-const useStyle = makeStyles({
-  root: {
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    height: '100%'
+    alignItems: 'center'
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: '#bf0426'
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3)
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2)
   }
-})
+}))
 
-export default Signup
+const SignUp = () => {
+  const classes = useStyles()
+
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign up
+        </Typography>
+        <form className={classes.form} noValidate>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                autoComplete="fname"
+                name="firstName"
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="lname"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                label="I want to receive inspiration, marketing promotions and updates via email."
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link to={'/login'}>
+                Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+      <Box mt={5}>
+        <Copyright />
+      </Box>
+    </Container>
+  )
+}
+
+export default SignUp

@@ -4,28 +4,34 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import { Drawer, List, ListItem, ListItemText, Toolbar } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 
-const VerticalTabs = () => {
+interface Props {
+  open: boolean
+  openHandler: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const VerticalTabs: React.FC<Props> = (props) => {
   const classes = useStyles()
 
   return (
     <Drawer
       className={classes.drawer}
-      variant="permanent"
       classes={{
         paper: classes.drawerPaper
       }}
+      variant="persistent"
+      open={props.open}
     >
       <Toolbar />
       <div className={classes.drawerContainer}>
         <List>
           <ListItem button component={Link} to="/">
-            <ListItemText primary="Item One" />
+            <ListItemText primary="Item One" onMouseDown={() => props.openHandler(!props.open)} />
           </ListItem>
           <ListItem button component={Link} to="/signup">
-            <ListItemText primary="Item Two" />
+            <ListItemText primary="Item Two" onMouseDown={() => props.openHandler(!props.open)}/>
           </ListItem>
           <ListItem button component={Link} to="/posts">
-            <ListItemText primary="Item Three" />
+            <ListItemText primary="Item Three" onMouseDown={() => props.openHandler(!props.open)}/>
           </ListItem>
         </List>
       </div>
@@ -35,9 +41,7 @@ const VerticalTabs = () => {
 const drawerWidth = 180
 const useStyles = makeStyles((theme: Theme) => ({
   drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    zIndex: 0
+    zIndex: 10
   },
   drawerContainer: {
     overflow: 'auto',
