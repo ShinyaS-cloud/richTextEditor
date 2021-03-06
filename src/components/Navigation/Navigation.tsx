@@ -1,8 +1,9 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import { makeStyles, Theme } from '@material-ui/core/styles'
-import { Drawer, List, ListItem, ListItemText, Toolbar } from '@material-ui/core'
+import { Divider, Drawer, List, ListItem, ListItemText } from '@material-ui/core'
 import { Link } from 'react-router-dom'
+import { Create } from '@material-ui/icons'
 
 interface Props {
   open: boolean
@@ -18,21 +19,27 @@ const VerticalTabs: React.FC<Props> = (props) => {
       classes={{
         paper: classes.drawerPaper
       }}
-      variant="persistent"
       open={props.open}
+      onClose={() => {
+        props.openHandler(false)
+      }}
     >
-      <Toolbar />
       <div className={classes.drawerContainer}>
         <List>
+          <Divider />
           <ListItem button component={Link} to="/">
-            <ListItemText primary="Item One" onMouseDown={() => props.openHandler(!props.open)} />
+            <Create/>
+            <ListItemText primary="Rich Text Editor" onMouseDown={() => props.openHandler(false)} />
           </ListItem>
+          <Divider />
           <ListItem button component={Link} to="/signup">
-            <ListItemText primary="Item Two" onMouseDown={() => props.openHandler(!props.open)}/>
+            <ListItemText primary="Item Two" onMouseDown={() => props.openHandler(false)} />
           </ListItem>
+          <Divider />
           <ListItem button component={Link} to="/posts">
-            <ListItemText primary="Item Three" onMouseDown={() => props.openHandler(!props.open)}/>
+            <ListItemText primary="Item Three" onMouseDown={() => props.openHandler(false)} />
           </ListItem>
+          <Divider />
         </List>
       </div>
     </Drawer>

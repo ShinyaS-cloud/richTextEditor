@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useState } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -14,11 +14,15 @@ import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { Link } from 'react-router-dom'
 
+import normalGoogleButton from '../assets/btn_google_signin_light_normal_web.png'
+import pressGoogleButton from '../assets/btn_google_signin_light_pressed_web.png'
+import { Divider } from '@material-ui/core'
+
 const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <a href="#">Your Website</a> {new Date().getFullYear()}
+      <a href="/">Your Website</a> {new Date().getFullYear()}
       {'.'}
     </Typography>
   )
@@ -41,11 +45,24 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  divider: {
+    width: '30rem',
+    marginTop: '1rem',
+    marginBottom: '1rem'
   }
 }))
 
 const SignIn = () => {
   const classes = useStyles()
+  const [image, setImage] = useState(normalGoogleButton)
+
+  const onMouseDownHandler = () => {
+    setImage(pressGoogleButton)
+  }
+  const onMouseUpHandler = () => {
+    setImage(normalGoogleButton)
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -56,6 +73,16 @@ const SignIn = () => {
         <Typography component="h1" variant="h5">
           Log in
         </Typography>
+        <Divider className={classes.divider} />
+        <a href="/auth/google">
+          <img
+            src={image}
+            alt="googleLoginButton"
+            onMouseDown={onMouseDownHandler}
+            onMouseUp={onMouseUpHandler}
+          />
+        </a>
+        <Divider className={classes.divider} />
         <form className={classes.form} noValidate>
           <TextField
             variant="outlined"

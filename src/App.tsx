@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useEffect } from 'react'
 import { CssBaseline } from '@material-ui/core'
 
 import Layout from './components/Layout/Layout'
@@ -8,6 +8,14 @@ import RichEditor from './components/RichEditor/RichEditor'
 import Signup from './components/Signup'
 import Posts from './components/Posts'
 import Login from './components/Login'
+import { fetchUser } from './reducer/authReducer'
+import { useDispatch } from 'react-redux'
+
+const dispatch = useDispatch()
+
+useEffect(() => {
+  dispatch(fetchUser())
+})
 
 const App: React.FC = () => {
   return (

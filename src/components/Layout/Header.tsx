@@ -9,9 +9,10 @@ import {
   Toolbar,
   Typography
 } from '@material-ui/core'
-import { MenuOpen } from '@material-ui/icons'
+import { Menu } from '@material-ui/icons'
 
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 interface Props {
   open: boolean
@@ -20,6 +21,24 @@ interface Props {
 
 const Header: React.FC<Props> = (props) => {
   const classes = useStyles()
+  const auth = useSelector((state) => state.authReducer)
+
+  const renderContent = () => {
+    if (auth.googleId === '') {
+      return (
+        <Button className={classes.loginButton} component={Link} to={'/login'}>
+          ログイン
+        </Button>
+      )
+    } else {
+      return (
+        <Button className={classes.loginButton} component={Link} to={'/login'}>
+          ログアウト
+        </Button>
+      )
+    }
+  }
+
   return (
     <div className={classes.root}>
       <AppBar position="fixed" elevation={0} className={classes.appBar}>
@@ -31,14 +50,12 @@ const Header: React.FC<Props> = (props) => {
             color="inherit"
             aria-label="menu"
           >
-            <MenuOpen />
+            <Menu />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            News
+            Rich Text Editor
           </Typography>
-          <Button component={Link} to={'/login'}>
-            Login
-          </Button>
+          {renderContent()}
         </Toolbar>
       </AppBar>
     </div>
@@ -56,6 +73,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   title: {
     flexGrow: 1
+  },
+  loginButton: {
+    color: 'white'
   }
 }))
 export default Header
