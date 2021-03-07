@@ -6,10 +6,10 @@ import App from './App'
 import { Provider } from 'react-redux'
 import * as serviceWorker from './serviceWorker'
 import { configureStore } from '@reduxjs/toolkit'
-import buttonReducer from './store/buttonReducer'
+import authReducer from './reducer/authReducer'
 
 const reducer = {
-  buttonReducer: buttonReducer.reducer
+  authReducer: authReducer.reducer
 }
 
 const store = configureStore({ reducer })

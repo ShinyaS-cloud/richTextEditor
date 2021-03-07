@@ -22,7 +22,6 @@ interface Props {
 const Header: React.FC<Props> = (props) => {
   const classes = useStyles()
   const auth = useSelector((state) => state.authReducer)
-
   const renderContent = () => {
     if (auth.googleId === '') {
       return (

@@ -11,13 +11,13 @@ import Login from './components/Login'
 import { fetchUser } from './reducer/authReducer'
 import { useDispatch } from 'react-redux'
 
-const dispatch = useDispatch()
-
-useEffect(() => {
-  dispatch(fetchUser())
-})
-
 const App: React.FC = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchUser())
+  })
+
   return (
     <BrowserRouter>
       <div>
