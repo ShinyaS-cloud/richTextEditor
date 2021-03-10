@@ -5,7 +5,6 @@ export const initialState = { googleId: '', __v: 0, _id: '', credits: 0 }
 
 export const fetchUser = createAsyncThunk('/api/current_user', async () => {
   const response = await axios.get('/api/current_user')
-
   return response.data
 })
 
