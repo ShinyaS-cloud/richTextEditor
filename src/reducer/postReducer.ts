@@ -3,8 +3,19 @@ import axios from 'axios'
 
 export const initialState = { postId: 0, title: '', imageUrl: '', userId: 0 }
 
-export const fetchPost = createAsyncThunk('/api/post', async () => {
-  const response = await axios.get('/api/post')
+const categories = {
+  pet: { id: 0, name: 'pet' },
+  sports: { id: 1, name: 'sports' },
+  novel: { id: 2, name: 'novel' },
+  IT: { id: 3, name: 'IT' },
+  food: { id: 4, name: 'food' },
+  twitter: { id: 5, name: 'twitter' }
+}
+
+type CategoryTypes = keyof typeof categories
+
+export const fetchPost = createAsyncThunk('/api/post', async (categoryName: CategoryTypes) => {
+  const response = await axios.get('/api/post', { params: categoryName })
   return response.data
 })
 

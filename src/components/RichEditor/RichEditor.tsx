@@ -7,10 +7,11 @@ import {
   EditorState,
   ContentBlock
 } from 'draft-js'
-import { makeStyles } from '@material-ui/core'
+import { FormControl, InputLabel, makeStyles, Select, TextField } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
+import SaveButton from './Buttons/SaveButton'
 import Immutable from 'immutable'
 
 const myCustomBlock = Immutable.Map({
@@ -30,7 +31,12 @@ const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 const RichEditor = () => {
   const classes = useStyle()
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [title, setTitle] = useState('')
+  const [select, setSelect] = useState('')
   const ref = useRef<Editor>(null)
+
+  const valueChangeHandler = (e: any) => setTitle(e.target.value)
+  const selectChangeHandler = (e: any) => setSelect(e.target.value)
 
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
@@ -53,8 +59,34 @@ const RichEditor = () => {
   // const contentState = editorState.getCurrentContent()
   // console.log(contentState.toJS())
 
+  const categories = ['pet', 'sports', 'novel', 'IT', 'food']
+
+  const SelectList = () => {
+    const selects = categories.map((c) => {
+      const index = categories.indexOf(c)
+      return (
+        <option key={c} value={index}>
+          {c}
+        </option>
+      )
+    })
+    return selects
+  }
+
   return (
     <div className={classes.root}>
+      <div className={classes.text}>
+        <p>タイトル</p>
+        <TextField value={title} onChange={valueChangeHandler} />
+        <p>カテゴリー</p>
+        <FormControl>
+          <InputLabel>カテゴリー</InputLabel>
+          <Select value={select} onChange={selectChangeHandler}>
+            {SelectList}
+          </Select>
+        </FormControl>
+      </div>
+
       <div className={classes.buttons}>
         <StyleButtons editorState={editorState} setEditorState={setEditorState} />
         <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
@@ -70,6 +102,7 @@ const RichEditor = () => {
           ref={ref}
         />
       </div>
+      <SaveButton editorState={editorState} title={title} />
     </div>
   )
 }
@@ -122,6 +155,9 @@ const useStyle = makeStyles({
     padding: '1rem 1rem',
     fontSize: ' 18px ',
     cursor: 'text'
+  },
+  text: {
+    width: '80%'
   },
   right: {
     textAlign: 'right'

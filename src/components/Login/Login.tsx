@@ -14,8 +14,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { Link } from 'react-router-dom'
 
-import normalGoogleButton from '../assets/btn_google_signin_light_normal_web.png'
-import pressGoogleButton from '../assets/btn_google_signin_light_pressed_web.png'
+import normalGoogleButton from '../../assets/btn_google_signin_light_normal_web.png'
+import pressGoogleButton from '../../assets/btn_google_signin_light_pressed_web.png'
 import { Divider } from '@material-ui/core'
 
 const Copyright = () => {
