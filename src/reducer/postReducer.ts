@@ -1,7 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-export const initialState = { postId: 0, title: '', imageUrl: '', userId: 0 }
+export const initialState = {
+  id: 0,
+  title: '',
+  imageUrl: '',
+  category: 0,
+  content: JSON.stringify({}),
+  userId: 0
+}
 
 const categories = {
   pet: { id: 0, name: 'pet' },
@@ -23,7 +30,7 @@ const postReducer = createSlice({
   name: 'postReducer',
   initialState: initialState,
   reducers: {
-    userInit: (state, action: PayloadAction) => ({
+    postInit: (state, action: PayloadAction) => ({
       ...state
     })
   },

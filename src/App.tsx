@@ -9,14 +9,17 @@ import Signup from './components/Login/Signup'
 import Posts from './components/PostPage/Posts'
 import Login from './components/Login/Login'
 import { fetchUser } from './reducer/authReducer'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 const App: React.FC = () => {
   const dispatch = useDispatch()
+  const state = useSelector((state) => state.authReducer)
+
+  console.log(state)
 
   useEffect(() => {
     dispatch(fetchUser())
-  })
+  }, [])
 
   return (
     <BrowserRouter>
@@ -24,8 +27,8 @@ const App: React.FC = () => {
         <CssBaseline />
         <Layout>
           <Switch>
-            <Route path="/" exact component={RichEditor} />
-            <Route path="/posts" component={Posts} />
+            <Route path="/" exact component={Posts} />
+            <Route path="/newpost" component={RichEditor} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
           </Switch>

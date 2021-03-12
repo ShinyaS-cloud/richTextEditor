@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import { Button } from '@material-ui/core'
-import { Save } from '@material-ui/icons'
+
 import { convertToRaw, EditorState } from 'draft-js'
 import axios from 'axios'
 
@@ -24,7 +24,6 @@ const SaveButton: React.FC<Props> = (props) => {
   return (
     <div>
       <Button onClick={save} type="submit">
-        <Save />
         保存
       </Button>
     </div>

@@ -2,10 +2,21 @@ import 'react-redux'
 
 type MyState = {
   authReducer: {
+    id: number
     googleId: string
-    __v: number
-    _id: string
-    credits: number
+    name: string
+    email: string
+    loginGoogle: boolean
+    password: string
+    postId: number
+  }
+  postReducer: {
+    id: number
+    title: string
+    imageUrl: string
+    category: number
+    content: JSON
+    userId: number
   }
 }
 declare module 'react-redux' {

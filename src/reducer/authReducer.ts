@@ -1,7 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-export const initialState = { googleId: '', __v: 0, _id: '', credits: 0 }
+export const initialState = {
+  id: 0,
+  googleId: '',
+  name: '',
+  email: '',
+  loginGoogle: false,
+  password: '',
+  postId: 0
+}
 
 export const fetchUser = createAsyncThunk('/api/current_user', async () => {
   const response = await axios.get('/api/current_user')

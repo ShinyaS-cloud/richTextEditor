@@ -31,7 +31,7 @@ const Header: React.FC<Props> = (props) => {
       )
     } else {
       return (
-        <Button className={classes.loginButton} component={Link} to={'/login'}>
+        <Button className={classes.loginButton} href={'/api/logout'}>
           ログアウト
         </Button>
       )
@@ -52,7 +52,9 @@ const Header: React.FC<Props> = (props) => {
             <Menu />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Rich Text Editor
+            <Link to={'/'} className={classes.titleDecoration}>
+              Rich Text Editor
+            </Link>
           </Typography>
           {renderContent()}
         </Toolbar>
@@ -72,6 +74,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   title: {
     flexGrow: 1
+  },
+  titleDecoration: {
+    textDecoration: 'none',
+    color: 'black'
   },
   loginButton: {
     color: 'white'
