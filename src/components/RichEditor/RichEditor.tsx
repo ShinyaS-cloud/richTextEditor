@@ -7,7 +7,7 @@ import {
   EditorState,
   ContentBlock
 } from 'draft-js'
-import { FormControl, InputLabel, makeStyles, Select, TextField } from '@material-ui/core'
+import { FormControl, InputLabel, makeStyles, MenuItem, Select, TextField } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
@@ -61,17 +61,14 @@ const RichEditor = () => {
 
   const categories = ['pet', 'sports', 'novel', 'IT', 'food']
 
-  const SelectList = () => {
-    const selects = categories.map((c) => {
-      const index = categories.indexOf(c)
-      return (
-        <option key={c} value={index}>
-          {c}
-        </option>
-      )
-    })
-    return selects
-  }
+  const Selects = categories.map((c) => {
+    const index = categories.indexOf(c)
+    return (
+      <MenuItem key={index} value={index}>
+        {c}
+      </MenuItem>
+    )
+  })
 
   return (
     <div className={classes.root}>
@@ -82,7 +79,7 @@ const RichEditor = () => {
         <FormControl>
           <InputLabel>カテゴリー</InputLabel>
           <Select value={select} onChange={selectChangeHandler}>
-            {SelectList}
+            {Selects}
           </Select>
         </FormControl>
       </div>
