@@ -27,7 +27,7 @@ const VerticalTabs: React.FC<Props> = (props) => {
       <div className={classes.drawerContainer}>
         <List>
           <Divider />
-          <ListItem button component='a' href="/newpost">
+          <ListItem button component='a' href="/api/newpost">
             <Create />
             <ListItemText primary="Rich Text Editor" onMouseDown={() => props.openHandler(false)} />
           </ListItem>

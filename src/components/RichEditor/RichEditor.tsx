@@ -13,6 +13,7 @@ import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
 import SaveButton from './Buttons/SaveButton'
 import Immutable from 'immutable'
+import { RouteComponentProps } from 'react-router-dom'
 
 const myCustomBlock = Immutable.Map({
   right: {
@@ -26,13 +27,19 @@ const myCustomBlock = Immutable.Map({
   }
 })
 
+type UserProps = RouteComponentProps<{
+  articleId: string
+}>
+
+type categories = 'pet' | 'sports' | 'novel' | 'IT' | 'food'
+
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
-const RichEditor = () => {
+const RichEditor:React.FC<UserProps> = (props) => {
   const classes = useStyle()
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const [title, setTitle] = useState('')
-  const [select, setSelect] = useState('')
+  const [select, setSelect] = useState<categories>('IT')
   const ref = useRef<Editor>(null)
 
   const valueChangeHandler = (e: any) => setTitle(e.target.value)
@@ -74,9 +81,9 @@ const RichEditor = () => {
     <div className={classes.root}>
       <div className={classes.text}>
         <p>タイトル</p>
-        <TextField value={title} onChange={valueChangeHandler} />
+        <TextField className={classes.textItems} value={title} onChange={valueChangeHandler} />
         <p>カテゴリー</p>
-        <FormControl>
+        <FormControl className={classes.textItems}>
           <InputLabel>カテゴリー</InputLabel>
           <Select value={select} onChange={selectChangeHandler}>
             {Selects}
@@ -99,7 +106,14 @@ const RichEditor = () => {
           ref={ref}
         />
       </div>
-      <SaveButton editorState={editorState} title={title} />
+      <div className={classes.buttons}>
+        <SaveButton
+          editorState={editorState}
+          title={title}
+          category={select}
+          articleId={props.match.params.articleId}
+        />
+      </div>
     </div>
   )
 }
@@ -154,7 +168,13 @@ const useStyle = makeStyles({
     cursor: 'text'
   },
   text: {
+    textAlign: 'center'
+  },
+  textItems: {
     width: '80%'
+  },
+  title: {
+    textAlign: 'center'
   },
   right: {
     textAlign: 'right'

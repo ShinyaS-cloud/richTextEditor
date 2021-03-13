@@ -9,6 +9,7 @@ type MyState = {
     loginGoogle: boolean
     password: string
     postId: number
+    token: string
   }
   postReducer: {
     id: number

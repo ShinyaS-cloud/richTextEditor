@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
+axios.defaults.withCredentials = true
 
 export const initialState = {
   id: 0,
@@ -8,11 +9,17 @@ export const initialState = {
   email: '',
   loginGoogle: false,
   password: '',
-  postId: 0
+  postId: 0,
+  token: ''
 }
 
 export const fetchUser = createAsyncThunk('/api/current_user', async () => {
   const response = await axios.get('/api/current_user')
+  return response.data
+})
+
+export const fetchJwt = createAsyncThunk('/api/jwt', async () => {
+  const response = await axios.get('/api/jwt')
   return response.data
 })
 
@@ -30,6 +37,10 @@ const authReducer = createSlice({
       .addCase(fetchUser.fulfilled, (state, response) => ({ ...state, ...response.payload }))
 
       .addCase(fetchUser.rejected, (state) => console.log(state))
+    builder
+      .addCase(fetchJwt.fulfilled, (state, response) => ({ ...state, ...response.payload }))
+
+      .addCase(fetchJwt.rejected, (state) => console.log(state))
   }
 })
 

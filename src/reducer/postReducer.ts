@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
+axios.defaults.withCredentials = true
 
 export const initialState = {
   id: 0,

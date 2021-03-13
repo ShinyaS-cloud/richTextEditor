@@ -10,6 +10,7 @@ import Posts from './components/PostPage/Posts'
 import Login from './components/Login/Login'
 import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
+import axios from 'axios'
 
 const App: React.FC = () => {
   const dispatch = useDispatch()
@@ -19,6 +20,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchUser())
+    const getCsrfToken = async () => {
+      const { data } = await axios.get('/api/csrfToken')
+      axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken
+    }
+    getCsrfToken()
   }, [])
 
   return (
@@ -28,7 +34,7 @@ const App: React.FC = () => {
         <Layout>
           <Switch>
             <Route path="/" exact component={Posts} />
-            <Route path="/newpost" component={RichEditor} />
+            <Route path="/newpost/:articleId" component={RichEditor} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
           </Switch>
