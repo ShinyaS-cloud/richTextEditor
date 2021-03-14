@@ -31,15 +31,15 @@ type UserProps = RouteComponentProps<{
   articleId: string
 }>
 
-type categories = 'pet' | 'sports' | 'novel' | 'IT' | 'food'
+// type categories = 'pet' | 'sports' | 'novel' | 'it' | 'food'
 
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
-const RichEditor:React.FC<UserProps> = (props) => {
+const RichEditor: React.FC<UserProps> = (props) => {
   const classes = useStyle()
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const [title, setTitle] = useState('')
-  const [select, setSelect] = useState<categories>('IT')
+  const [select, setSelect] = useState(0)
   const ref = useRef<Editor>(null)
 
   const valueChangeHandler = (e: any) => setTitle(e.target.value)

@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   titleDecoration: {
     textDecoration: 'none',
-    color: 'black'
+    color: 'white'
   },
   loginButton: {
     color: 'white'

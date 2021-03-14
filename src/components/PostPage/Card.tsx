@@ -17,34 +17,21 @@ import ShareIcon from '@material-ui/icons/Share'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      maxWidth: 345,
-      marginTop: '1.5rem',
-      marginBottom: '1.5rem'
-    },
-    media: {
-      height: 0,
-      paddingTop: '56.25%' // 16:9
-    },
-    expand: {
-      transform: 'rotate(0deg)',
-      marginLeft: 'auto',
-      transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest
-      })
-    },
-    expandOpen: {
-      transform: 'rotate(180deg)'
-    },
-    avatar: {
-      backgroundColor: red[500]
-    }
-  })
-)
+type Props = {
+  article: {
+    articleId: number
+    title: string
+    imageUrl: string
+    category: number
+    content: JSON
+    userId: number
+    createdAt: string
+    updatedAt: string
+  }
+}
 
-const RecipeReviewCard = () => {
+const RecipeReviewCard: React.FC<Props> = (props) => {
+  const article = props.article
   const classes = useStyles()
   const [expanded, setExpanded] = React.useState(false)
   const [up, setUp] = React.useState(2)
@@ -70,7 +57,7 @@ const RecipeReviewCard = () => {
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
-            R
+            {article.userId}
           </Avatar>
         }
         action={
@@ -78,14 +65,10 @@ const RecipeReviewCard = () => {
             <MoreVertIcon />
           </IconButton>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={article.title}
+        subheader={article.createdAt}
       />
-      <CardMedia
-        className={classes.media}
-        image="/static/images/cards/paella.jpg"
-        title="Paella dish"
-      />
+      <CardMedia component='img' className={classes.media} src={article.imageUrl} title={article.title} />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
           This impressive paella is a perfect party dish and a fun meal to cook together with your
@@ -140,5 +123,32 @@ const RecipeReviewCard = () => {
     </Card>
   )
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      maxWidth: 345,
+      marginTop: '1.5rem',
+      marginBottom: '1.5rem'
+    },
+    media: {
+      height: 0,
+      paddingTop: '56.25%' // 16:9
+    },
+    expand: {
+      transform: 'rotate(0deg)',
+      marginLeft: 'auto',
+      transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest
+      })
+    },
+    expandOpen: {
+      transform: 'rotate(180deg)'
+    },
+    avatar: {
+      backgroundColor: red[500]
+    }
+  })
+)
 
 export default RecipeReviewCard

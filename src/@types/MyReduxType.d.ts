@@ -12,12 +12,18 @@ type MyState = {
     token: string
   }
   postReducer: {
-    id: number
-    title: string
-    imageUrl: string
-    category: number
-    content: JSON
-    userId: number
+    article: [
+      {
+        articleId: number
+        title: string
+        imageUrl: string
+        category: number
+        content: JSON
+        userId: number
+        createdAt: string
+        updatedAt: string
+      }
+    ]
   }
 }
 declare module 'react-redux' {

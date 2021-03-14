@@ -11,6 +11,7 @@ import Login from './components/Login/Login'
 import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
+import PostPage from './components/PostPage/PostPage'
 
 axios.defaults.withCredentials = true
 
@@ -24,9 +25,7 @@ const App: React.FC = () => {
     const getCsrfToken = async () => {
       try {
         const { data } = await axios.get('/api/csrfToken')
-
         axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken
-        console.log(data)
       } catch (error) {
         console.log(error)
       }
@@ -43,6 +42,7 @@ const App: React.FC = () => {
           <Switch>
             <Route path="/" exact component={Posts} />
             <Route path="/newpost/:articleId" component={RichEditor} />
+            <Route path="/post" component={PostPage} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
           </Switch>

@@ -1,24 +1,22 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, makeStyles } from '@material-ui/core'
 import Card from './Card'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchArticleCategory } from '../../reducer/postReducer'
 
 const Posts = () => {
   const classes = useStyle()
-  return (
-    <Box className={classes.root}>
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-    </Box>
-  )
+  const dispatch = useDispatch()
+  const article = useSelector((state) => state.postReducer.article)
+  useEffect(() => {
+    dispatch(fetchArticleCategory(''))
+  }, [])
+  const renderContent = article.map((a) => {
+    return <Card key={a.articleId} article={a} />
+  })
+
+  return <Box className={classes.root}>{renderContent}</Box>
 }
 
 const useStyle = makeStyles({

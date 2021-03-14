@@ -7,7 +7,7 @@ import axios from 'axios'
 
 type Props = {
   editorState: EditorState
-  category: 'pet' | 'sports' | 'novel' | 'IT' | 'food'
+  category: number
   title: string
   articleId: string
 }
@@ -16,16 +16,16 @@ const SaveButton: React.FC<Props> = (props) => {
   const save = async () => {
     const contentState = props.editorState.getCurrentContent()
     const content = convertToRaw(contentState)
+    const saveContent = {
+      data: {
+        articleId: +props.articleId,
+        title: props.title,
+        category: props.category,
+        content: content
+      }
+    }
     try {
-      const res = await axios.post('/api/save/', {
-        data: {
-          id: +props.articleId,
-          title: props.title,
-          category: props.category,
-          content: content
-        }
-      })
-      console.log(res.data)
+      await axios.post('/api/save/', saveContent)
     } catch (error) {
       console.log(error)
     }
