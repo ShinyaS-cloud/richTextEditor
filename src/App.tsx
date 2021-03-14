@@ -12,6 +12,8 @@ import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
+axios.defaults.withCredentials = true
+
 const App: React.FC = () => {
   const dispatch = useDispatch()
   const state = useSelector((state) => state.authReducer)
@@ -19,12 +21,18 @@ const App: React.FC = () => {
   console.log(state)
 
   useEffect(() => {
-    dispatch(fetchUser())
     const getCsrfToken = async () => {
-      const { data } = await axios.get('/api/csrfToken')
-      axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken
+      try {
+        const { data } = await axios.get('/api/csrfToken')
+
+        axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken
+        console.log(data)
+      } catch (error) {
+        console.log(error)
+      }
     }
     getCsrfToken()
+    dispatch(fetchUser())
   }, [])
 
   return (
