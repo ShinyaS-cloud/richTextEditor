@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react'
-import { makeStyles } from '@material-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Avatar, CardHeader, IconButton, makeStyles, Typography } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   ContentBlock,
@@ -11,6 +11,8 @@ import {
   EditorState
 } from 'draft-js'
 import Immutable from 'immutable'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import { red } from '@material-ui/core/colors'
 import { fetchArticle } from '../../reducer/postReducer'
 
 const myCustomBlock = Immutable.Map({
@@ -27,15 +29,19 @@ const myCustomBlock = Immutable.Map({
 
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
-const PostPage = () => {
-  const dispatch = useDispatch()
+const ArticlePage = () => {
   const classes = useStyle()
-  const article = useSelector((state) => state.postReducer.article)
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    dispatch(fetchArticle())
-  }, [])
-  const contentState = convertFromRaw(JSON.parse(article[0].content))
-  const editorStates = EditorState.createWithContent(contentState)
+    dispatch(fetchArticle)
+  }, [dispatch])
+
+  const fetchedArticle = useSelector((state) => state.postReducer.article)
+  const article = fetchedArticle[0]
+  const contentState = convertFromRaw(article.content)
+  const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
+
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
     switch (type) {
@@ -49,8 +55,24 @@ const PostPage = () => {
         return type
     }
   }
+
   return (
     <div className={classes.root}>
+      <CardHeader
+        avatar={
+          <Avatar aria-label="recipe" className={classes.avatar}>
+            {article.userName}
+          </Avatar>
+        }
+        action={
+          <IconButton aria-label="settings">
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title={article.title}
+        subheader={article.createdAt}
+      />
+      <Typography variant="h1">{article.title}</Typography>
       <div className={classes.editor}>
         <Editor
           customStyleMap={customStyleMap}
@@ -110,6 +132,9 @@ const useStyle = makeStyles({
     fontSize: ' 18px ',
     cursor: 'text'
   },
+  avatar: {
+    backgroundColor: red[500]
+  },
   right: {
     textAlign: 'right'
   },
@@ -121,4 +146,4 @@ const useStyle = makeStyles({
   }
 })
 
-export default PostPage
+export default ArticlePage

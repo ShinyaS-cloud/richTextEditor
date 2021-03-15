@@ -1,4 +1,5 @@
 import 'react-redux'
+import { RawDraftContentState } from 'draft-js'
 
 type MyState = {
   authReducer: {
@@ -18,8 +19,9 @@ type MyState = {
         title: string
         imageUrl: string
         category: number
-        content: JSON
-        userId: number
+        content: RawDraftContentState
+        userName: string
+        abstract: string
         createdAt: string
         updatedAt: string
       }

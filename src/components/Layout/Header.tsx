@@ -52,7 +52,7 @@ const Header: React.FC<Props> = (props) => {
             <Menu />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            <Link to={'/'} className={classes.titleDecoration}>
+            <Link to={'/home'} className={classes.titleDecoration}>
               Rich Text Editor
             </Link>
           </Typography>

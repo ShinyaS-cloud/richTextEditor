@@ -5,13 +5,14 @@ import { CssBaseline } from '@material-ui/core'
 import Layout from './components/Layout/Layout'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import RichEditor from './components/RichEditor/RichEditor'
+
 import Signup from './components/Login/Signup'
 import Posts from './components/PostPage/Posts'
 import Login from './components/Login/Login'
 import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
-import PostPage from './components/PostPage/PostPage'
+import ArticlePage from './components/PostPage/ArticlePage'
 
 axios.defaults.withCredentials = true
 
@@ -32,7 +33,7 @@ const App: React.FC = () => {
     }
     getCsrfToken()
     dispatch(fetchUser())
-  }, [])
+  }, [dispatch])
 
   return (
     <BrowserRouter>
@@ -40,9 +41,9 @@ const App: React.FC = () => {
         <CssBaseline />
         <Layout>
           <Switch>
-            <Route path="/" exact component={Posts} />
+            <Route path="/home" exact component={Posts} />
             <Route path="/newpost/:articleId" component={RichEditor} />
-            <Route path="/post" component={PostPage} />
+            <Route path="/:userName/:articleId" component={ArticlePage} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
           </Switch>

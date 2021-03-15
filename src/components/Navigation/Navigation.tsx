@@ -27,17 +27,17 @@ const VerticalTabs: React.FC<Props> = (props) => {
       <div className={classes.drawerContainer}>
         <List>
           <Divider />
-          <ListItem button component='a' href="/api/newpost">
+          <ListItem button component="a" href="/api/newpost">
             <Create />
             <ListItemText primary="Rich Text Editor" onMouseDown={() => props.openHandler(false)} />
           </ListItem>
           <Divider />
           <ListItem button component={Link} to="/signup">
-            <ListItemText primary="Item Two" onMouseDown={() => props.openHandler(false)} />
+            <ListItemText primary="Signup" onMouseDown={() => props.openHandler(false)} />
           </ListItem>
           <Divider />
-          <ListItem button component={Link} to="/">
-            <ListItemText primary="Item Three" onMouseDown={() => props.openHandler(false)} />
+          <ListItem button component={Link} to="/home">
+            <ListItemText primary="Articles" onMouseDown={() => props.openHandler(false)} />
           </ListItem>
           <Divider />
         </List>

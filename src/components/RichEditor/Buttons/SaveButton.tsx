@@ -24,6 +24,7 @@ const SaveButton: React.FC<Props> = (props) => {
         content: content
       }
     }
+    console.log(content)
     try {
       await axios.post('/api/save/', saveContent)
     } catch (error) {

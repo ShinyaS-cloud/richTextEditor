@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { ContentState, convertToRaw } from 'draft-js'
 axios.defaults.withCredentials = true
 
 export const initialState = {
@@ -9,7 +10,7 @@ export const initialState = {
       title: '',
       imageUrl: '',
       category: 0,
-      content: JSON.stringify({}),
+      content: convertToRaw(ContentState.createFromText('')),
       userId: 0,
       createdAt: '',
       updatedAt: ''
@@ -46,9 +47,11 @@ export const fetchArticleCategory = createAsyncThunk(
   }
 )
 
-export const fetchArticle = createAsyncThunk('/article', async (articleId: number) => {
+export const fetchArticle = createAsyncThunk('/api/article', async (articleId: number) => {
   try {
-    const { data } = await axios.get('/article', { params: { articleId: articleId } })
+    const { data } = await axios.get('/api/article', {
+      params: { articleId: articleId }
+    })
     data.createdAt = traslateDate(data.createdAt)
     data.updatedAt = traslateDate(data.updatedAt)
     return data

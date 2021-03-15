@@ -9,10 +9,13 @@ const Posts = () => {
   const classes = useStyle()
   const dispatch = useDispatch()
   const article = useSelector((state) => state.postReducer.article)
+
   useEffect(() => {
     dispatch(fetchArticleCategory(''))
-  }, [])
+  }, [dispatch])
+
   const renderContent = article.map((a) => {
+    console.log(a.userName)
     return <Card key={a.articleId} article={a} />
   })
 
