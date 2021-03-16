@@ -1,6 +1,13 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState } from 'react'
-import { Avatar, CardHeader, IconButton, makeStyles, Typography } from '@material-ui/core'
+import {
+  Avatar,
+  CardHeader,
+  CircularProgress,
+  IconButton,
+  makeStyles,
+  Typography
+} from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   ContentBlock,
@@ -14,7 +21,11 @@ import Immutable from 'immutable'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { red } from '@material-ui/core/colors'
 import { fetchArticle } from '../../reducer/postReducer'
+import { useParams } from 'react-router'
 
+/**
+ * custom block の定義
+ */
 const myCustomBlock = Immutable.Map({
   right: {
     element: 'div'
@@ -29,19 +40,28 @@ const myCustomBlock = Immutable.Map({
 
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
+/**
+ * fanctional component 部分
+ */
+
 const ArticlePage = () => {
   const classes = useStyle()
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(fetchArticle)
-  }, [dispatch])
-
+  const { articleId } = useParams<{ articleId: string }>()
   const fetchedArticle = useSelector((state) => state.postReducer.article)
+  const loading = useSelector((state) => state.postReducer.loading)
   const article = fetchedArticle[0]
   const contentState = convertFromRaw(article.content)
   const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
 
+  useEffect(() => {
+    dispatch(fetchArticle(+articleId))
+    setEditorState(EditorState.createWithContent(contentState))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  console.log('articleId', articleId)
+  console.log('fetchedArticle', fetchedArticle)
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
     switch (type) {
@@ -56,38 +76,51 @@ const ArticlePage = () => {
     }
   }
 
-  return (
-    <div className={classes.root}>
-      <CardHeader
-        avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            {article.userName}
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={article.title}
-        subheader={article.createdAt}
-      />
-      <Typography variant="h1">{article.title}</Typography>
-      <div className={classes.editor}>
-        <Editor
-          customStyleMap={customStyleMap}
-          editorState={editorState}
-          onChange={setEditorState}
-          blockRenderMap={extendedBlockRenderMap}
-          blockStyleFn={myBlockStyleFn}
-          readOnly={true}
-        />
-      </div>
+  const AvaterArea = (
+    <Avatar aria-label="recipe" className={classes.avatar}>
+      {article.userName}
+    </Avatar>
+  )
+  const Action: any = (
+    <IconButton aria-label="settings">
+      <MoreVertIcon />
+    </IconButton>
+  )
+
+  const Title: any = article.title
+
+  const EditorComponent: any = (
+    <Editor
+      customStyleMap={customStyleMap}
+      editorState={editorState}
+      onChange={setEditorState}
+      blockRenderMap={extendedBlockRenderMap}
+      blockStyleFn={myBlockStyleFn}
+      readOnly={true}
+    />
+  )
+
+  let renderComponent = (
+    <div className={classes.editor}>
+      <CardHeader avatar={AvaterArea} action={Action} title={Title} subheader={article.createdAt} />
+      <Typography variant="h3">{Title}</Typography>
+      <div className={classes.editor}>{EditorComponent}</div>
     </div>
   )
+  if (loading) {
+    renderComponent = (
+      <div className={classes.circular}>
+        <CircularProgress size="5rem" />
+      </div>
+    )
+  }
+
+  return <div className={classes.root}>{renderComponent}</div>
 }
 
-/// customStyleMap
+/**
+ * customStyleMap
+ */
 const customStyleMap: DraftStyleMap = {
   red: {
     color: 'rgba(255, 0, 0, 1.0)'
@@ -134,6 +167,11 @@ const useStyle = makeStyles({
   },
   avatar: {
     backgroundColor: red[500]
+  },
+  circular: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '100px'
   },
   right: {
     textAlign: 'right'

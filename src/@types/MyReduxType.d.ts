@@ -26,6 +26,7 @@ type MyState = {
         updatedAt: string
       }
     ]
+    loading: boolean
   }
 }
 declare module 'react-redux' {

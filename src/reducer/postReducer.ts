@@ -15,17 +15,24 @@ export const initialState = {
       createdAt: '',
       updatedAt: ''
     }
-  ]
+  ],
+  loading: false
 }
 
 const categories = ['pet', 'sports', 'novel', 'IT', 'food']
 
-// type CategoryTypes = keyof typeof categories
+/**
+ * Data型をyyyy年mm月dd日に変更する関数
+ */
 
 const traslateDate = (day: string): string => {
   const newDay = new Date(day)
   return newDay.getFullYear() + '年' + (newDay.getMonth() + 1) + '月' + newDay.getDate() + '日'
 }
+
+/**
+ * ArticleをCategoryごとに持ってくる
+ */
 
 export const fetchArticleCategory = createAsyncThunk(
   '/api/articleCategory',
@@ -34,7 +41,7 @@ export const fetchArticleCategory = createAsyncThunk(
       const { data } = await axios.get('/api/articleCategory', {
         params: { categoryName: categories.indexOf(categoryName) }
       })
-      data.map((r: any) => {
+      data.map((r: typeof initialState.article[0]) => {
         r.createdAt = traslateDate(r.createdAt)
         r.updatedAt = traslateDate(r.updatedAt)
         return r
@@ -46,6 +53,10 @@ export const fetchArticleCategory = createAsyncThunk(
     }
   }
 )
+
+/**
+ * 選択したArticleを一つ持ってくる
+ */
 
 export const fetchArticle = createAsyncThunk('/api/article', async (articleId: number) => {
   try {
@@ -60,12 +71,17 @@ export const fetchArticle = createAsyncThunk('/api/article', async (articleId: n
   }
 })
 
+/**
+ * Reducer
+ */
+
 const postReducer = createSlice({
   name: 'postReducer',
   initialState: initialState,
   reducers: {
-    postInit: (state, action: PayloadAction) => ({
-      ...state
+    articleInit: (state, action: PayloadAction) => ({
+      ...state,
+      ...initialState
     })
   },
 
@@ -73,17 +89,26 @@ const postReducer = createSlice({
     builder
       .addCase(fetchArticleCategory.fulfilled, (state, response) => ({
         ...state,
-        article: response.payload
+        article: response.payload,
+        loading: false
       }))
-
-      .addCase(fetchArticleCategory.rejected, (state) => console.log(state))
+      .addCase(fetchArticleCategory.pending, (state) => ({
+        ...state,
+        loading: true
+      }))
+      .addCase(fetchArticleCategory.rejected, (state) => ({ ...state, loading: false }))
 
     builder
       .addCase(fetchArticle.fulfilled, (state, response) => ({
         ...state,
-        article: response.payload
+        article: [response.payload],
+        loading: false
       }))
-      .addCase(fetchArticle.rejected, (state) => console.log(state))
+      .addCase(fetchArticle.pending, (state) => ({
+        ...state,
+        loading: true
+      }))
+      .addCase(fetchArticle.rejected, (state) => ({ ...state, loading: false }))
   }
 })
 
