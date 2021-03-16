@@ -22,15 +22,16 @@ import { Link } from 'react-router-dom'
 
 type Props = {
   article: {
-    articleId: number
+    id: number
     title: string
     imageUrl: string
     category: number
     content: RawDraftContentState
     abstract: string
-    userName: string
+    userId: number
     createdAt: string
     updatedAt: string
+    users: { id: number; name: string }
   }
 }
 
@@ -39,6 +40,7 @@ type Props = {
 const RecipeReviewCard: React.FC<Props> = (props) => {
   const article = props.article
   const classes = useStyles()
+
   const [up, setUp] = React.useState(2)
 
   const onElevation = () => {
@@ -59,7 +61,7 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
-            {article.userName}
+            {article.users.name}
           </Avatar>
         }
         action={
@@ -70,7 +72,7 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
         title={article.title}
         subheader={article.createdAt}
       />
-      <CardActionArea component={Link} to={'/' + article.userName + '/' + article.articleId}>
+      <CardActionArea component={Link} to={'/' + article.users.name + '/' + article.id}>
         <CardMedia
           component="div"
           className={classes.media}

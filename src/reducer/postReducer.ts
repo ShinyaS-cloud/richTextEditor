@@ -6,14 +6,15 @@ axios.defaults.withCredentials = true
 export const initialState = {
   article: [
     {
-      articleId: 0,
+      id: 0,
       title: '',
       imageUrl: '',
       category: 0,
       content: convertToRaw(ContentState.createFromText('')),
       userId: 0,
       createdAt: '',
-      updatedAt: ''
+      updatedAt: '',
+      users: { id: 0, name: '' }
     }
   ],
   loading: false
@@ -61,7 +62,7 @@ export const fetchArticleCategory = createAsyncThunk(
 export const fetchArticle = createAsyncThunk('/api/article', async (articleId: number) => {
   try {
     const { data } = await axios.get('/api/article', {
-      params: { articleId: articleId }
+      params: { id: articleId }
     })
     data.createdAt = traslateDate(data.createdAt)
     data.updatedAt = traslateDate(data.updatedAt)
@@ -93,7 +94,7 @@ const postReducer = createSlice({
         loading: false
       }))
       .addCase(fetchArticleCategory.pending, (state) => ({
-        ...state,
+        ...initialState,
         loading: true
       }))
       .addCase(fetchArticleCategory.rejected, (state) => ({ ...state, loading: false }))
@@ -105,7 +106,7 @@ const postReducer = createSlice({
         loading: false
       }))
       .addCase(fetchArticle.pending, (state) => ({
-        ...state,
+        ...initialState,
         loading: true
       }))
       .addCase(fetchArticle.rejected, (state) => ({ ...state, loading: false }))

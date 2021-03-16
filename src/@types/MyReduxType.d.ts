@@ -15,15 +15,16 @@ type MyState = {
   postReducer: {
     article: [
       {
-        articleId: number
+        id: number
         title: string
         imageUrl: string
         category: number
         content: RawDraftContentState
-        userName: string
+        userId: number
         abstract: string
         createdAt: string
         updatedAt: string
+        users: { id: number; name: string }
       }
     ]
     loading: boolean

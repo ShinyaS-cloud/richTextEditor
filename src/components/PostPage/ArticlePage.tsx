@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Avatar,
   CardHeader,
@@ -50,18 +50,25 @@ const ArticlePage = () => {
   const { articleId } = useParams<{ articleId: string }>()
   const fetchedArticle = useSelector((state) => state.postReducer.article)
   const loading = useSelector((state) => state.postReducer.loading)
+
   const article = fetchedArticle[0]
   const contentState = convertFromRaw(article.content)
-  const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
 
-  useEffect(() => {
-    dispatch(fetchArticle(+articleId))
+  const changeStateHandler = useCallback(() => {
     setEditorState(EditorState.createWithContent(contentState))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    dispatch(fetchArticle(+articleId))
+    changeStateHandler()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [articleId, dispatch])
+
   console.log('articleId', articleId)
   console.log('fetchedArticle', fetchedArticle)
+
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
     switch (type) {
@@ -78,7 +85,7 @@ const ArticlePage = () => {
 
   const AvaterArea = (
     <Avatar aria-label="recipe" className={classes.avatar}>
-      {article.userName}
+      {article.users.name}
     </Avatar>
   )
   const Action: any = (

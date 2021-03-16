@@ -13,10 +13,11 @@ const Posts = () => {
 
   useEffect(() => {
     dispatch(fetchArticleCategory(''))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
 
   const renderMap = article.map((a) => {
-    return <Card key={a.articleId} article={a} />
+    return <Card key={a.id} article={a} />
   })
 
   let renderContent: any = <Box className={classes.root}>{renderMap}</Box>
@@ -24,7 +25,7 @@ const Posts = () => {
   if (loading) {
     renderContent = (
       <Box className={classes.circular}>
-        <CircularProgress size="5rem"/>
+        <CircularProgress size="5rem" />
       </Box>
     )
   }
