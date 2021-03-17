@@ -4,6 +4,7 @@ import { Box, CircularProgress, makeStyles } from '@material-ui/core'
 import Card from './Card'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchArticleCategory } from '../../reducer/postReducer'
+import Category from './Category'
 
 const Posts = () => {
   const classes = useStyle()
@@ -30,7 +31,12 @@ const Posts = () => {
     )
   }
 
-  return <div>{renderContent}</div>
+  return (
+    <div>
+      <Category />
+      {renderContent}
+    </div>
+  )
 }
 
 const useStyle = makeStyles({

@@ -44,8 +44,6 @@ const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
  * fanctional component 部分
  */
 
-// const localStorageKey = 'persistState'
-
 const ArticlePage = () => {
   const classes = useStyle()
   const dispatch = useDispatch()
@@ -55,11 +53,10 @@ const ArticlePage = () => {
   /**
    * localStrageからデータを取ってくる。なければstoreから取ってくる。
    */
-  // const localState = localStorage.getItem(localStorageKey)
-  // const article = localState ? JSON.parse(localState) : fetchedArticle[0]
-  const article = fetchedArticle[0]
-  // const persistState = { ...article }
 
+  const article = fetchedArticle[0]
+
+  console.log(article)
   const location = useLocation()
   const history = useHistory()
   console.log('location', location)
@@ -68,17 +65,11 @@ const ArticlePage = () => {
   const contentState = convertFromRaw(article.content)
   const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
 
-  // useEffect(() => {
-  //   localStorage.setItem(localStorageKey, JSON.stringify(persistState))
-  //   return () => {
-  //     localStorage.removeItem(localStorageKey)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
   useEffect(() => {
-    dispatch(fetchArticle)
-  }, [dispatch, history])
+    window.onpopstate = () => {
+      dispatch(fetchArticle)
+    }
+  }, [dispatch])
 
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
