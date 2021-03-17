@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Avatar,
   CardHeader,
@@ -20,8 +20,8 @@ import {
 import Immutable from 'immutable'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { red } from '@material-ui/core/colors'
+import { useHistory, useLocation } from 'react-router'
 import { fetchArticle } from '../../reducer/postReducer'
-import { useParams } from 'react-router'
 
 /**
  * custom block の定義
@@ -44,30 +44,41 @@ const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
  * fanctional component 部分
  */
 
+// const localStorageKey = 'persistState'
+
 const ArticlePage = () => {
   const classes = useStyle()
   const dispatch = useDispatch()
-  const { articleId } = useParams<{ articleId: string }>()
   const fetchedArticle = useSelector((state) => state.postReducer.article)
   const loading = useSelector((state) => state.postReducer.loading)
 
+  /**
+   * localStrageからデータを取ってくる。なければstoreから取ってくる。
+   */
+  // const localState = localStorage.getItem(localStorageKey)
+  // const article = localState ? JSON.parse(localState) : fetchedArticle[0]
   const article = fetchedArticle[0]
-  const contentState = convertFromRaw(article.content)
-  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  // const persistState = { ...article }
 
-  const changeStateHandler = useCallback(() => {
-    setEditorState(EditorState.createWithContent(contentState))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const location = useLocation()
+  const history = useHistory()
+  console.log('location', location)
+  console.log(history)
+
+  const contentState = convertFromRaw(article.content)
+  const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
+
+  // useEffect(() => {
+  //   localStorage.setItem(localStorageKey, JSON.stringify(persistState))
+  //   return () => {
+  //     localStorage.removeItem(localStorageKey)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   useEffect(() => {
-    dispatch(fetchArticle(+articleId))
-    changeStateHandler()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [articleId, dispatch])
-
-  console.log('articleId', articleId)
-  console.log('fetchedArticle', fetchedArticle)
+    dispatch(fetchArticle)
+  }, [dispatch, history])
 
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
@@ -122,7 +133,17 @@ const ArticlePage = () => {
     )
   }
 
-  return <div className={classes.root}>{renderComponent}</div>
+  return (
+    // <Suspense
+    //   fallback={
+    //     <div className={classes.circular}>
+    //       <CircularProgress size="5rem" />
+    //     </div>
+    //   }
+    // >
+    <div className={classes.root}>{renderComponent}</div>
+    //  </Suspense>
+  )
 }
 
 /**

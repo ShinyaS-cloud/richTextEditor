@@ -59,18 +59,21 @@ export const fetchArticleCategory = createAsyncThunk(
  * 選択したArticleを一つ持ってくる
  */
 
-export const fetchArticle = createAsyncThunk('/api/article', async (articleId: number) => {
-  try {
-    const { data } = await axios.get('/api/article', {
-      params: { id: articleId }
-    })
-    data.createdAt = traslateDate(data.createdAt)
-    data.updatedAt = traslateDate(data.updatedAt)
-    return data
-  } catch (error) {
-    console.log(error)
+export const fetchArticle = createAsyncThunk(
+  '/api/article',
+  async (articleId: number) => {
+    try {
+      const { data } = await axios.get('/api/article', {
+        params: { id: articleId }
+      })
+      data.createdAt = traslateDate(data.createdAt)
+      data.updatedAt = traslateDate(data.updatedAt)
+      return data
+    } catch (error) {
+      console.log(error)
+    }
   }
-})
+)
 
 /**
  * Reducer

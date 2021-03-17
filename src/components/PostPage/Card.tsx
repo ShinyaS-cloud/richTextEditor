@@ -18,7 +18,9 @@ import ShareIcon from '@material-ui/icons/Share'
 
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { CardActionArea } from '@material-ui/core'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { fetchArticle } from '../../reducer/postReducer'
 
 type Props = {
   article: {
@@ -39,7 +41,9 @@ type Props = {
 
 const RecipeReviewCard: React.FC<Props> = (props) => {
   const article = props.article
+  const dispatch = useDispatch()
   const classes = useStyles()
+  const history = useHistory()
 
   const [up, setUp] = React.useState(2)
 
@@ -48,6 +52,11 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
   }
   const offElevation = () => {
     setUp(2)
+  }
+
+  const onChangeLocationHandler = async () => {
+    await Promise.all([dispatch(fetchArticle(article.id))])
+    history.push('/' + article.users.name + '/' + article.id)
   }
 
   return (
@@ -72,7 +81,7 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
         title={article.title}
         subheader={article.createdAt}
       />
-      <CardActionArea component={Link} to={'/' + article.users.name + '/' + article.id}>
+      <CardActionArea onClick={onChangeLocationHandler}>
         <CardMedia
           component="div"
           className={classes.media}
