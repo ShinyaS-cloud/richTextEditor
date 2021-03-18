@@ -52,9 +52,9 @@ const Header: React.FC<Props> = (props) => {
             <Menu />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            <Link to={'/home'} className={classes.titleDecoration}>
+            <a href='/home' className={classes.titleDecoration}>
               Rich Text Editor
-            </Link>
+            </a>
           </Typography>
           {renderContent()}
         </Toolbar>

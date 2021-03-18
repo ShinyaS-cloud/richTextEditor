@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   Avatar,
   CardHeader,
@@ -20,8 +20,13 @@ import {
 import Immutable from 'immutable'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { red } from '@material-ui/core/colors'
-import { useHistory, useLocation } from 'react-router'
-import { fetchArticle } from '../../reducer/postReducer'
+import { fetchArticle } from '../../reducer/articleReducer'
+import { useParams } from 'react-router'
+
+/**
+ * paramsの型
+ */
+type thisPageParams = { articleId: string }
 
 /**
  * custom block の定義
@@ -47,29 +52,19 @@ const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 const ArticlePage = () => {
   const classes = useStyle()
   const dispatch = useDispatch()
-  const fetchedArticle = useSelector((state) => state.postReducer.article)
-  const loading = useSelector((state) => state.postReducer.loading)
-
-  /**
-   * localStrageからデータを取ってくる。なければstoreから取ってくる。
-   */
-
-  const article = fetchedArticle[0]
-
-  console.log(article)
-  const location = useLocation()
-  const history = useHistory()
-  console.log('location', location)
-  console.log(history)
+  const loading = useSelector((state) => state.articleReducer.loading)
+  const article = useSelector((state) => state.articleReducer.article)
 
   const contentState = convertFromRaw(article.content)
-  const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
+  // eslint-disable-next-line no-unused-vars
+  const dummyHandler = (a: EditorState) => {}
+
+  const { articleId } = useParams<thisPageParams>()
 
   useEffect(() => {
-    window.onpopstate = () => {
-      dispatch(fetchArticle)
-    }
-  }, [dispatch])
+    dispatch(fetchArticle(+articleId))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
@@ -101,8 +96,8 @@ const ArticlePage = () => {
   const EditorComponent: any = (
     <Editor
       customStyleMap={customStyleMap}
-      editorState={editorState}
-      onChange={setEditorState}
+      editorState={EditorState.createWithContent(contentState)}
+      onChange={dummyHandler}
       blockRenderMap={extendedBlockRenderMap}
       blockStyleFn={myBlockStyleFn}
       readOnly={true}

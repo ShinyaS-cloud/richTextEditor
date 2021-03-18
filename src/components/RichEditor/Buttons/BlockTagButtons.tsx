@@ -2,21 +2,40 @@
 import React, { Fragment } from 'react'
 import { EditorState, RichUtils } from 'draft-js'
 import { IconButton, Menu, MenuItem } from '@material-ui/core'
-import {
-  Code,
-  FormatAlignCenter,
-  FormatAlignLeft,
-  FormatAlignRight,
-  FormatListBulleted,
-  FormatListNumbered,
-  FormatQuote,
-  Title
-} from '@material-ui/icons'
+// import {
+//   Code,
+//   FormatAlignCenter,
+//   FormatAlignLeft,
+//   FormatAlignRight,
+//   FormatListBulleted,
+//   FormatListNumbered,
+//   FormatQuote,
+//   Title
+// } from '@material-ui/icons'
 
 type Props = {
   editorState: EditorState
   setEditorState: React.Dispatch<React.SetStateAction<EditorState>>
 }
+
+const headingType = [
+  'header-one',
+  'header-two',
+  'header-three',
+  'header-four',
+  'header-five',
+  'header-six'
+]
+
+const blockType = [
+  'blockquote',
+  'code-block',
+  'unordered-list-item',
+  'ordered-list-item',
+  'left',
+  'center',
+  'right'
+]
 
 const BlockTagButtons: React.FC<Props> = (props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -36,14 +55,30 @@ const BlockTagButtons: React.FC<Props> = (props) => {
   }
 
   const blockChangeButtonOpen = (event: any, type: string) => {
-    handleClose()
     blockChangeButton(event, type)
+    handleClose()
   }
+
+  const HeadingComponent = headingType.map((h) => {
+    return (
+      <MenuItem key={h} onClick={(e) => blockChangeButtonOpen(e, h)}>
+        {h}
+      </MenuItem>
+    )
+  })
+
+  const BlockChangeComponent = blockType.map((b) => {
+    return (
+      <IconButton key={b} onMouseDown={(e) => blockChangeButton(e, b)}>
+        {b}
+      </IconButton>
+    )
+  })
 
   return (
     <Fragment>
       <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-        <Title />
+        H
       </IconButton>
       <Menu
         id="simple-menu"
@@ -52,26 +87,18 @@ const BlockTagButtons: React.FC<Props> = (props) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem key="header-one" onClick={(e) => blockChangeButtonOpen(e, 'header-one')}>
-          h1
-        </MenuItem>
-        <MenuItem key="header-two" onClick={(e) => blockChangeButtonOpen(e, 'header-two')}>
-          h2
-        </MenuItem>
-        <MenuItem key="header-three" onClick={(e) => blockChangeButtonOpen(e, 'header-three')}>
-          h3
-        </MenuItem>
-        <MenuItem key="header-four" onClick={(e) => blockChangeButtonOpen(e, 'header-four')}>
-          h4
-        </MenuItem>
-        <MenuItem key="header-five" onClick={(e) => blockChangeButtonOpen(e, 'header-five')}>
-          h5
-        </MenuItem>
-        <MenuItem key="header-six" onClick={(e) => blockChangeButtonOpen(e, 'header-six')}>
-          h6
-        </MenuItem>
+        {HeadingComponent}
       </Menu>
-      <IconButton key="blockquote" onMouseDown={(e) => blockChangeButton(e, 'blockquote')}>
+      {BlockChangeComponent}
+    </Fragment>
+  )
+}
+
+export default BlockTagButtons
+
+// eslint-disable-next-line no-lone-blocks
+{
+  /* <IconButton key="blockquote" onMouseDown={(e) => blockChangeButton(e, 'blockquote')}>
         <FormatQuote />
       </IconButton>
       <IconButton key="code-block" onMouseDown={(e) => blockChangeButton(e, 'code-block')}>
@@ -97,9 +124,5 @@ const BlockTagButtons: React.FC<Props> = (props) => {
       </IconButton>
       <IconButton key="right" onMouseDown={(e) => blockChangeButton(e, 'right')}>
         <FormatAlignRight />
-      </IconButton>
-    </Fragment>
-  )
+      </IconButton> */
 }
-
-export default BlockTagButtons

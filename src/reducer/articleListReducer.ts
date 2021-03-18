@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { ContentState, convertToRaw } from 'draft-js'
-axios.defaults.withCredentials = true
 
 export const initialState = {
   article: [
@@ -10,10 +8,10 @@ export const initialState = {
       title: '',
       imageUrl: '',
       category: 0,
-      content: convertToRaw(ContentState.createFromText('')),
       userId: 0,
       createdAt: '',
       updatedAt: '',
+      isFavorite: false,
       users: { id: 0, name: '' }
     }
   ],
@@ -35,12 +33,22 @@ const traslateDate = (day: string): string => {
  * ArticleをCategoryごとに持ってくる
  */
 
-export const fetchArticleCategory = createAsyncThunk(
+type argType = { categoryName: string; usersId: number }
+
+export const fetchArticleListCategory = createAsyncThunk(
   '/api/articleCategory',
-  async (categoryName: string) => {
+  async (arg: argType) => {
     try {
+      const { categoryName, usersId } = arg
+      let indexOfCategory = categories.indexOf(categoryName)
+      if (categories.indexOf(categoryName) === -1) {
+        indexOfCategory = 0
+      }
       const { data } = await axios.get('/api/articleCategory', {
-        params: { categoryName: categories.indexOf(categoryName) }
+        params: {
+          categoryNumber: indexOfCategory,
+          usersId: usersId
+        }
       })
       data.map((r: typeof initialState.article[0]) => {
         r.createdAt = traslateDate(r.createdAt)
@@ -56,31 +64,11 @@ export const fetchArticleCategory = createAsyncThunk(
 )
 
 /**
- * 選択したArticleを一つ持ってくる
- */
-
-export const fetchArticle = createAsyncThunk(
-  '/api/article',
-  async (articleId: number) => {
-    try {
-      const { data } = await axios.get('/api/article', {
-        params: { id: articleId }
-      })
-      data.createdAt = traslateDate(data.createdAt)
-      data.updatedAt = traslateDate(data.updatedAt)
-      return data
-    } catch (error) {
-      console.log(error)
-    }
-  }
-)
-
-/**
  * Reducer
  */
 
-const postReducer = createSlice({
-  name: 'postReducer',
+const articleListReducer = createSlice({
+  name: 'articleListReducer',
   initialState: initialState,
   reducers: {
     articleInit: (state, action: PayloadAction) => ({
@@ -91,29 +79,17 @@ const postReducer = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchArticleCategory.fulfilled, (state, response) => ({
+      .addCase(fetchArticleListCategory.fulfilled, (state, response) => ({
         ...state,
         article: response.payload,
         loading: false
       }))
-      .addCase(fetchArticleCategory.pending, (state) => ({
+      .addCase(fetchArticleListCategory.pending, (state) => ({
         ...initialState,
         loading: true
       }))
-      .addCase(fetchArticleCategory.rejected, (state) => ({ ...state, loading: false }))
-
-    builder
-      .addCase(fetchArticle.fulfilled, (state, response) => ({
-        ...state,
-        article: [response.payload],
-        loading: false
-      }))
-      .addCase(fetchArticle.pending, (state) => ({
-        ...initialState,
-        loading: true
-      }))
-      .addCase(fetchArticle.rejected, (state) => ({ ...state, loading: false }))
+      .addCase(fetchArticleListCategory.rejected, (state) => ({ ...state, loading: false }))
   }
 })
 
-export default postReducer
+export default articleListReducer

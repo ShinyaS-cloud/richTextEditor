@@ -5,8 +5,8 @@ import AppBar from '@material-ui/core/AppBar'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
-import { useDispatch } from 'react-redux'
-import { fetchArticleCategory } from '../../reducer/postReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchArticleListCategory } from '../../reducer/articleListReducer'
 
 const a11yProps = (index: any) => {
   return {
@@ -26,10 +26,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 const ScrollableTabsButtonAuto = () => {
   const classes = useStyles()
   const [value, setValue] = React.useState(0)
+  const usersId = useSelector((state) => state.authReducer.id)
   const dispatch = useDispatch()
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue)
-    dispatch(fetchArticleCategory(categories[value]))
+    dispatch(fetchArticleListCategory({ categoryName: categories[value], usersId }))
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const categories = ['pet', 'sports', 'novel', 'IT', 'food']

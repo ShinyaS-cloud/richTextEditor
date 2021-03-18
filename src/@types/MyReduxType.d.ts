@@ -12,18 +12,33 @@ type MyState = {
     postId: number
     token: string
   }
-  postReducer: {
+  articleReducer: {
+    article: {
+      id: number
+      title: string
+      imageUrl: string
+      category: number
+      content: RawDraftContentState
+      userId: number
+      abstract: string
+      createdAt: string
+      updatedAt: string
+      users: { id: number; name: string }
+    }
+    loading: boolean
+  }
+  articleListReducer: {
     article: [
       {
         id: number
         title: string
         imageUrl: string
         category: number
-        content: RawDraftContentState
         userId: number
         abstract: string
         createdAt: string
         updatedAt: string
+        isFavorite: boolean
         users: { id: number; name: string }
       }
     ]

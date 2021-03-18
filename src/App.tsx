@@ -7,12 +7,12 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import RichEditor from './components/RichEditor/RichEditor'
 
 import Signup from './components/Login/Signup'
-import Posts from './components/PostPage/Posts'
+import Posts from './components/ArticlePage/ArticleList'
 import Login from './components/Login/Login'
 import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
-import ArticlePage from './components/PostPage/ArticlePage'
+import ArticlePage from './components/ArticlePage/ArticlePage'
 
 axios.defaults.withCredentials = true
 

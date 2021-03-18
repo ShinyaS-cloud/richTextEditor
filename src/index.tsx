@@ -7,11 +7,13 @@ import { Provider } from 'react-redux'
 import * as serviceWorker from './serviceWorker'
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './reducer/authReducer'
-import postReducer from './reducer/postReducer'
+import articleListReducer from './reducer/articleListReducer'
+import articleReducer from './reducer/articleReducer'
 
 const reducer = {
   authReducer: authReducer.reducer,
-  postReducer: postReducer.reducer
+  articleListReducer: articleListReducer.reducer,
+  articleReducer: articleReducer.reducer
 }
 
 const store = configureStore({ reducer })

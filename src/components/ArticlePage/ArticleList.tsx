@@ -3,19 +3,20 @@ import React, { useEffect } from 'react'
 import { Box, CircularProgress, makeStyles } from '@material-ui/core'
 import Card from './Card'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchArticleCategory } from '../../reducer/postReducer'
+import { fetchArticleListCategory } from '../../reducer/articleListReducer'
 import Category from './Category'
 
 const Posts = () => {
   const classes = useStyle()
   const dispatch = useDispatch()
-  const article = useSelector((state) => state.postReducer.article)
-  const loading = useSelector((state) => state.postReducer.loading)
+  const usersId = useSelector((state) => state.authReducer.id)
+  const article = useSelector((state) => state.articleListReducer.article)
+  const loading = useSelector((state) => state.articleListReducer.loading)
 
   useEffect(() => {
-    dispatch(fetchArticleCategory(''))
+    dispatch(fetchArticleListCategory({ categoryName: 'pet', usersId }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch])
+  }, [])
 
   const renderMap = article.map((a) => {
     return <Card key={a.id} article={a} />

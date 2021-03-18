@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { RawDraftContentState } from 'draft-js'
+import qs from 'qs'
 
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -18,9 +18,8 @@ import ShareIcon from '@material-ui/icons/Share'
 
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { CardActionArea } from '@material-ui/core'
-import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { fetchArticle } from '../../reducer/postReducer'
+import axios from 'axios'
+import { useSelector } from 'react-redux'
 
 type Props = {
   article: {
@@ -28,11 +27,11 @@ type Props = {
     title: string
     imageUrl: string
     category: number
-    content: RawDraftContentState
     abstract: string
     userId: number
     createdAt: string
     updatedAt: string
+    isFavorite: boolean
     users: { id: number; name: string }
   }
 }
@@ -41,9 +40,9 @@ type Props = {
 
 const RecipeReviewCard: React.FC<Props> = (props) => {
   const article = props.article
-  const dispatch = useDispatch()
   const classes = useStyles()
-  const history = useHistory()
+
+  const usersId = useSelector((state) => state.authReducer.id)
 
   const [up, setUp] = React.useState(2)
 
@@ -54,10 +53,15 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
     setUp(2)
   }
 
-  const onChangeLocationHandler = async () => {
-    await Promise.all([dispatch(fetchArticle(article.id))])
-    history.push('/' + article.users.name + '/' + article.id)
+  const favoriteHandler = async () => {
+    try {
+      await axios.post('/api/favorite', qs.stringify({ usersId, articleId: article.id }))
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+  const favoriteColor = props.article.isFavorite ? 'inherit' : 'error'
 
   return (
     <Card
@@ -81,7 +85,7 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
         title={article.title}
         subheader={article.createdAt}
       />
-      <CardActionArea onClick={onChangeLocationHandler}>
+      <CardActionArea component="a" href={'/' + article.users.name + '/' + article.id}>
         <CardMedia
           component="div"
           className={classes.media}
@@ -95,8 +99,8 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
         </CardContent>
       </CardActionArea>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton aria-label="add to favorites" onClick={favoriteHandler}>
+          <FavoriteIcon color={favoriteColor} />
         </IconButton>
         <IconButton aria-label="share">
           <ShareIcon />
@@ -129,6 +133,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     avatar: {
       backgroundColor: red[500]
+    },
+    onFavorite: {
+      backgroundColor: red[300]
     }
   })
 )
