@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import qs from 'qs'
 
@@ -39,10 +39,10 @@ type Props = {
 // const apiUrl = '/api'
 
 const RecipeReviewCard: React.FC<Props> = (props) => {
-  const article = props.article
   const classes = useStyles()
-
   const usersId = useSelector((state) => state.authReducer.id)
+  const [favoriteState, setFavoriteState] = useState(props.article.isFavorite)
+  const article = props.article
 
   const [up, setUp] = React.useState(2)
 
@@ -55,13 +55,17 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
 
   const favoriteHandler = async () => {
     try {
-      await axios.post('/api/favorite', qs.stringify({ usersId, articleId: article.id }))
+      const { data } = await axios.post(
+        '/api/favorite',
+        qs.stringify({ usersId, articleId: article.id })
+      )
+      setFavoriteState(data.isFavorite)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const favoriteColor = props.article.isFavorite ? 'inherit' : 'error'
+  const favoriteColor = favoriteState ? 'error' : 'inherit'
 
   return (
     <Card

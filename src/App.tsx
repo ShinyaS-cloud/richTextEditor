@@ -20,8 +20,8 @@ const App: React.FC = () => {
   const dispatch = useDispatch()
   const state = useSelector((state) => state.authReducer)
 
+  console.log(state)
   useEffect(() => {
-    console.log(state)
     const getCsrfToken = async () => {
       try {
         const { data } = await axios.get('/api/csrfToken')

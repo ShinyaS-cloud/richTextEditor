@@ -15,8 +15,7 @@ const Posts = () => {
 
   useEffect(() => {
     dispatch(fetchArticleListCategory({ categoryName: 'pet', usersId }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [dispatch, usersId])
 
   const renderMap = article.map((a) => {
     return <Card key={a.id} article={a} />
