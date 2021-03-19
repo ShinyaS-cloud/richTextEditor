@@ -40,7 +40,7 @@ const Header: React.FC<Props> = (props) => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="fixed" elevation={0} className={classes.appBar}>
+      <AppBar position='static' elevation={0} className={classes.appBar}>
         <Toolbar>
           <IconButton
             onClick={() => props.openHandler(!props.open)}

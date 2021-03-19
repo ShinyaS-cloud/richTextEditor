@@ -12,7 +12,7 @@ export const initialState = {
       createdAt: '',
       updatedAt: '',
       isFavorite: false,
-      users: { id: 0, name: '' }
+      users: { id: 0, codename: '' }
     }
   ],
   loading: false
@@ -64,6 +64,29 @@ export const fetchArticleListCategory = createAsyncThunk(
 )
 
 /**
+ * Article を userごとに持ってくる
+ */
+
+export const fetchArticleListUser = createAsyncThunk(
+  '/api/articleUser',
+  async (usersId: number) => {
+    try {
+      const { data } = await axios.get('/api/articleUser', {
+        params: { usersId }
+      })
+      data.map((r: typeof initialState.article[0]) => {
+        r.createdAt = traslateDate(r.createdAt)
+        r.updatedAt = traslateDate(r.updatedAt)
+        return r
+      })
+      return data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+)
+
+/**
  * Reducer
  */
 
@@ -89,6 +112,17 @@ const articleListReducer = createSlice({
         loading: true
       }))
       .addCase(fetchArticleListCategory.rejected, (state) => ({ ...state, loading: false }))
+    builder
+      .addCase(fetchArticleListUser.fulfilled, (state, response) => ({
+        ...state,
+        article: response.payload,
+        loading: false
+      }))
+      .addCase(fetchArticleListUser.pending, (state) => ({
+        ...initialState,
+        loading: true
+      }))
+      .addCase(fetchArticleListUser.rejected, (state) => ({ ...state, loading: false }))
   }
 })
 

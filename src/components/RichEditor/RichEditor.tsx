@@ -145,25 +145,18 @@ const customStyleMap: DraftStyleMap = {
 /// style
 const useStyle = makeStyles({
   root: {
-    backgroundColor: '#f2ecd8',
-    backgroundAttachment: 'fixed',
-    margin: '0 auto',
-    width: '100%',
-    overflowY: 'scroll',
-    height: '100%'
   },
   buttons: {
     margin: '0 auto',
     textAlign: 'center'
   },
   editor: {
-    width: '80%',
+    width: '60%',
     backgroundColor: 'white',
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
-    marginBottom: '5rem',
-    minHeight: '30rem',
-    padding: '1rem 1rem',
+    minHeight: '50rem',
+    padding: '3rem 2rem',
     fontSize: ' 18px ',
     cursor: 'text'
   },
@@ -171,7 +164,7 @@ const useStyle = makeStyles({
     textAlign: 'center'
   },
   textItems: {
-    width: '80%'
+    width: '60%'
   },
   title: {
     textAlign: 'center'

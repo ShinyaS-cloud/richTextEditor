@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react'
-import { CssBaseline } from '@material-ui/core'
+import { createMuiTheme, CssBaseline, MuiThemeProvider } from '@material-ui/core'
 
 import Layout from './components/Layout/Layout'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
@@ -13,6 +13,7 @@ import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 import ArticlePage from './components/ArticlePage/ArticlePage'
+import UserPage from './components/UserPage/UserPage'
 
 axios.defaults.withCredentials = true
 
@@ -32,22 +33,33 @@ const App: React.FC = () => {
     }
     getCsrfToken()
     dispatch(fetchUser())
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
+
+  const theme = createMuiTheme({
+    palette: {
+      background: {
+        default: '#f2ecd8'
+      }
+    }
+  })
 
   return (
     <BrowserRouter>
       <div>
-        <CssBaseline />
-        <Layout>
-          <Switch>
-            <Route path="/home" exact component={Posts} />
-            <Route path="/newpost/:articleId" component={RichEditor} />
-            <Route path="/:userName/:articleId" component={ArticlePage} />
-            <Route path="/signup" component={Signup} />
-            <Route path="/login" component={Login} />
-          </Switch>
-        </Layout>
+        <MuiThemeProvider theme={theme}>
+          <CssBaseline />
+          <Layout>
+            <Switch>
+              <Route path="/home" exact component={Posts} />
+              <Route path="/newpost/:articleId" component={RichEditor} />
+              <Route path="/:codename/:articleId" component={ArticlePage} />
+              <Route path="/signup" component={Signup} />
+              <Route path="/login" component={Login} />
+              <Route path='/:codename' component={UserPage}/>
+            </Switch>
+          </Layout>
+        </MuiThemeProvider>
       </div>
     </BrowserRouter>
   )

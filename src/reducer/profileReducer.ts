@@ -4,17 +4,16 @@ axios.defaults.withCredentials = true
 
 export const initialState = {
   id: 0,
-  googleId: '',
-  codename: '',
-  email: '',
-  loginGoogle: false,
-  password: '',
+  name: '',
+  introduction: '',
   avatarUrl: '',
-  headerUrl: ''
+  headerUrl: '',
+  usersId: 0,
+  users: { codename: '' }
 }
 
-export const fetchUser = createAsyncThunk('/api/current_user', async () => {
-  const response = await axios.get('/api/current_user')
+export const fetchProfile = createAsyncThunk('/api/profile', async (codename: string) => {
+  const response = await axios.get('/api/profile', { params: { codename } })
   return response.data
 })
 
@@ -29,9 +28,9 @@ const authReducer = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUser.fulfilled, (state, response) => ({ ...state, ...response.payload }))
+      .addCase(fetchProfile.fulfilled, (state, response) => ({ ...state, ...response.payload }))
 
-      .addCase(fetchUser.rejected, (state) => console.log(state))
+      .addCase(fetchProfile.rejected, (state) => console.log(state))
   }
 })
 

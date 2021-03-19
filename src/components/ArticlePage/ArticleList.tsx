@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react'
 import { Box, CircularProgress, makeStyles } from '@material-ui/core'
-import Card from './Card'
+import ArticleCard from './ArticleCard'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchArticleListCategory } from '../../reducer/articleListReducer'
 import Category from './Category'
@@ -18,7 +18,7 @@ const Posts = () => {
   }, [dispatch, usersId])
 
   const renderMap = article.map((a) => {
-    return <Card key={a.id} article={a} />
+    return <ArticleCard key={a.id} article={a} />
   })
 
   let renderContent: any = <Box className={classes.root}>{renderMap}</Box>

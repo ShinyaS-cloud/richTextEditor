@@ -82,7 +82,7 @@ const ArticlePage = () => {
 
   const AvaterArea = (
     <Avatar aria-label="recipe" className={classes.avatar}>
-      {article.users.name}
+      {article.users.codename}
     </Avatar>
   )
   const Action: any = (
@@ -105,9 +105,17 @@ const ArticlePage = () => {
   )
 
   let renderComponent = (
-    <div className={classes.editor}>
-      <CardHeader avatar={AvaterArea} action={Action} title={Title} subheader={article.createdAt} />
-      <Typography variant="h3">{Title}</Typography>
+    <div>
+      <CardHeader
+        className={classes.header}
+        avatar={AvaterArea}
+        action={Action}
+        title={Title}
+        subheader={article.createdAt}
+      />
+      <Typography className={classes.title} variant="h3">
+        {Title}
+      </Typography>
       <div className={classes.editor}>{EditorComponent}</div>
     </div>
   )
@@ -119,17 +127,7 @@ const ArticlePage = () => {
     )
   }
 
-  return (
-    // <Suspense
-    //   fallback={
-    //     <div className={classes.circular}>
-    //       <CircularProgress size="5rem" />
-    //     </div>
-    //   }
-    // >
-    <div className={classes.root}>{renderComponent}</div>
-    //  </Suspense>
-  )
+  return <div className={classes.root}>{renderComponent}</div>
 }
 
 /**
@@ -161,21 +159,27 @@ const customStyleMap: DraftStyleMap = {
 
 const useStyle = makeStyles({
   root: {
-    backgroundColor: '#f2ecd8',
-    backgroundAttachment: 'fixed',
-    margin: '0 auto',
-    width: '100%',
     overflowY: 'scroll',
-    height: '100%'
+    marginBottom: '5rem'
+  },
+  header: {
+    margin: '0 auto',
+    width: '60%',
+    backgroundColor: 'white'
+  },
+  title: {
+    margin: '0 auto',
+    textAlign: 'center',
+    width: '60%',
+    backgroundColor: 'white'
   },
   editor: {
-    width: '80%',
+    width: '60%',
     backgroundColor: 'white',
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
-    marginBottom: '5rem',
-    minHeight: '30rem',
-    padding: '1rem 1rem',
+    minHeight: '50rem',
+    padding: '3rem 2rem',
     fontSize: ' 18px ',
     cursor: 'text'
   },

@@ -32,13 +32,13 @@ type Props = {
     createdAt: string
     updatedAt: string
     isFavorite: boolean
-    users: { id: number; name: string }
+    users: { id: number; codename: string }
   }
 }
 
 // const apiUrl = '/api'
 
-const RecipeReviewCard: React.FC<Props> = (props) => {
+const ArticleCard: React.FC<Props> = (props) => {
   const classes = useStyles()
   const usersId = useSelector((state) => state.authReducer.id)
   const [favoriteState, setFavoriteState] = useState(props.article.isFavorite)
@@ -78,7 +78,7 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
-            {article.users.name}
+            {article.users.codename}
           </Avatar>
         }
         action={
@@ -89,7 +89,7 @@ const RecipeReviewCard: React.FC<Props> = (props) => {
         title={article.title}
         subheader={article.createdAt}
       />
-      <CardActionArea component="a" href={'/' + article.users.name + '/' + article.id}>
+      <CardActionArea component="a" href={'/' + article.users.codename + '/' + article.id}>
         <CardMedia
           component="div"
           className={classes.media}
@@ -144,4 +144,4 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export default RecipeReviewCard
+export default ArticleCard

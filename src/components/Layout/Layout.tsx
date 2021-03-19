@@ -4,7 +4,7 @@ import Navigation from '../Navigation/Navigation'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
 import Header from './Header'
-import { Box, Toolbar } from '@material-ui/core'
+import { Box } from '@material-ui/core'
 
 type Props = { children: React.ReactNode }
 
@@ -16,7 +16,6 @@ const Layout: React.FC<Props> = (props) => {
       <Box className={classes.header}>
         <Header open={open} openHandler={setOpen} />
       </Box>
-      <Toolbar />
       <Box className={classes.mainContainer}>
         <Navigation open={open} openHandler={setOpen} />
         <main className={classes.mainPanel}>{props.children}</main>
@@ -29,8 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-      backgroundColor: theme.palette.background.paper,
-      height: '100vh'
+      height: '100%'
     },
     header: {
       zIndex: 100
@@ -44,8 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
     mainPanel: {
       flexGrow: 1,
-      overflow: 'auto',
-      backgroundColor: '#f2ecd8'
+      overflow: 'auto'
     }
   })
 )

@@ -5,12 +5,10 @@ type MyState = {
   authReducer: {
     id: number
     googleId: string
-    name: string
+    codename: string
     email: string
     loginGoogle: boolean
     password: string
-    postId: number
-    token: string
   }
   articleReducer: {
     article: {
@@ -23,7 +21,7 @@ type MyState = {
       abstract: string
       createdAt: string
       updatedAt: string
-      users: { id: number; name: string }
+      users: { id: number; codename: string }
     }
     loading: boolean
   }
@@ -39,10 +37,19 @@ type MyState = {
         createdAt: string
         updatedAt: string
         isFavorite: boolean
-        users: { id: number; name: string }
+        users: { id: number; codename: string }
       }
     ]
     loading: boolean
+  }
+  profileReducer: {
+    id: number
+    name: string
+    introduction: string
+    avatarUrl: string
+    headerUrl: string
+    usersId: number
+    users: { codename: string }
   }
 }
 declare module 'react-redux' {
