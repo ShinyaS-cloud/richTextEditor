@@ -17,8 +17,8 @@ export const fetchProfile = createAsyncThunk('/api/profile', async (codename: st
   return response.data
 })
 
-const authReducer = createSlice({
-  name: 'authReducer',
+const userReducer = createSlice({
+  name: 'userReducer',
   initialState: initialState,
   reducers: {
     userInit: (state, action: PayloadAction) => ({
@@ -34,4 +34,4 @@ const authReducer = createSlice({
   }
 })
 
-export default authReducer
+export default userReducer

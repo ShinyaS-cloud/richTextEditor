@@ -81,9 +81,13 @@ const ArticlePage = () => {
   }
 
   const AvaterArea = (
-    <Avatar aria-label="recipe" className={classes.avatar}>
-      {article.users.codename}
-    </Avatar>
+    <a href={'/' + article.user.codename}>
+      <Avatar
+        aria-label="recipe"
+        className={classes.avatar}
+        src={process.env.PUBLIC_URL + '/' + article.user.avatarUrl}
+      />
+    </a>
   )
   const Action: any = (
     <IconButton aria-label="settings">

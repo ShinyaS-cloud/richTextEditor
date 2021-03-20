@@ -1,61 +1,75 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+  AppBar,
   Avatar,
   Box,
   Card,
   CardContent,
   CardMedia,
   makeStyles,
+  Tab,
+  Tabs,
   Typography
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchProfile } from '../../reducer/profileReducer'
+import { fetchProfile } from '../../reducer/userReducer'
 import { useParams } from 'react-router'
-import ArticleCard from '../ArticlePage/ArticleCard'
-import { fetchArticleListUser } from '../../reducer/articleListReducer'
+
+import FavoriteList from './FavoriteList'
+import UserArticleList from './UserArticleList'
 
 type Params = { codename: string }
 
 const UserPage = () => {
   const classes = useStyles()
-  const profile = useSelector((state) => state.profileReducer)
-  const article = useSelector((state) => state.articleListReducer.article)
+  const user = useSelector((state) => state.userReducer)
+  const [value, setValue] = useState(0)
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue)
+  }
+
+  const a11yProps = (index: any) => {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`
+    }
+  }
+
+  const renderComponent = <div>{value === 0 ? <UserArticleList /> : <FavoriteList />}</div>
 
   const param = useParams<Params>()
   const dispatch = useDispatch()
-
   useEffect(() => {
     dispatch(fetchProfile(param.codename))
   }, [dispatch, param])
 
-  useEffect(() => {
-    dispatch(fetchArticleListUser(profile.usersId))
-  }, [dispatch, profile.usersId])
-
-  const renderMap = article.map((a) => {
-    return <ArticleCard key={a.id} article={a} />
-  })
-
   return (
     <div className={classes.root}>
       <Card className={classes.card}>
-        <CardMedia component="img" height="300" src={profile.headerUrl} />
+        <CardMedia component="img" height="300" src={user.headerUrl} />
         <CardContent className={classes.cardContent}>
-          <Avatar
-            className={classes.avater}
-            src={process.env.PUBLIC_URL + '/' + profile.avatarUrl}
-          />
+          <Avatar className={classes.avater} src={process.env.PUBLIC_URL + '/' + user.avatarUrl} />
           <Box>
             <Typography variant="h5" component="h3">
-              {profile.name}
+              {user.name}
             </Typography>
             <Typography className={classes.codename} variant="inherit" component="h3">
-              @{profile.users.codename}
+              @{user.codename}
             </Typography>
           </Box>
         </CardContent>
-        <Box className={classes.content}>{renderMap}</Box>
+        <div className={classes.appbar}>
+          <AppBar position="static">
+            <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+              <Tab label={user.codename + 'の記事'} {...a11yProps(0)} />
+              <Tab label="お気に入り" {...a11yProps(1)} />
+            </Tabs>
+          </AppBar>
+        </div>
+
+        {renderComponent}
       </Card>
     </div>
   )
@@ -72,7 +86,8 @@ const useStyles = makeStyles((theme) => ({
     top: -theme.spacing(7)
   },
   card: {
-    marginTop: theme.spacing(5)
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5)
   },
   cardContent: {
     display: 'flex'
@@ -80,10 +95,8 @@ const useStyles = makeStyles((theme) => ({
   codename: {
     color: 'gray'
   },
-  content: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around'
+  appbar: {
+    backgroundColor: theme.palette.background.paper
   }
 }))
 

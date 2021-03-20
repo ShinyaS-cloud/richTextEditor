@@ -9,13 +9,13 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './reducer/authReducer'
 import articleListReducer from './reducer/articleListReducer'
 import articleReducer from './reducer/articleReducer'
-import profileReducer from './reducer/profileReducer'
+import userReducer from './reducer/userReducer'
 
 const reducer = {
   authReducer: authReducer.reducer,
   articleListReducer: articleListReducer.reducer,
   articleReducer: articleReducer.reducer,
-  profileReducer: profileReducer.reducer
+  userReducer: userReducer.reducer
 }
 
 const store = configureStore({ reducer })

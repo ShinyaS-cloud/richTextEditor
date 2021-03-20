@@ -12,7 +12,7 @@ export const initialState = {
       createdAt: '',
       updatedAt: '',
       isFavorite: false,
-      users: { id: 0, codename: '' }
+      user: { name: '', codename: '', avatarUrl: '' }
     }
   ],
   loading: false
@@ -33,21 +33,21 @@ const traslateDate = (day: string): string => {
  * ArticleをCategoryごとに持ってくる
  */
 
-type argType = { categoryName: string; usersId: number }
+type argType = { categoryName: string; userId: number }
 
 export const fetchArticleListCategory = createAsyncThunk(
-  '/api/articleCategory',
+  '/api/articleList',
   async (arg: argType) => {
     try {
-      const { categoryName, usersId } = arg
+      const { categoryName, userId } = arg
       let indexOfCategory = categories.indexOf(categoryName)
       if (categories.indexOf(categoryName) === -1) {
         indexOfCategory = 0
       }
-      const { data } = await axios.get('/api/articleCategory', {
+      const { data } = await axios.get('/api/articleList', {
         params: {
           categoryNumber: indexOfCategory,
-          usersId: usersId
+          userId: userId
         }
       })
       data.map((r: typeof initialState.article[0]) => {
@@ -68,11 +68,34 @@ export const fetchArticleListCategory = createAsyncThunk(
  */
 
 export const fetchArticleListUser = createAsyncThunk(
-  '/api/articleUser',
-  async (usersId: number) => {
+  '/api/articleList/user',
+  async (userId: number) => {
     try {
-      const { data } = await axios.get('/api/articleUser', {
-        params: { usersId }
+      const { data } = await axios.get('/api/articleList/user', {
+        params: { userId }
+      })
+      data.map((r: typeof initialState.article[0]) => {
+        r.createdAt = traslateDate(r.createdAt)
+        r.updatedAt = traslateDate(r.updatedAt)
+        return r
+      })
+      return data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+)
+
+/**
+ * userがお気に入りしたarticleを持ってくる
+ */
+
+export const fetchArticleListFavorite = createAsyncThunk(
+  '/api/articleList/favorite',
+  async (userId: number) => {
+    try {
+      const { data } = await axios.get('/api/articleList/favorite', {
+        params: { userId }
       })
       data.map((r: typeof initialState.article[0]) => {
         r.createdAt = traslateDate(r.createdAt)
@@ -123,6 +146,17 @@ const articleListReducer = createSlice({
         loading: true
       }))
       .addCase(fetchArticleListUser.rejected, (state) => ({ ...state, loading: false }))
+    builder
+      .addCase(fetchArticleListFavorite.fulfilled, (state, response) => ({
+        ...state,
+        article: response.payload,
+        loading: false
+      }))
+      .addCase(fetchArticleListFavorite.pending, (state) => ({
+        ...initialState,
+        loading: true
+      }))
+      .addCase(fetchArticleListFavorite.rejected, (state) => ({ ...state, loading: false }))
   }
 })
 

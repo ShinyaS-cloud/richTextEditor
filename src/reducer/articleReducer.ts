@@ -12,7 +12,7 @@ export const initialState = {
     userId: 0,
     createdAt: '',
     updatedAt: '',
-    users: { id: 0, codename: '' }
+    user: { name: '', codename: '', avatarUrl: '' }
   },
   loading: false
 }

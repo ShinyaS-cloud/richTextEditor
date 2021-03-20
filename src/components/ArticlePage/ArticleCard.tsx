@@ -32,15 +32,14 @@ type Props = {
     createdAt: string
     updatedAt: string
     isFavorite: boolean
-    users: { id: number; codename: string }
+    user: { codename: string; avatarUrl: string }
   }
 }
-
-// const apiUrl = '/api'
+const categories = ['pet', 'sports', 'novel', 'IT', 'food']
 
 const ArticleCard: React.FC<Props> = (props) => {
   const classes = useStyles()
-  const usersId = useSelector((state) => state.authReducer.id)
+  const userId = useSelector((state) => state.authReducer.id)
   const [favoriteState, setFavoriteState] = useState(props.article.isFavorite)
   const article = props.article
 
@@ -57,7 +56,7 @@ const ArticleCard: React.FC<Props> = (props) => {
     try {
       const { data } = await axios.post(
         '/api/favorite',
-        qs.stringify({ usersId, articleId: article.id })
+        qs.stringify({ userId, articleId: article.id })
       )
       setFavoriteState(data.isFavorite)
     } catch (error) {
@@ -77,9 +76,13 @@ const ArticleCard: React.FC<Props> = (props) => {
     >
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            {article.users.codename}
-          </Avatar>
+          <a href={'/' + article.user.codename}>
+            <Avatar
+              aria-label="recipe"
+              className={classes.avatar}
+              src={process.env.PUBLIC_URL + '/' + article.user.avatarUrl}
+            />
+          </a>
         }
         action={
           <IconButton aria-label="settings">
@@ -89,7 +92,7 @@ const ArticleCard: React.FC<Props> = (props) => {
         title={article.title}
         subheader={article.createdAt}
       />
-      <CardActionArea component="a" href={'/' + article.users.codename + '/' + article.id}>
+      <CardActionArea component="a" href={'/' + article.user.codename + '/' + article.id}>
         <CardMedia
           component="div"
           className={classes.media}
@@ -99,6 +102,9 @@ const ArticleCard: React.FC<Props> = (props) => {
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
             {article.abstract}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {categories[article.category]}
           </Typography>
         </CardContent>
       </CardActionArea>

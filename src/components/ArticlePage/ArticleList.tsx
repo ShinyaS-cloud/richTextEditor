@@ -1,21 +1,15 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Box, CircularProgress, makeStyles } from '@material-ui/core'
 import ArticleCard from './ArticleCard'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchArticleListCategory } from '../../reducer/articleListReducer'
+import { useSelector } from 'react-redux'
+
 import Category from './Category'
 
 const Posts = () => {
   const classes = useStyle()
-  const dispatch = useDispatch()
-  const usersId = useSelector((state) => state.authReducer.id)
   const article = useSelector((state) => state.articleListReducer.article)
   const loading = useSelector((state) => state.articleListReducer.loading)
-
-  useEffect(() => {
-    dispatch(fetchArticleListCategory({ categoryName: 'pet', usersId }))
-  }, [dispatch, usersId])
 
   const renderMap = article.map((a) => {
     return <ArticleCard key={a.id} article={a} />

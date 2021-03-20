@@ -5,10 +5,10 @@ axios.defaults.withCredentials = true
 export const initialState = {
   id: 0,
   googleId: '',
-  codename: '',
   email: '',
   loginGoogle: false,
   password: '',
+  codename: '',
   avatarUrl: '',
   headerUrl: ''
 }
