@@ -20,6 +20,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { CardActionArea } from '@material-ui/core'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router'
 
 type Props = {
   article: {
@@ -43,6 +44,7 @@ const ArticleCard: React.FC<Props> = (props) => {
   const [favoriteState, setFavoriteState] = useState(props.article.isFavorite)
   const article = props.article
 
+  const history = useHistory()
   const [up, setUp] = React.useState(2)
 
   const onElevation = () => {
@@ -58,7 +60,11 @@ const ArticleCard: React.FC<Props> = (props) => {
         '/api/favorite',
         qs.stringify({ userId, articleId: article.id })
       )
-      setFavoriteState(data.isFavorite)
+      if (!data) {
+        history.push('/login')
+      } else {
+        setFavoriteState(data.isFavorite)
+      }
     } catch (error) {
       console.log(error)
     }

@@ -14,12 +14,13 @@ import Container from '@material-ui/core/Container'
 
 import { useForm } from 'react-hook-form'
 
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import normalGoogleButton from '../../assets/btn_google_signin_light_normal_web.png'
 import pressGoogleButton from '../../assets/btn_google_signin_light_pressed_web.png'
-import { Divider } from '@material-ui/core'
+import { Divider, Snackbar } from '@material-ui/core'
 import axios from 'axios'
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 
 const Copyright = () => {
   return (
@@ -34,8 +35,8 @@ const Copyright = () => {
 const SignIn = () => {
   const classes = useStyles()
   const [image, setImage] = useState(normalGoogleButton)
+  const [open, setOpen] = useState(false)
   const { handleSubmit, register, errors } = useForm()
-  const history = useHistory()
 
   const onMouseDownHandler = () => {
     setImage(pressGoogleButton)
@@ -44,21 +45,49 @@ const SignIn = () => {
     setImage(normalGoogleButton)
   }
 
+  /**
+   * login→できなければスナックバーを出す
+   */
+
   const postForm = async (formData: any) => {
     try {
       const { data } = await axios.post('/api/login', formData)
-      if (data.error) {
-        history.push('/login')
+      if (data) {
+        location.href = '/home'
       } else {
-        history.push('/home')
+        setOpen(true)
       }
     } catch (error) {
       console.log(error.message)
     }
   }
 
+  /**
+   * snackbar
+   */
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setOpen(false)
+  }
+
+  const Alert = (props: AlertProps) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />
+  }
+
+  /**
+   * render
+   */
+
   return (
     <Container component="main" maxWidth="xs">
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          ログインできません
+        </Alert>
+      </Snackbar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />

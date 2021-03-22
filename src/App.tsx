@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { createMuiTheme, CssBaseline, MuiThemeProvider } from '@material-ui/core'
 
 import Layout from './components/Layout/Layout'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import RichEditor from './components/RichEditor/RichEditor'
 
 import Signup from './components/Login/Signup'
@@ -51,12 +51,13 @@ const App: React.FC = () => {
           <CssBaseline />
           <Layout>
             <Switch>
+              <Redirect exact from="/" to="/home" />
               <Route path="/home" exact component={Posts} />
               <Route path="/newpost/:articleId" component={RichEditor} />
               <Route path="/:codename/:articleId" component={ArticlePage} />
               <Route path="/signup" component={Signup} />
               <Route path="/login" component={Login} />
-              <Route path='/:codename' component={UserPage}/>
+              <Route path="/:codename" component={UserPage} />
             </Switch>
           </Layout>
         </MuiThemeProvider>
