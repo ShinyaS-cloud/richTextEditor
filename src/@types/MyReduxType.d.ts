@@ -4,10 +4,13 @@ import { RawDraftContentState } from 'draft-js'
 type MyState = {
   authReducer: {
     id: number
-    googleId: string
-    email: string
-    loginGoogle: boolean
-    password: string
+    authUserId: number
+    name: string
+    introduction: string
+    avatarUrl: string
+    headerUrl: string
+    codename: string
+    isLogedIn: false
   }
   articleReducer: {
     article: {

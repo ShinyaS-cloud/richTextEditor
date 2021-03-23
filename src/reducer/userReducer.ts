@@ -8,8 +8,7 @@ export const initialState = {
   introduction: '',
   avatarUrl: '',
   headerUrl: '',
-  usersId: 0,
-  users: { codename: '' }
+  codename: ''
 }
 
 export const fetchProfile = createAsyncThunk('/api/profile', async (codename: string) => {

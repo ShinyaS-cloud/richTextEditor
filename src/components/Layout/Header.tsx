@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { Fragment } from 'react'
 import {
   AppBar,
+  Avatar,
   Button,
   IconButton,
   makeStyles,
@@ -21,18 +22,23 @@ interface Props {
 
 const Header: React.FC<Props> = (props) => {
   const classes = useStyles()
-  const auth = useSelector((state) => state.authReducer)
+  const authUser = useSelector((state) => state.authReducer)
   const renderContent = () => {
-    if (auth.googleId === '') {
+    if (authUser.isLogedIn) {
       return (
-        <Button className={classes.loginButton} component={Link} to={'/login'}>
-          ログイン
-        </Button>
+        <Fragment>
+          <a href={'/' + authUser.codename}>
+            <Avatar aria-label="recipe" src={process.env.PUBLIC_URL + '/' + authUser.avatarUrl} />
+          </a>
+          <Button className={classes.loginButton} href={'/api/logout'}>
+            ログアウト
+          </Button>
+        </Fragment>
       )
     } else {
       return (
-        <Button className={classes.loginButton} href={'/api/logout'}>
-          ログアウト
+        <Button className={classes.loginButton} component={Link} to={'/login'}>
+          ログイン
         </Button>
       )
     }
@@ -40,7 +46,7 @@ const Header: React.FC<Props> = (props) => {
 
   return (
     <div className={classes.root}>
-      <AppBar position='static' elevation={0} className={classes.appBar}>
+      <AppBar position="static" elevation={0} className={classes.appBar}>
         <Toolbar>
           <IconButton
             onClick={() => props.openHandler(!props.open)}
@@ -52,7 +58,7 @@ const Header: React.FC<Props> = (props) => {
             <Menu />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            <a href='/home' className={classes.titleDecoration}>
+            <a href="/home" className={classes.titleDecoration}>
               Rich Text Editor
             </a>
           </Typography>

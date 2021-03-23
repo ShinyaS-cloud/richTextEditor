@@ -5,13 +5,17 @@ import {
   DraftStyleMap,
   Editor,
   EditorState,
-  ContentBlock
+  ContentBlock,
+  CompositeDecorator,
+  RichUtils
 } from 'draft-js'
 import { FormControl, InputLabel, makeStyles, MenuItem, Select, TextField } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
 import SaveButton from './Buttons/SaveButton'
+import { handleStrategy, hashtagStrategy, HandleSpan, HashtagSpan } from './Decorators/HashTag'
+import { Link, findLinkEntities } from './Decorators/LinkDecorator'
 import Immutable from 'immutable'
 import { RouteComponentProps } from 'react-router-dom'
 
@@ -31,15 +35,34 @@ type UserProps = RouteComponentProps<{
   articleId: string
 }>
 
-// type categories = 'pet' | 'sports' | 'novel' | 'it' | 'food'
-
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
 const RichEditor: React.FC<UserProps> = (props) => {
+  const compositeDecorator = new CompositeDecorator([
+    {
+      strategy: handleStrategy,
+      component: HandleSpan
+    },
+    {
+      strategy: hashtagStrategy,
+      component: HashtagSpan
+    },
+    {
+      strategy: findLinkEntities,
+      component: Link
+    }
+  ])
+
+  /**
+   * states
+   */
   const classes = useStyle()
-  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
   const [title, setTitle] = useState('')
   const [select, setSelect] = useState(0)
+  const contentState = editorState.getCurrentContent()
+  const selection = editorState.getSelection()
+
   const ref = useRef<Editor>(null)
 
   const valueChangeHandler = (e: any) => setTitle(e.target.value)
@@ -59,13 +82,6 @@ const RichEditor: React.FC<UserProps> = (props) => {
     }
   }
 
-  // const selectState = editorState.getSelection()
-  // console.log(selectState.toJS())
-  // console.log(editorState.toJS())
-
-  // const contentState = editorState.getCurrentContent()
-  // console.log(contentState.toJS())
-
   const categories = ['pet', 'sports', 'novel', 'IT', 'food']
 
   const Selects = categories.map((c) => {
@@ -76,6 +92,73 @@ const RichEditor: React.FC<UserProps> = (props) => {
       </MenuItem>
     )
   })
+
+  /**
+   * Link
+   */
+
+  const [showURLInput, setShowURLInput] = useState(false)
+  const [urlValue, setUrlValue] = useState('')
+
+  const onURLChange = (e: any) => setUrlValue(e.target.value)
+
+  const promptForLink = (e: any) => {
+    e.preventDefault()
+    if (!selection.isCollapsed()) {
+      const startKey = editorState.getSelection().getStartKey()
+      const startOffset = editorState.getSelection().getStartOffset()
+      const blockWithLinkAtBeginning = contentState.getBlockForKey(startKey)
+      const linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset)
+
+      let url = ''
+      if (linkKey) {
+        const linkInstance = contentState.getEntity(linkKey)
+        url = linkInstance.getData().url
+      }
+      setShowURLInput(true)
+      setUrlValue(url)
+    }
+  }
+
+  const confirmLink = (e: any) => {
+    e.preventDefault()
+
+    const contentStateWithEntity = contentState.createEntity('LINK', 'MUTABLE', { url: urlValue })
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+    const newEditorState = EditorState.set(editorState, { currentContent: contentStateWithEntity })
+    setEditorState(RichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey))
+    setShowURLInput(false)
+    setUrlValue('')
+  }
+
+  const onLinkInputKeyDown = (e: any) => {
+    if (e.which === 13) {
+      confirmLink(e)
+    }
+  }
+
+  const removeLink = (e: any) => {
+    e.preventDefault()
+    if (!selection.isCollapsed()) {
+      setEditorState(RichUtils.toggleLink(editorState, selection, null))
+    }
+  }
+
+  let urlInput
+  if (showURLInput) {
+    urlInput = (
+      <div style={styles.urlInputContainer}>
+        <input
+          onChange={onURLChange}
+          style={styles.urlInput}
+          type="text"
+          value={urlValue}
+          onKeyDown={onLinkInputKeyDown}
+        />
+        <button onMouseDown={confirmLink}>Confirm</button>
+      </div>
+    )
+  }
 
   return (
     <div className={classes.root}>
@@ -96,6 +179,18 @@ const RichEditor: React.FC<UserProps> = (props) => {
         <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
         <ColorButtons editorState={editorState} setEditorState={setEditorState} />
       </div>
+
+      <div style={{ marginBottom: 10 }}>
+        Select some text, then use the buttons to add or remove links on the selected text.
+      </div>
+      <div>
+        <button onMouseDown={promptForLink} style={{ marginRight: 10 }}>
+          Add Link
+        </button>
+        <button onMouseDown={removeLink}>Remove Link</button>
+      </div>
+      {urlInput}
+
       <div className={classes.editor} onClick={() => ref.current?.focus()}>
         <Editor
           customStyleMap={customStyleMap}
@@ -106,6 +201,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
           ref={ref}
         />
       </div>
+
       <div className={classes.buttons}>
         <SaveButton
           editorState={editorState}
@@ -144,8 +240,7 @@ const customStyleMap: DraftStyleMap = {
 }
 /// style
 const useStyle = makeStyles({
-  root: {
-  },
+  root: {},
   buttons: {
     margin: '0 auto',
     textAlign: 'center'
@@ -169,6 +264,7 @@ const useStyle = makeStyles({
   title: {
     textAlign: 'center'
   },
+
   right: {
     textAlign: 'right'
   },
@@ -179,6 +275,33 @@ const useStyle = makeStyles({
     textAlign: 'left'
   }
 })
+
+const styles = {
+  handle: {
+    color: 'rgba(98, 177, 254, 1.0)'
+  },
+  hashtag: {
+    color: 'rgba(95, 184, 138, 1.0)'
+  },
+  urlInputContainer: {
+    marginBottom: 10
+  },
+  urlInput: {
+    fontFamily: "'Georgia', serif",
+    marginRight: 10,
+    padding: 3
+  },
+  editor: {
+    border: '1px solid #ccc',
+    cursor: 'text',
+    minHeight: 80,
+    padding: 10
+  },
+  link: {
+    color: '#3b5998',
+    textDecoration: 'underline'
+  }
+}
 
 export default RichEditor
 

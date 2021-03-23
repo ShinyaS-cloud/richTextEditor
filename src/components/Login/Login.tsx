@@ -83,9 +83,13 @@ const SignIn = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
         <Alert onClose={handleClose} severity="error">
-          ログインできません
+          メールアドレスかパスワードが間違っています
         </Alert>
       </Snackbar>
       <div className={classes.paper}>

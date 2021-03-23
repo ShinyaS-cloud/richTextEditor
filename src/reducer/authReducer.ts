@@ -4,18 +4,18 @@ axios.defaults.withCredentials = true
 
 export const initialState = {
   id: 0,
-  googleId: '',
-  email: '',
-  loginGoogle: false,
-  password: '',
+  name: '',
   codename: '',
+  introduction: '',
   avatarUrl: '',
-  headerUrl: ''
+  headerUrl: '',
+  authUserId: 0,
+  isLogedIn: false
 }
 
 export const fetchUser = createAsyncThunk('/api/current_user', async () => {
-  const response = await axios.get('/api/current_user')
-  return response.data
+  const { data } = await axios.get('/api/current_user')
+  return data
 })
 
 const authReducer = createSlice({

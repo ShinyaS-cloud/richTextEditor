@@ -2,6 +2,8 @@
 import React, { useEffect } from 'react'
 import {
   Avatar,
+  Button,
+  Card,
   CardHeader,
   CircularProgress,
   IconButton,
@@ -10,6 +12,7 @@ import {
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  CompositeDecorator,
   ContentBlock,
   convertFromRaw,
   DefaultDraftBlockRenderMap,
@@ -22,6 +25,14 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { red } from '@material-ui/core/colors'
 import { fetchArticle } from '../../reducer/articleReducer'
 import { useParams } from 'react-router'
+import {
+  handleStrategy,
+  hashtagStrategy,
+  HandleSpan,
+  HashtagSpan
+} from '../RichEditor/Decorators/HashTag'
+
+import { Link, findLinkEntities } from '../RichEditor/Decorators/LinkDecorator'
 
 /**
  * paramsの型
@@ -50,10 +61,26 @@ const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
  */
 
 const ArticlePage = () => {
+  const compositeDecorator = new CompositeDecorator([
+    {
+      strategy: handleStrategy,
+      component: HandleSpan
+    },
+    {
+      strategy: hashtagStrategy,
+      component: HashtagSpan
+    },
+    {
+      strategy: findLinkEntities,
+      component: Link
+    }
+  ])
+
   const classes = useStyle()
   const dispatch = useDispatch()
   const loading = useSelector((state) => state.articleReducer.loading)
   const article = useSelector((state) => state.articleReducer.article)
+  const auth = useSelector((state) => state.authReducer)
 
   const contentState = convertFromRaw(article.content)
   // eslint-disable-next-line no-unused-vars
@@ -100,7 +127,7 @@ const ArticlePage = () => {
   const EditorComponent: any = (
     <Editor
       customStyleMap={customStyleMap}
-      editorState={EditorState.createWithContent(contentState)}
+      editorState={EditorState.createWithContent(contentState, compositeDecorator)}
       onChange={dummyHandler}
       blockRenderMap={extendedBlockRenderMap}
       blockStyleFn={myBlockStyleFn}
@@ -108,19 +135,34 @@ const ArticlePage = () => {
     />
   )
 
+  const EditButton: React.FC = () => {
+    if (auth.id === article.userId) {
+      return (
+        <Button variant="contained" color="primary">
+          編集
+        </Button>
+      )
+    } else {
+      return <div></div>
+    }
+  }
+
   let renderComponent = (
     <div>
-      <CardHeader
-        className={classes.header}
-        avatar={AvaterArea}
-        action={Action}
-        title={Title}
-        subheader={article.createdAt}
-      />
-      <Typography className={classes.title} variant="h3">
-        {Title}
-      </Typography>
-      <div className={classes.editor}>{EditorComponent}</div>
+      <Card className={classes.editor}>
+        <CardHeader
+          className={classes.header}
+          avatar={AvaterArea}
+          action={Action}
+          title={Title}
+          subheader={article.createdAt}
+        />
+        <Typography className={classes.title} variant="h3">
+          {Title}
+        </Typography>
+        {EditorComponent}
+      </Card>
+      <div className={classes.button}>{EditButton}</div>
     </div>
   )
   if (loading) {
@@ -161,27 +203,25 @@ const customStyleMap: DraftStyleMap = {
   }
 }
 
-const useStyle = makeStyles({
+const useStyle = makeStyles((theme) => ({
   root: {
     overflowY: 'scroll',
-    marginBottom: '5rem'
+    marginBottom: theme.spacing(3)
   },
   header: {
     margin: '0 auto',
-    width: '60%',
     backgroundColor: 'white'
   },
   title: {
     margin: '0 auto',
     textAlign: 'center',
-    width: '60%',
     backgroundColor: 'white'
   },
   editor: {
     width: '60%',
-    backgroundColor: 'white',
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
+    marginTop: theme.spacing(3),
     minHeight: '50rem',
     padding: '3rem 2rem',
     fontSize: ' 18px ',
@@ -190,10 +230,13 @@ const useStyle = makeStyles({
   avatar: {
     backgroundColor: red[500]
   },
+  button: {
+    textAlign: 'center'
+  },
   circular: {
     display: 'flex',
     justifyContent: 'center',
-    marginTop: '100px'
+    marginTop: theme.spacing(10)
   },
   right: {
     textAlign: 'right'
@@ -204,6 +247,6 @@ const useStyle = makeStyles({
   left: {
     textAlign: 'left'
   }
-})
+}))
 
 export default ArticlePage

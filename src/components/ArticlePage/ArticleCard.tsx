@@ -17,7 +17,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 import ShareIcon from '@material-ui/icons/Share'
 
 import MoreVertIcon from '@material-ui/icons/MoreVert'
-import { CardActionArea } from '@material-ui/core'
+import { Box, CardActionArea, Chip } from '@material-ui/core'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -85,7 +85,6 @@ const ArticleCard: React.FC<Props> = (props) => {
           <a href={'/' + article.user.codename}>
             <Avatar
               aria-label="recipe"
-              className={classes.avatar}
               src={process.env.PUBLIC_URL + '/' + article.user.avatarUrl}
             />
           </a>
@@ -105,15 +104,20 @@ const ArticleCard: React.FC<Props> = (props) => {
           image={article.imageUrl}
           title={article.title}
         />
-        <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {article.abstract}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {categories[article.category]}
-          </Typography>
-        </CardContent>
       </CardActionArea>
+      <CardContent>
+        <Typography variant="body2" color="textSecondary" component="p">
+          {article.abstract}
+        </Typography>
+      </CardContent>
+      <Box>
+        <Chip
+          className={classes.chips}
+          size="small"
+          label={categories[article.category].toUpperCase()}
+          color="primary"
+        />
+      </Box>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites" onClick={favoriteHandler}>
           <FavoriteIcon color={favoriteColor} />
@@ -137,21 +141,14 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 0,
       paddingTop: '56.25%' // 16:9
     },
-    expand: {
-      transform: 'rotate(0deg)',
-      marginLeft: 'auto',
-      transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest
-      })
-    },
-    expandOpen: {
-      transform: 'rotate(180deg)'
-    },
-    avatar: {
-      backgroundColor: red[500]
-    },
     onFavorite: {
       backgroundColor: red[300]
+    },
+    chips: {
+      marginLeft: theme.spacing(2)
+    },
+    buttons: {
+      bottom: theme.spacing(2)
     }
   })
 )
