@@ -12,6 +12,7 @@ export const initialState = {
       createdAt: '',
       updatedAt: '',
       isFavorite: false,
+      favoriteCount: 0,
       user: { name: '', codename: '', avatarUrl: '' }
     }
   ],

@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardHeader,
@@ -83,13 +84,14 @@ const ArticlePage = () => {
   const auth = useSelector((state) => state.authReducer)
 
   const contentState = convertFromRaw(article.content)
+
   // eslint-disable-next-line no-unused-vars
   const dummyHandler = (a: EditorState) => {}
 
   const { articleId } = useParams<thisPageParams>()
 
   useEffect(() => {
-    dispatch(fetchArticle(+articleId))
+    dispatch(fetchArticle({ articleId: +articleId, authUserId: auth.authUserId }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -138,9 +140,11 @@ const ArticlePage = () => {
   const EditButton: React.FC = () => {
     if (auth.id === article.userId) {
       return (
-        <Button variant="contained" color="primary">
-          編集
-        </Button>
+        <div>
+          <Button variant="contained" color="primary">
+            編集
+          </Button>
+        </div>
       )
     } else {
       return <div></div>
@@ -148,22 +152,26 @@ const ArticlePage = () => {
   }
 
   let renderComponent = (
-    <div>
-      <Card className={classes.editor}>
-        <CardHeader
-          className={classes.header}
-          avatar={AvaterArea}
-          action={Action}
-          title={Title}
-          subheader={article.createdAt}
-        />
-        <Typography className={classes.title} variant="h3">
-          {Title}
-        </Typography>
-        {EditorComponent}
-      </Card>
-      <div className={classes.button}>{EditButton}</div>
-    </div>
+    <Fragment>
+      <Box>
+        <Card className={classes.editor}>
+          <CardHeader
+            className={classes.header}
+            avatar={AvaterArea}
+            action={Action}
+            title={Title}
+            subheader={article.createdAt}
+          />
+          <Typography className={classes.title} variant="h3">
+            {Title}
+          </Typography>
+          {EditorComponent}
+        </Card>
+        <div className={classes.button}>
+          <EditButton />
+        </div>
+      </Box>
+    </Fragment>
   )
   if (loading) {
     renderComponent = (
@@ -231,6 +239,7 @@ const useStyle = makeStyles((theme) => ({
     backgroundColor: red[500]
   },
   button: {
+    margin: '0 auto',
     textAlign: 'center'
   },
   circular: {

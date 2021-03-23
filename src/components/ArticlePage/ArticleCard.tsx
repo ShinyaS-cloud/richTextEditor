@@ -33,6 +33,7 @@ type Props = {
     createdAt: string
     updatedAt: string
     isFavorite: boolean
+    favoriteCount: number
     user: { codename: string; avatarUrl: string }
   }
 }
@@ -41,8 +42,9 @@ const categories = ['pet', 'sports', 'novel', 'IT', 'food']
 const ArticleCard: React.FC<Props> = (props) => {
   const classes = useStyles()
   const userId = useSelector((state) => state.authReducer.id)
-  const [favoriteState, setFavoriteState] = useState(props.article.isFavorite)
   const article = props.article
+  const [favoriteCount, setFavoriteCount] = useState(article.favoriteCount)
+  const [favoriteState, setFavoriteState] = useState(props.article.isFavorite)
 
   const history = useHistory()
   const [up, setUp] = React.useState(2)
@@ -63,6 +65,7 @@ const ArticleCard: React.FC<Props> = (props) => {
       if (!data) {
         history.push('/login')
       } else {
+        setFavoriteCount(data.favoriteCount)
         setFavoriteState(data.isFavorite)
       }
     } catch (error) {
@@ -122,6 +125,9 @@ const ArticleCard: React.FC<Props> = (props) => {
         <IconButton aria-label="add to favorites" onClick={favoriteHandler}>
           <FavoriteIcon color={favoriteColor} />
         </IconButton>
+        <Typography variant="body2" color="textSecondary" component="p">
+          {favoriteCount}
+        </Typography>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>

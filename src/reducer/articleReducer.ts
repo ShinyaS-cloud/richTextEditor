@@ -12,6 +12,8 @@ export const initialState = {
     userId: 0,
     createdAt: '',
     updatedAt: '',
+    isFavorite: false,
+    favoriteCount: 0,
     user: { name: '', codename: '', avatarUrl: '' }
   },
   loading: false
@@ -30,10 +32,12 @@ const traslateDate = (day: string): string => {
  * 選択したArticleを一つ持ってくる
  */
 
-export const fetchArticle = createAsyncThunk('/api/article', async (articleId: number) => {
+type argType = { articleId: number; authUserId: number }
+
+export const fetchArticle = createAsyncThunk('/api/article', async (arg: argType) => {
   try {
     const { data } = await axios.get('/api/article', {
-      params: { id: articleId }
+      params: { id: arg.articleId, authUserId: arg.authUserId }
     })
     data.createdAt = traslateDate(data.createdAt)
     data.updatedAt = traslateDate(data.updatedAt)

@@ -23,6 +23,8 @@ type MyState = {
       abstract: string
       createdAt: string
       updatedAt: string
+      isFavorite: boolean
+      favoriteCount: number
       user: { name: string; codename: string; avatarUrl: string }
     }
     loading: boolean
@@ -39,6 +41,7 @@ type MyState = {
         createdAt: string
         updatedAt: string
         isFavorite: boolean
+        favoriteCount: number
         user: { name: string; codename: string; avatarUrl: string }
       }
     ]
