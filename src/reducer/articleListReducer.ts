@@ -16,6 +16,7 @@ export const initialState = {
       user: { name: '', codename: '', avatarUrl: '' }
     }
   ],
+  hasMore: true,
   loading: false
 }
 
@@ -25,7 +26,7 @@ const categories = ['pet', 'sports', 'novel', 'IT', 'food']
  * Data型をyyyy年mm月dd日に変更する関数
  */
 
-const traslateDate = (day: string): string => {
+const translateDate = (day: string): string => {
   const newDay = new Date(day)
   return newDay.getFullYear() + '年' + (newDay.getMonth() + 1) + '月' + newDay.getDate() + '日'
 }
@@ -34,13 +35,13 @@ const traslateDate = (day: string): string => {
  * ArticleをCategoryごとに持ってくる
  */
 
-type argType = { categoryName: string; userId: number }
+type argType = { categoryName: string; userId: number; next: number }
 
 export const fetchArticleListCategory = createAsyncThunk(
   '/api/articleList',
   async (arg: argType) => {
     try {
-      const { categoryName, userId } = arg
+      const { categoryName, userId, next } = arg
       let indexOfCategory = categories.indexOf(categoryName)
       if (categories.indexOf(categoryName) === -1) {
         indexOfCategory = 0
@@ -48,12 +49,13 @@ export const fetchArticleListCategory = createAsyncThunk(
       const { data } = await axios.get('/api/articleList', {
         params: {
           categoryNumber: indexOfCategory,
-          userId: userId
+          userId,
+          next
         }
       })
       data.map((r: typeof initialState.article[0]) => {
-        r.createdAt = traslateDate(r.createdAt)
-        r.updatedAt = traslateDate(r.updatedAt)
+        r.createdAt = translateDate(r.createdAt)
+        r.updatedAt = translateDate(r.updatedAt)
         return r
       })
 
@@ -76,8 +78,8 @@ export const fetchArticleListUser = createAsyncThunk(
         params: { userId }
       })
       data.map((r: typeof initialState.article[0]) => {
-        r.createdAt = traslateDate(r.createdAt)
-        r.updatedAt = traslateDate(r.updatedAt)
+        r.createdAt = translateDate(r.createdAt)
+        r.updatedAt = translateDate(r.updatedAt)
         return r
       })
       return data
@@ -99,8 +101,8 @@ export const fetchArticleListFavorite = createAsyncThunk(
         params: { userId }
       })
       data.map((r: typeof initialState.article[0]) => {
-        r.createdAt = traslateDate(r.createdAt)
-        r.updatedAt = traslateDate(r.updatedAt)
+        r.createdAt = translateDate(r.createdAt)
+        r.updatedAt = translateDate(r.updatedAt)
         return r
       })
       return data
@@ -119,7 +121,6 @@ const articleListReducer = createSlice({
   initialState: initialState,
   reducers: {
     articleInit: (state, action: PayloadAction) => ({
-      ...state,
       ...initialState
     })
   },
@@ -128,11 +129,12 @@ const articleListReducer = createSlice({
     builder
       .addCase(fetchArticleListCategory.fulfilled, (state, response) => ({
         ...state,
-        article: response.payload,
+        article: [...state.article, ...response.payload],
+        hasMore: Boolean(response.payload.length),
         loading: false
       }))
       .addCase(fetchArticleListCategory.pending, (state) => ({
-        ...initialState,
+        ...state,
         loading: true
       }))
       .addCase(fetchArticleListCategory.rejected, (state) => ({ ...state, loading: false }))
@@ -143,7 +145,7 @@ const articleListReducer = createSlice({
         loading: false
       }))
       .addCase(fetchArticleListUser.pending, (state) => ({
-        ...initialState,
+        ...state,
         loading: true
       }))
       .addCase(fetchArticleListUser.rejected, (state) => ({ ...state, loading: false }))
@@ -154,7 +156,7 @@ const articleListReducer = createSlice({
         loading: false
       }))
       .addCase(fetchArticleListFavorite.pending, (state) => ({
-        ...initialState,
+        ...state,
         loading: true
       }))
       .addCase(fetchArticleListFavorite.rejected, (state) => ({ ...state, loading: false }))

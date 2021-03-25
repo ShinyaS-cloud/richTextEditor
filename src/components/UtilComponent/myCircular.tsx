@@ -2,8 +2,7 @@
 import React from 'react'
 import { CircularProgress, makeStyles } from '@material-ui/core'
 
-const myCircular = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+const MyCircular: React.FC = () => {
   const classes = useStyle()
   return (
     <div className={classes.circular}>
@@ -20,4 +19,4 @@ const useStyle = makeStyles({
   }
 })
 
-export default myCircular
+export default MyCircular

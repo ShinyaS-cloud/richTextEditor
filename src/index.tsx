@@ -10,12 +10,16 @@ import authReducer from './reducer/authReducer'
 import articleListReducer from './reducer/articleListReducer'
 import articleReducer from './reducer/articleReducer'
 import userReducer from './reducer/userReducer'
+import followReducer from './reducer/followReducer'
+import commentReducer from './reducer/commentReducer'
 
 const reducer = {
   authReducer: authReducer.reducer,
   articleListReducer: articleListReducer.reducer,
   articleReducer: articleReducer.reducer,
-  userReducer: userReducer.reducer
+  userReducer: userReducer.reducer,
+  followReducer: followReducer.reducer,
+  commentReducer: commentReducer.reducer
 }
 
 const store = configureStore({ reducer })

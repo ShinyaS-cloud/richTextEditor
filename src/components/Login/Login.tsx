@@ -32,7 +32,7 @@ const Copyright = () => {
   )
 }
 
-const SignIn = () => {
+const LogIn = () => {
   const classes = useStyles()
   const [image, setImage] = useState(normalGoogleButton)
   const [open, setOpen] = useState(false)
@@ -83,11 +83,7 @@ const SignIn = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
           メールアドレスかパスワードが間違っています
         </Alert>
@@ -119,6 +115,7 @@ const SignIn = () => {
             id="email"
             label="Email Address"
             name="email"
+            type="email"
             autoComplete="email"
             autoFocus
             inputRef={register({
@@ -201,4 +198,4 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default SignIn
+export default LogIn

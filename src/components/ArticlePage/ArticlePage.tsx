@@ -35,6 +35,8 @@ import {
 
 import { Link, findLinkEntities } from '../RichEditor/Decorators/LinkDecorator'
 
+import CommentList from './CommentList'
+
 /**
  * paramsの型
  */
@@ -171,6 +173,7 @@ const ArticlePage = () => {
           <EditButton />
         </div>
       </Box>
+      <CommentList />
     </Fragment>
   )
   if (loading) {

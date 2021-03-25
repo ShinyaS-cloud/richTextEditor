@@ -1,10 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useState } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
@@ -13,15 +11,16 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import axios from 'axios'
+import { Alert } from '@material-ui/lab'
+import { Snackbar } from '@material-ui/core'
 
 const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <a href="#">
-        Your Website
-      </a>{' '}
-      {new Date().getFullYear()}
+      <a href="#">Your Website</a> {new Date().getFullYear()}
       {'.'}
     </Typography>
   )
@@ -49,9 +48,39 @@ const useStyles = makeStyles((theme) => ({
 
 const SignUp = () => {
   const classes = useStyles()
+  const { handleSubmit } = useForm()
+  const [open, setOpen] = useState(false)
+  const postForm = async (formData: any) => {
+    try {
+      const { data } = await axios.post('/api/signup', formData)
+      if (data) {
+        // location.href = '/home'
+        console.log('data', data)
+      } else {
+        setOpen(true)
+      }
+    } catch (error) {
+      console.log('postForm', error.message)
+    }
+  }
 
+  /**
+   * snackbar
+   */
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setOpen(false)
+  }
   return (
     <Container component="main" maxWidth="xs">
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          メールアドレスかパスワードが間違っています
+        </Alert>
+      </Snackbar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -59,31 +88,8 @@ const SignUp = () => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={handleSubmit((data) => postForm(data))} className={classes.form}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-              />
-            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -91,6 +97,7 @@ const SignUp = () => {
                 fullWidth
                 id="email"
                 label="Email Address"
+                type="email"
                 name="email"
                 autoComplete="email"
               />
@@ -107,12 +114,6 @@ const SignUp = () => {
                 autoComplete="current-password"
               />
             </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              />
-            </Grid>
           </Grid>
           <Button
             type="submit"
@@ -125,9 +126,7 @@ const SignUp = () => {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link to={'/login'}>
-                Already have an account? Sign in
-              </Link>
+              <Link to={'/login'}>Already have an account? Sign in</Link>
             </Grid>
           </Grid>
         </form>

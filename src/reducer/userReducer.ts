@@ -8,12 +8,22 @@ export const initialState = {
   introduction: '',
   avatarUrl: '',
   headerUrl: '',
-  codename: ''
+  codename: '',
+  isFollow: false,
+  toFollowCount: 0,
+  fromFollowCount: 0
 }
 
-export const fetchProfile = createAsyncThunk('/api/profile', async (codename: string) => {
-  const response = await axios.get('/api/profile', { params: { codename } })
-  return response.data
+type argType = {
+  codename: string
+  authUserId: number
+}
+
+export const fetchProfile = createAsyncThunk('/api/profile', async (arg: argType) => {
+  const { data } = await axios.get('/api/profile', {
+    params: { ...arg }
+  })
+  return data
 })
 
 const userReducer = createSlice({

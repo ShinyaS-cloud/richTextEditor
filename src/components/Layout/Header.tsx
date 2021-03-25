@@ -24,7 +24,7 @@ const Header: React.FC<Props> = (props) => {
   const classes = useStyles()
   const authUser = useSelector((state) => state.authReducer)
   const renderContent = () => {
-    if (authUser.isLogedIn) {
+    if (authUser.isLoggedIn) {
       return (
         <Fragment>
           <a href={'/' + authUser.codename}>

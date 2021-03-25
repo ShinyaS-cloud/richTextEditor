@@ -1,49 +1,117 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
-import { Box, CircularProgress, makeStyles } from '@material-ui/core'
+import React, { useEffect, useState } from 'react'
+// import React, { useState } from 'react'
+import { AppBar, Box, makeStyles, Tab, Tabs } from '@material-ui/core'
 import ArticleCard from './ArticleCard'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import Category from './Category'
+import articleReducer, { fetchArticleListCategory } from '../../reducer/articleListReducer'
+import MyCircular from '../UtilComponent/myCircular'
 
-const Posts = () => {
+const a11yProps = (index: any) => {
+  return {
+    id: `scrollable-auto-tab-${index}`,
+    'aria-controls': `scrollable-auto-tabpanel-${index}`
+  }
+}
+
+const ArticleList = () => {
   const classes = useStyle()
-  const article = useSelector((state) => state.articleListReducer.article)
-  const loading = useSelector((state) => state.articleListReducer.loading)
 
-  const renderMap = article.map((a) => {
-    return <ArticleCard key={a.id} article={a} />
-  })
+  const userId = useSelector((state) => state.authReducer.id)
+  const articleList = useSelector((state) => state.articleListReducer)
+  const dispatch = useDispatch()
+  const [value, setValue] = useState(0)
+  const [next, setNext] = useState(12)
+  const article = articleList.article.slice(1)
+  const loading = articleList.loading
 
-  let renderContent: any = <Box className={classes.root}>{renderMap}</Box>
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue)
+    setNext(12)
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const categories = ['pet', 'sports', 'novel', 'IT', 'food']
 
-  if (loading) {
-    renderContent = (
-      <Box className={classes.circular}>
-        <CircularProgress size="5rem" />
-      </Box>
+  useEffect(() => {
+    dispatch(articleReducer.actions.articleInit())
+    dispatch(fetchArticleListCategory({ categoryName: categories[value], userId, next: 0 }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
+
+  const Category = () => {
+    return (
+      <div>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example"
+          >
+            <Tab label={categories[0]} {...a11yProps(0)} />
+            <Tab label={categories[1]} {...a11yProps(1)} />
+            <Tab label={categories[2]} {...a11yProps(2)} />
+            <Tab label={categories[3]} {...a11yProps(3)} />
+            <Tab label={categories[4]} {...a11yProps(4)} />
+          </Tabs>
+        </AppBar>
+      </div>
     )
   }
 
+  const fetchData = () => {
+    try {
+      if (articleList.hasMore) {
+        setNext(next + 12)
+        dispatch(fetchArticleListCategory({ categoryName: categories[value], userId, next }))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const LoadingComponent = () => {
+    if (loading) {
+      return (
+        <MyCircular/>
+      )
+    }
+    return <div></div>
+  }
+  const scrollEventHandler = () => {
+    const doch = document.body.clientHeight // ページ全体の高さ
+    const winh = window.innerHeight // ウィンドウの高さ
+    const bottom = doch - winh // ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
+    if (bottom <= document.documentElement.scrollTop) {
+      // 一番下までスクロールした時に実行
+      fetchData()
+    }
+  }
+  window.onscroll = scrollEventHandler
+  console.log('articleList.hasMore ', articleList.hasMore)
+
   return (
-    <div>
+    <Box>
       <Category />
-      {renderContent}
-    </div>
+      <Box className={classes.cards}>
+        {article.map((a: any) => (
+          <ArticleCard key={a.id} article={a} />
+        ))}
+      </Box>
+      <LoadingComponent />
+    </Box>
   )
 }
 
-const useStyle = makeStyles({
-  root: {
+const useStyle = makeStyles((theme) => ({
+  cards: {
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around'
-  },
-  circular: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '100px'
   }
-})
+}))
 
-export default Posts
+export default ArticleList

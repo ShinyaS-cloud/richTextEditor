@@ -10,7 +10,7 @@ type MyState = {
     avatarUrl: string
     headerUrl: string
     codename: string
-    isLogedIn: false
+    isLoggedIn: false
   }
   articleReducer: {
     article: {
@@ -45,6 +45,7 @@ type MyState = {
         user: { name: string; codename: string; avatarUrl: string }
       }
     ]
+    hasMore: boolean
     loading: boolean
   }
   userReducer: {
@@ -54,6 +55,22 @@ type MyState = {
     avatarUrl: string
     headerUrl: string
     codename: string
+    isFollow: boolean
+    toFollowCount: number
+    fromFollowCount: number
+  }
+  followReducer: {
+    id: number
+    toFollow: { name: string; avatarUrl: string; introduction: string; codename: string }[]
+    fromFollow: { name: string; avatarUrl: string; introduction: string; codename: string }[]
+  }
+  commentReducer: {
+    comment: {
+      id: number
+      comment: string
+      user: { name: string; codename: string; avatarUrl: string }
+    }[]
+    loading: boolean
   }
 }
 declare module 'react-redux' {

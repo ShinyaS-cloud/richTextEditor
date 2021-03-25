@@ -99,6 +99,7 @@ const ArticleCard: React.FC<Props> = (props) => {
         }
         title={article.title}
         subheader={article.createdAt}
+        className={classes.cardHeader}
       />
       <CardActionArea component="a" href={'/' + article.user.codename + '/' + article.id}>
         <CardMedia
@@ -108,30 +109,30 @@ const ArticleCard: React.FC<Props> = (props) => {
           title={article.title}
         />
       </CardActionArea>
-      <CardContent>
+      <CardContent className={classes.abstract}>
         <Typography variant="body2" color="textSecondary" component="p">
           {article.abstract}
         </Typography>
       </CardContent>
-      <Box>
+      <Box className={classes.buttonActions}>
         <Chip
           className={classes.chips}
           size="small"
           label={categories[article.category].toUpperCase()}
           color="primary"
         />
+        <CardActions disableSpacing>
+          <IconButton aria-label="add to favorites" onClick={favoriteHandler}>
+            <FavoriteIcon color={favoriteColor} />
+          </IconButton>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {favoriteCount}
+          </Typography>
+          <IconButton aria-label="share">
+            <ShareIcon />
+          </IconButton>
+        </CardActions>
       </Box>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites" onClick={favoriteHandler}>
-          <FavoriteIcon color={favoriteColor} />
-        </IconButton>
-        <Typography variant="body2" color="textSecondary" component="p">
-          {favoriteCount}
-        </Typography>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
     </Card>
   )
 }
@@ -141,20 +142,31 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       maxWidth: 345,
       marginTop: '1.5rem',
-      marginBottom: '1.5rem'
+      marginBottom: '1.5rem',
+      flexGrow: 1
+    },
+    cardHeader: {
+      height: '20%'
     },
     media: {
-      height: 0,
+      height: '56.25%',
       paddingTop: '56.25%' // 16:9
     },
     onFavorite: {
       backgroundColor: red[300]
     },
     chips: {
+      marginTop: theme.spacing(2),
       marginLeft: theme.spacing(2)
     },
+    abstract: {
+      height: '13.75%'
+    },
     buttons: {
-      bottom: theme.spacing(2)
+      marginButtom: theme.spacing(3)
+    },
+    buttonActions: {
+      height: '10%'
     }
   })
 )
