@@ -76,9 +76,11 @@ const RichEditor: React.FC<UserProps> = (props) => {
   const [editorState, setEditorState] = useState(
     EditorState.createWithContent(contentState, compositeDecorator)
   )
-
   const [title, setTitle] = useState(article.title)
   const [category, setCategory] = useState(article.category)
+  const refEditorState = useRef(editorState)
+  const refTitle = useRef(title)
+  const refCategory = useRef(category)
 
   const selection = editorState.getSelection()
 
@@ -90,14 +92,20 @@ const RichEditor: React.FC<UserProps> = (props) => {
   }, [])
 
   useEffect(() => {
+    refEditorState.current = editorState
+    refCategory.current = category
+    refTitle.current = title
+  }, [category, editorState, title])
+
+  useEffect(() => {
     const save = async () => {
-      const contentState = editorState.getCurrentContent()
+      const contentState = refEditorState.current.getCurrentContent()
       const content = convertToRaw(contentState)
       const saveContent = {
         data: {
           articleId: +articleId,
-          title: title,
-          category: category,
+          title: refTitle.current,
+          category: refCategory.current,
           content: content
         }
       }
@@ -115,6 +123,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
     }, 10000)
     return () => {
       clearInterval(saveTime)
+      save()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
