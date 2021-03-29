@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   DefaultDraftBlockRenderMap,
   DraftStyleMap,
@@ -7,7 +7,9 @@ import {
   EditorState,
   ContentBlock,
   CompositeDecorator,
-  RichUtils
+  RichUtils,
+  convertToRaw,
+  convertFromRaw
 } from 'draft-js'
 import { FormControl, InputLabel, makeStyles, MenuItem, Select, TextField } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
@@ -17,7 +19,10 @@ import SaveButton from './Buttons/SaveButton'
 import { handleStrategy, hashtagStrategy, HandleSpan, HashtagSpan } from './Decorators/HashTag'
 import { Link, findLinkEntities } from './Decorators/LinkDecorator'
 import Immutable from 'immutable'
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchArticle } from '../../reducer/articleReducer'
+import axios from 'axios'
 
 const myCustomBlock = Immutable.Map({
   right: {
@@ -34,6 +39,11 @@ const myCustomBlock = Immutable.Map({
 type UserProps = RouteComponentProps<{
   articleId: string
 }>
+
+/**
+ * paramsの型
+ */
+type thisPageParams = { articleId: string }
 
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
@@ -56,17 +66,61 @@ const RichEditor: React.FC<UserProps> = (props) => {
   /**
    * states
    */
+  const { articleId } = useParams<thisPageParams>()
+  const dispatch = useDispatch()
+
   const classes = useStyle()
-  const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
-  const [title, setTitle] = useState('')
-  const [select, setSelect] = useState(0)
-  const contentState = editorState.getCurrentContent()
+  const article = useSelector((state) => state.articleReducer.article)
+
+  const contentState = convertFromRaw(article.content)
+  const [editorState, setEditorState] = useState(
+    EditorState.createWithContent(contentState, compositeDecorator)
+  )
+
+  const [title, setTitle] = useState(article.title)
+  const [category, setCategory] = useState(article.category)
+
   const selection = editorState.getSelection()
 
   const ref = useRef<Editor>(null)
 
+  useEffect(() => {
+    dispatch(fetchArticle(+articleId))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const save = async () => {
+      const contentState = editorState.getCurrentContent()
+      const content = convertToRaw(contentState)
+      const saveContent = {
+        data: {
+          articleId: +articleId,
+          title: title,
+          category: category,
+          content: content
+        }
+      }
+      console.log('save')
+      console.log(saveContent)
+
+      try {
+        await axios.post('/api/save', saveContent)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const saveTime = setInterval(() => {
+      save()
+    }, 10000)
+    return () => {
+      clearInterval(saveTime)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const valueChangeHandler = (e: any) => setTitle(e.target.value)
-  const selectChangeHandler = (e: any) => setSelect(e.target.value)
+  const categoryChangeHandler = (e: any) => setCategory(e.target.value)
 
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
@@ -168,7 +222,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
         <p>カテゴリー</p>
         <FormControl className={classes.textItems}>
           <InputLabel>カテゴリー</InputLabel>
-          <Select value={select} onChange={selectChangeHandler}>
+          <Select value={category} onChange={categoryChangeHandler}>
             {Selects}
           </Select>
         </FormControl>
@@ -206,7 +260,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
         <SaveButton
           editorState={editorState}
           title={title}
-          category={select}
+          category={category}
           articleId={props.match.params.articleId}
         />
       </div>

@@ -13,6 +13,7 @@ export const initialState = {
       updatedAt: '',
       isFavorite: false,
       favoriteCount: 0,
+      isPublic: false,
       user: { name: '', codename: '', avatarUrl: '' }
     }
   ],
@@ -20,7 +21,7 @@ export const initialState = {
   loading: false
 }
 
-const categories = ['pet', 'sports', 'novel', 'IT', 'food']
+const categories = ['uncategorized', 'pet', 'sports', 'novel', 'IT', 'food']
 
 /**
  * Data型をyyyy年mm月dd日に変更する関数

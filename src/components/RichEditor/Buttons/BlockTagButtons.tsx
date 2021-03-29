@@ -2,6 +2,15 @@
 import React, { Fragment } from 'react'
 import { EditorState, RichUtils } from 'draft-js'
 import { IconButton, Menu, MenuItem } from '@material-ui/core'
+import {
+  FormatQuote,
+  Code,
+  FormatListBulleted,
+  FormatListNumbered,
+  FormatAlignLeft,
+  FormatAlignCenter,
+  FormatAlignRight
+} from '@material-ui/icons'
 // import {
 //   Code,
 //   FormatAlignCenter,
@@ -27,15 +36,15 @@ const headingType = [
   'header-six'
 ]
 
-const blockType = [
-  'blockquote',
-  'code-block',
-  'unordered-list-item',
-  'ordered-list-item',
-  'left',
-  'center',
-  'right'
-]
+// const blockType = [
+//   'blockquote',
+//   'code-block',
+//   'unordered-list-item',
+//   'ordered-list-item',
+//   'left',
+//   'center',
+//   'right'
+// ]
 
 const BlockTagButtons: React.FC<Props> = (props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -67,14 +76,6 @@ const BlockTagButtons: React.FC<Props> = (props) => {
     )
   })
 
-  const BlockChangeComponent = blockType.map((b) => {
-    return (
-      <IconButton key={b} onMouseDown={(e) => blockChangeButton(e, b)}>
-        {b}
-      </IconButton>
-    )
-  })
-
   return (
     <Fragment>
       <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
@@ -89,16 +90,7 @@ const BlockTagButtons: React.FC<Props> = (props) => {
       >
         {HeadingComponent}
       </Menu>
-      {BlockChangeComponent}
-    </Fragment>
-  )
-}
-
-export default BlockTagButtons
-
-// eslint-disable-next-line no-lone-blocks
-{
-  /* <IconButton key="blockquote" onMouseDown={(e) => blockChangeButton(e, 'blockquote')}>
+      <IconButton key="blockquote" onMouseDown={(e) => blockChangeButton(e, 'blockquote')}>
         <FormatQuote />
       </IconButton>
       <IconButton key="code-block" onMouseDown={(e) => blockChangeButton(e, 'code-block')}>
@@ -124,5 +116,9 @@ export default BlockTagButtons
       </IconButton>
       <IconButton key="right" onMouseDown={(e) => blockChangeButton(e, 'right')}>
         <FormatAlignRight />
-      </IconButton> */
+      </IconButton>
+    </Fragment>
+  )
 }
+
+export default BlockTagButtons

@@ -1,22 +1,24 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-export const initialState = [
-  {
-    comment: {
-      id: 0,
-      comment: '',
+export const initialState = {
+  commentArray: [
+    {
+      comment: {
+        id: 0,
+        comment: ''
+      },
       user: { name: '', codename: '', avatarUrl: '' }
-    },
-    loading: false
-  }
-]
+    }
+  ],
+  loading: false
+}
 
 /**
  * 選択したarticleのcommentを持ってくる
  */
 
-export const fetchComment = createAsyncThunk('/api/comment', async (articleId) => {
+export const fetchComment = createAsyncThunk('/api/comment', async (articleId: number) => {
   try {
     const { data } = await axios.get('/api/comment', {
       params: { articleId }
@@ -46,7 +48,7 @@ const commentReducer = createSlice({
     builder
       .addCase(fetchComment.fulfilled, (state, response) => ({
         ...state,
-        comment: response.payload,
+        commentArray: [...state.commentArray, ...response.payload],
         loading: false
       }))
       .addCase(fetchComment.pending, (state) => ({

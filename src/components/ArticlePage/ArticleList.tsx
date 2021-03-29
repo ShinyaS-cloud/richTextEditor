@@ -31,7 +31,8 @@ const ArticleList = () => {
     setNext(12)
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const categories = ['pet', 'sports', 'novel', 'IT', 'food']
+  const categories = ['uncategorized', 'pet', 'sports', 'novel', 'IT', 'food']
+  const categoriesJa = ['未分類', 'ペット', 'スポーツ', '小説', 'IT', 'フード']
 
   useEffect(() => {
     dispatch(articleReducer.actions.articleInit())
@@ -52,11 +53,12 @@ const ArticleList = () => {
             scrollButtons="auto"
             aria-label="scrollable auto tabs example"
           >
-            <Tab label={categories[0]} {...a11yProps(0)} />
-            <Tab label={categories[1]} {...a11yProps(1)} />
-            <Tab label={categories[2]} {...a11yProps(2)} />
-            <Tab label={categories[3]} {...a11yProps(3)} />
-            <Tab label={categories[4]} {...a11yProps(4)} />
+            <Tab label={categoriesJa[0]} {...a11yProps(0)} />
+            <Tab label={categoriesJa[1]} {...a11yProps(1)} />
+            <Tab label={categoriesJa[2]} {...a11yProps(2)} />
+            <Tab label={categoriesJa[3]} {...a11yProps(3)} />
+            <Tab label={categoriesJa[4]} {...a11yProps(4)} />
+            <Tab label={categoriesJa[5]} {...a11yProps(5)} />
           </Tabs>
         </AppBar>
       </div>
@@ -75,23 +77,20 @@ const ArticleList = () => {
   }
   const LoadingComponent = () => {
     if (loading) {
-      return (
-        <MyCircular/>
-      )
+      return <MyCircular />
     }
     return <div></div>
   }
   const scrollEventHandler = () => {
-    const doch = document.body.clientHeight // ページ全体の高さ
-    const winh = window.innerHeight // ウィンドウの高さ
-    const bottom = doch - winh // ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
+    const documentHeight = document.body.clientHeight // ページ全体の高さ
+    const windowHeight = window.innerHeight // ウィンドウの高さ
+    const bottom = documentHeight - windowHeight // ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
     if (bottom <= document.documentElement.scrollTop) {
       // 一番下までスクロールした時に実行
       fetchData()
     }
   }
   window.onscroll = scrollEventHandler
-  console.log('articleList.hasMore ', articleList.hasMore)
 
   return (
     <Box>

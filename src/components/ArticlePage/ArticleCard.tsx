@@ -33,11 +33,12 @@ type Props = {
     createdAt: string
     updatedAt: string
     isFavorite: boolean
+    isPublic: boolean
     favoriteCount: number
     user: { codename: string; avatarUrl: string }
   }
 }
-const categories = ['pet', 'sports', 'novel', 'IT', 'food']
+const categories = ['未分類', 'ペット', 'スポーツ', '小説', 'IT', 'フード']
 
 const ArticleCard: React.FC<Props> = (props) => {
   const classes = useStyles()
@@ -74,6 +75,14 @@ const ArticleCard: React.FC<Props> = (props) => {
   }
 
   const favoriteColor = favoriteState ? 'error' : 'inherit'
+
+  const PublicChip = () => {
+    if (article.isPublic) {
+      return <div></div>
+    } else {
+      return <Chip className={classes.chips} size="small" label="未公開" color="secondary" />
+    }
+  }
 
   return (
     <Card
@@ -118,9 +127,10 @@ const ArticleCard: React.FC<Props> = (props) => {
         <Chip
           className={classes.chips}
           size="small"
-          label={categories[article.category].toUpperCase()}
+          label={categories[article.category]}
           color="primary"
         />
+        <PublicChip />
         <CardActions disableSpacing>
           <IconButton aria-label="add to favorites" onClick={favoriteHandler}>
             <FavoriteIcon color={favoriteColor} />
@@ -163,7 +173,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '13.75%'
     },
     buttons: {
-      marginButtom: theme.spacing(3)
+      marginButton: theme.spacing(3)
     },
     buttonActions: {
       height: '10%'

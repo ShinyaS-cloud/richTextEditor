@@ -37,6 +37,8 @@ import { Link, findLinkEntities } from '../RichEditor/Decorators/LinkDecorator'
 
 import CommentList from './CommentList'
 
+import { useHistory } from 'react-router-dom'
+
 /**
  * paramsの型
  */
@@ -60,7 +62,7 @@ const myCustomBlock = Immutable.Map({
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
 /**
- * fanctional component 部分
+ * functional component 部分
  */
 
 const ArticlePage = () => {
@@ -84,6 +86,7 @@ const ArticlePage = () => {
   const loading = useSelector((state) => state.articleReducer.loading)
   const article = useSelector((state) => state.articleReducer.article)
   const auth = useSelector((state) => state.authReducer)
+  const history = useHistory()
 
   const contentState = convertFromRaw(article.content)
 
@@ -93,9 +96,17 @@ const ArticlePage = () => {
   const { articleId } = useParams<thisPageParams>()
 
   useEffect(() => {
-    dispatch(fetchArticle({ articleId: +articleId, authUserId: auth.authUserId }))
+    dispatch(fetchArticle(+articleId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const editHandler = async () => {
+    try {
+      history.push('/edit/' + articleId)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
@@ -111,7 +122,7 @@ const ArticlePage = () => {
     }
   }
 
-  const AvaterArea = (
+  const AvatarArea = (
     <a href={'/' + article.user.codename}>
       <Avatar
         aria-label="recipe"
@@ -143,7 +154,7 @@ const ArticlePage = () => {
     if (auth.id === article.userId) {
       return (
         <div>
-          <Button variant="contained" color="primary">
+          <Button onClick={editHandler} variant="contained" color="primary">
             編集
           </Button>
         </div>
@@ -159,7 +170,7 @@ const ArticlePage = () => {
         <Card className={classes.editor}>
           <CardHeader
             className={classes.header}
-            avatar={AvaterArea}
+            avatar={AvatarArea}
             action={Action}
             title={Title}
             subheader={article.createdAt}
@@ -173,7 +184,9 @@ const ArticlePage = () => {
           <EditButton />
         </div>
       </Box>
-      <CommentList />
+      <Box className={classes.comment}>
+        <CommentList articleId={+articleId} />
+      </Box>
     </Fragment>
   )
   if (loading) {
@@ -232,7 +245,7 @@ const useStyle = makeStyles((theme) => ({
     width: '60%',
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(1),
     minHeight: '50rem',
     padding: '3rem 2rem',
     fontSize: ' 18px ',
@@ -245,10 +258,15 @@ const useStyle = makeStyles((theme) => ({
     margin: '0 auto',
     textAlign: 'center'
   },
+  comment: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: theme.spacing(5)
+  },
   circular: {
     display: 'flex',
     justifyContent: 'center',
-    marginTop: theme.spacing(10)
+    marginTop: theme.spacing(1)
   },
   right: {
     textAlign: 'right'

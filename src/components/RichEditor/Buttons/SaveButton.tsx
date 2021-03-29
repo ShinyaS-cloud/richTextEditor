@@ -24,16 +24,15 @@ const SaveButton: React.FC<Props> = (props) => {
         content: content
       }
     }
-    console.log(content)
     try {
-      await axios.post('/api/save/', saveContent)
+      await axios.post('/api/save', saveContent)
     } catch (error) {
       console.log(error)
     }
   }
   return (
     <div>
-      <Button onClick={save} type="submit">
+      <Button variant="contained" color="primary" onClick={save} type="submit">
         保存
       </Button>
     </div>

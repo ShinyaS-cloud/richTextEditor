@@ -24,6 +24,7 @@ type MyState = {
       createdAt: string
       updatedAt: string
       isFavorite: boolean
+      isPublic: boolean
       favoriteCount: number
       user: { name: string; codename: string; avatarUrl: string }
     }
@@ -42,6 +43,7 @@ type MyState = {
         updatedAt: string
         isFavorite: boolean
         favoriteCount: number
+        isPublic: boolean
         user: { name: string; codename: string; avatarUrl: string }
       }
     ]
@@ -65,9 +67,11 @@ type MyState = {
     fromFollow: { name: string; avatarUrl: string; introduction: string; codename: string }[]
   }
   commentReducer: {
-    comment: {
-      id: number
-      comment: string
+    commentArray: {
+      comment: {
+        id: number
+        comment: string
+      }
       user: { name: string; codename: string; avatarUrl: string }
     }[]
     loading: boolean
