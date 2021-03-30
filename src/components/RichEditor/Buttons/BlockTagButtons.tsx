@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment } from 'react'
+import React from 'react'
 import { EditorState, RichUtils } from 'draft-js'
-import { IconButton, Menu, MenuItem } from '@material-ui/core'
+import { Box, IconButton, makeStyles, Menu, MenuItem } from '@material-ui/core'
 import {
   FormatQuote,
   Code,
@@ -49,6 +49,7 @@ const headingType = [
 const BlockTagButtons: React.FC<Props> = (props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
+  const classes = useStyles()
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget)
   }
@@ -77,7 +78,7 @@ const BlockTagButtons: React.FC<Props> = (props) => {
   })
 
   return (
-    <Fragment>
+    <Box className={classes.root}>
       <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
         H
       </IconButton>
@@ -117,8 +118,15 @@ const BlockTagButtons: React.FC<Props> = (props) => {
       <IconButton key="right" onMouseDown={(e) => blockChangeButton(e, 'right')}>
         <FormatAlignRight />
       </IconButton>
-    </Fragment>
+    </Box>
   )
 }
+
+const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  }
+})
 
 export default BlockTagButtons

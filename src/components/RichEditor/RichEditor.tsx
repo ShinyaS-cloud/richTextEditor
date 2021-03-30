@@ -9,9 +9,18 @@ import {
   CompositeDecorator,
   RichUtils,
   convertToRaw,
-  convertFromRaw
+  convertFromRaw,
+  SelectionState
 } from 'draft-js'
-import { FormControl, InputLabel, makeStyles, MenuItem, Select, TextField } from '@material-ui/core'
+import {
+  Box,
+  Divider,
+  FormControl,
+  makeStyles,
+  MenuItem,
+  Select,
+  TextField
+} from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
@@ -67,10 +76,16 @@ const RichEditor: React.FC<UserProps> = (props) => {
    * states
    */
   const { articleId } = useParams<thisPageParams>()
+
   const dispatch = useDispatch()
 
   const classes = useStyle()
   const article = useSelector((state) => state.articleReducer.article)
+
+  // eslint-disable-next-line no-unused-vars
+  const [composition, setComposition] = useState(false)
+  // eslint-disable-next-line no-unused-vars
+  const [compositionColor, setCompositionColor] = useState([''])
 
   const contentState = convertFromRaw(article.content)
   const [editorState, setEditorState] = useState(
@@ -110,7 +125,6 @@ const RichEditor: React.FC<UserProps> = (props) => {
         }
       }
       console.log('save')
-      console.log(saveContent)
 
       try {
         await axios.post('/api/save', saveContent)
@@ -223,38 +237,67 @@ const RichEditor: React.FC<UserProps> = (props) => {
     )
   }
 
+  const [start, setStart] = useState(0)
+
+  const COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
+  const onChangeHandler = () => {
+    const currentInlineStyle = editorState.getCurrentInlineStyle()
+    const start = editorState.getSelection().getStartOffset()
+    setStart(start)
+    const findColor = COLORS.filter((c) => currentInlineStyle.has(c))
+    if (findColor.length) {
+      setCompositionColor(findColor)
+      console.log('ifCompositionColor', compositionColor)
+    }
+  }
+
+  const offChangeHandler = () => {
+    const end = editorState.getSelection().getStartOffset()
+    
+  }
+
+  // const COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
+  // const onChangeHandler = (e: EditorState) => {
+  //   const findColor = COLORS.filter((c) => e.getCurrentInlineStyle().has(c))
+  //   if (composition) {
+  //     console.log('findColor', findColor)
+  //     if (findColor.length) {
+  //       // setCompositionColor(findColor[0])
+  //       console.log('ifCompositionColor', compositionColor)
+  //       return
+  //     }
+  //   }
+  //   console.log('compositionColor', compositionColor)
+  //   setEditorState(e)
+  // }
+
   return (
-    <div className={classes.root}>
-      <div className={classes.text}>
-        <p>タイトル</p>
-        <TextField className={classes.textItems} value={title} onChange={valueChangeHandler} />
-        <p>カテゴリー</p>
-        <FormControl className={classes.textItems}>
-          <InputLabel>カテゴリー</InputLabel>
-          <Select value={category} onChange={categoryChangeHandler}>
-            {Selects}
-          </Select>
-        </FormControl>
-      </div>
-
-      <div className={classes.buttons}>
+    <Box className={classes.root}>
+      <Box className={classes.buttonContainer}>
         <StyleButtons editorState={editorState} setEditorState={setEditorState} />
+        <Divider />
         <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
+        <Divider />
         <ColorButtons editorState={editorState} setEditorState={setEditorState} />
-      </div>
+        <Divider />
+        <Box style={{ marginBottom: 10 }}>
+          Select some text, then use the buttons to add or remove links on the selected text.
+        </Box>
+        <Box>
+          <button onMouseDown={promptForLink} style={{ marginRight: 10 }}>
+            Add Link
+          </button>
+          <button onMouseDown={removeLink}>Remove Link</button>
+          {urlInput}
+        </Box>
+      </Box>
+      <Box className={classes.dummyButtonContainer} />
 
-      <div style={{ marginBottom: 10 }}>
-        Select some text, then use the buttons to add or remove links on the selected text.
-      </div>
-      <div>
-        <button onMouseDown={promptForLink} style={{ marginRight: 10 }}>
-          Add Link
-        </button>
-        <button onMouseDown={removeLink}>Remove Link</button>
-      </div>
-      {urlInput}
-
-      <div className={classes.editor} onClick={() => ref.current?.focus()}>
+      <Box
+        className={classes.editor}
+        onCompositionStart={onChangeHandler}
+        onClick={() => ref.current?.focus()}
+      >
         <Editor
           customStyleMap={customStyleMap}
           editorState={editorState}
@@ -263,17 +306,28 @@ const RichEditor: React.FC<UserProps> = (props) => {
           blockStyleFn={myBlockStyleFn}
           ref={ref}
         />
-      </div>
+      </Box>
 
-      <div className={classes.buttons}>
-        <SaveButton
-          editorState={editorState}
-          title={title}
-          category={category}
-          articleId={props.match.params.articleId}
-        />
-      </div>
-    </div>
+      <Box className={classes.formContainer}>
+        <p>タイトル</p>
+        <TextField className={classes.textItems} value={title} onChange={valueChangeHandler} />
+        <p>カテゴリー</p>
+        <FormControl className={classes.textItems}>
+          <Select value={category} onChange={categoryChangeHandler}>
+            {Selects}
+          </Select>
+        </FormControl>
+        <Box className={classes.saveButton}>
+          <SaveButton
+            editorState={editorState}
+            title={title}
+            category={category}
+            articleId={props.match.params.articleId}
+          />
+        </Box>
+      </Box>
+      <Box className={classes.dummyFormContainer} />
+    </Box>
   )
 }
 
@@ -301,33 +355,41 @@ const customStyleMap: DraftStyleMap = {
     color: 'rgba(127, 0, 255, 1.0)'
   }
 }
+
+const buttonContainerWidth = '15%'
+const formContainerWidth = '20%'
 /// style
 const useStyle = makeStyles({
-  root: {},
-  buttons: {
-    margin: '0 auto',
-    textAlign: 'center'
-  },
+  root: { display: 'flex' },
+  buttonContainer: { padding: '0 1rem', width: buttonContainerWidth, position: 'fixed' },
+  dummyButtonContainer: { flexBasis: buttonContainerWidth },
+  formContainer: { padding: '0 1rem', width: formContainerWidth, position: 'fixed', right: 0 },
+  dummyFormContainer: { flexBasis: formContainerWidth },
   editor: {
-    width: '60%',
     backgroundColor: 'white',
     boxShadow: '0 1px 2px #eee',
     margin: '0 auto',
     minHeight: '50rem',
-    padding: '3rem 2rem',
+    maxWidth: '65%',
+    padding: '2rem 2rem',
     fontSize: ' 18px ',
-    cursor: 'text'
+    cursor: 'text',
+    flex: '1',
+    overflowY: 'auto'
   },
   text: {
     textAlign: 'center'
   },
   textItems: {
-    width: '60%'
+    width: '100%'
   },
   title: {
     textAlign: 'center'
   },
-
+  saveButton: {
+    textAlign: 'center',
+    marginTop: '2rem'
+  },
   right: {
     textAlign: 'right'
   },
@@ -350,7 +412,6 @@ const styles = {
     marginBottom: 10
   },
   urlInput: {
-    fontFamily: "'Georgia', serif",
     marginRight: 10,
     padding: 3
   },

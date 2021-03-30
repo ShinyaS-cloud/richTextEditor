@@ -53,7 +53,7 @@ const App: React.FC = () => {
             <Switch>
               <Redirect exact from="/" to="/home" />
               <Route path="/home" exact component={Posts} />
-              <Route path="/edit/:articleId" component={RichEditor} />
+              <Route path="/edit/:codename/:articleId" component={RichEditor} />
               <Route path="/:codename/:articleId" component={ArticlePage} />
               <Route path="/signup" component={Signup} />
               <Route path="/login" component={Login} />
