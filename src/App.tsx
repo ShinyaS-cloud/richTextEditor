@@ -26,7 +26,7 @@ const App: React.FC = () => {
     const getCsrfToken = async () => {
       try {
         const { data } = await axios.get('/api/csrfToken')
-        axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken
+        axios.defaults.headers.common['X-CSRF-Token'] = data.csrfToken
       } catch (error) {
         console.log(error)
       }

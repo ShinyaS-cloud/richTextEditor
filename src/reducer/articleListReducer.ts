@@ -71,24 +71,22 @@ export const fetchArticleListCategory = createAsyncThunk(
  * Article を userごとに持ってくる
  */
 
-export const fetchArticleListUser = createAsyncThunk(
-  '/api/articleList/user',
-  async (userId: number) => {
-    try {
-      const { data } = await axios.get('/api/articleList/user', {
-        params: { userId }
-      })
-      data.map((r: typeof initialState.article[0]) => {
-        r.createdAt = translateDate(r.createdAt)
-        r.updatedAt = translateDate(r.updatedAt)
-        return r
-      })
-      return data
-    } catch (error) {
-      console.log(error)
-    }
+export const fetchArticleListUser = createAsyncThunk('/api/articleList/user', async (arg: any) => {
+  try {
+    const { userId, next } = arg
+    const { data } = await axios.get('/api/articleList/user', {
+      params: { userId, next }
+    })
+    data.map((r: typeof initialState.article[0]) => {
+      r.createdAt = translateDate(r.createdAt)
+      r.updatedAt = translateDate(r.updatedAt)
+      return r
+    })
+    return data
+  } catch (error) {
+    console.log(error)
   }
-)
+})
 
 /**
  * userがお気に入りしたarticleを持ってくる
@@ -96,10 +94,11 @@ export const fetchArticleListUser = createAsyncThunk(
 
 export const fetchArticleListFavorite = createAsyncThunk(
   '/api/articleList/favorite',
-  async (userId: number) => {
+  async (arg: any) => {
     try {
+      const { userId, next } = arg
       const { data } = await axios.get('/api/articleList/favorite', {
-        params: { userId }
+        params: { userId, next }
       })
       data.map((r: typeof initialState.article[0]) => {
         r.createdAt = translateDate(r.createdAt)
@@ -142,7 +141,8 @@ const articleListReducer = createSlice({
     builder
       .addCase(fetchArticleListUser.fulfilled, (state, response) => ({
         ...state,
-        article: response.payload,
+        article: [...state.article, ...response.payload],
+        hasMore: Boolean(response.payload.length),
         loading: false
       }))
       .addCase(fetchArticleListUser.pending, (state) => ({
@@ -153,7 +153,8 @@ const articleListReducer = createSlice({
     builder
       .addCase(fetchArticleListFavorite.fulfilled, (state, response) => ({
         ...state,
-        article: response.payload,
+        article: [...state.article, ...response.payload],
+        hasMore: Boolean(response.payload.length),
         loading: false
       }))
       .addCase(fetchArticleListFavorite.pending, (state) => ({

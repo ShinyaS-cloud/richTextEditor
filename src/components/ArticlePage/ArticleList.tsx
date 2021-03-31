@@ -35,8 +35,10 @@ const ArticleList = () => {
   const categoriesJa = ['未分類', 'ペット', 'スポーツ', '小説', 'IT', 'フード']
 
   useEffect(() => {
-    dispatch(articleReducer.actions.articleInit())
     dispatch(fetchArticleListCategory({ categoryName: categories[value], userId, next: 0 }))
+    return () => {
+      dispatch(articleReducer.actions.articleInit())
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 

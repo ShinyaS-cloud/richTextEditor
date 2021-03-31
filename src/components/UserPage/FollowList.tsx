@@ -3,11 +3,11 @@ import React, { useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import { fetchFollow, fetchFollowee } from '../../reducer/followReducer'
+import followReducer, { fetchFollower, fetchFollowee } from '../../reducer/followReducer'
 import { Avatar, Box, makeStyles, Paper, Typography } from '@material-ui/core'
 
 type Props = {
-  type: 'to' | 'from'
+  type: boolean
 }
 
 const FollowList: React.FC<Props> = (props) => {
@@ -16,38 +16,47 @@ const FollowList: React.FC<Props> = (props) => {
   const user = useSelector((state) => state.userReducer)
 
   const follow = useSelector((state) => state.followReducer)
-  const toFollow = follow.toFollow
-  const fromFollow = follow.fromFollow
+  const follower = follow.follower.slice(1)
+  const followee = follow.followee.slice(1)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (props.type === 'to') {
-      dispatch(fetchFollow(user.id))
+    if (props.type) {
+      dispatch(fetchFollower(user.id))
     } else {
       dispatch(fetchFollowee(user.id))
     }
-  }, [dispatch, props.type, user.id])
+    return () => {
+      dispatch(followReducer.actions.followInit())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch])
 
   const userBox = (a: any) => {
     return (
-      <Paper key={a.name} className={classes.content}>
+      <Paper key={a.codename} className={classes.content}>
         <Avatar className={classes.avatar} src={process.env.PUBLIC_URL + '/' + a.avatarUrl} />
         <Box>
           <Typography variant="h5" component="h5">
             {a.name}
           </Typography>
-          <Typography className={classes.codename} variant="inherit" component="h5">
+          <Typography className={classes.codename} component="h5">
             @{a.codename}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography className={classes.codename} component="h5">
+            {a.introduction}
           </Typography>
         </Box>
       </Paper>
     )
   }
 
-  const toFollowRenderMap = toFollow.map(userBox)
-  const fromFollowRenderMap = fromFollow.map(userBox)
-  const renderMap = props.type === 'to' ? toFollowRenderMap : fromFollowRenderMap
+  const followerRenderMap = follower.map((f) => userBox(f))
+  const followeeRenderMap = followee.map((f) => userBox(f))
+  const renderMap = props.type ? followerRenderMap : followeeRenderMap
 
   return <Box>{renderMap}</Box>
 }
@@ -55,7 +64,8 @@ const FollowList: React.FC<Props> = (props) => {
 const useStyles = makeStyles((theme) => ({
   content: {
     display: 'flex',
-    width: '100%'
+    width: '100%',
+    height: theme.spacing(10)
   },
   avatar: {
     width: theme.spacing(5),
@@ -63,7 +73,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   codename: {
-    color: theme.palette.grey[100]
   }
 }))
 

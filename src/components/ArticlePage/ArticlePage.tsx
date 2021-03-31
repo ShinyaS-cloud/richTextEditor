@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import {
   Avatar,
   Box,
@@ -9,6 +9,7 @@ import {
   CircularProgress,
   IconButton,
   makeStyles,
+  Snackbar,
   Typography
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
@@ -38,6 +39,8 @@ import { Link, findLinkEntities } from '../RichEditor/Decorators/LinkDecorator'
 import CommentList from './CommentList'
 
 import { useHistory } from 'react-router-dom'
+import axios from 'axios'
+import { Alert } from '@material-ui/lab'
 
 /**
  * paramsの型
@@ -95,6 +98,8 @@ const ArticlePage = () => {
 
   const { articleId } = useParams<thisPageParams>()
 
+  const [snackOpen, setSnackOpen] = useState(false)
+
   useEffect(() => {
     dispatch(fetchArticle(+articleId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,7 +107,25 @@ const ArticlePage = () => {
 
   const editHandler = async () => {
     try {
-      history.push('/edit/' + articleId)
+      history.push('/edit/' + article.user.codename + '/' + articleId)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const deleteHandler = async () => {
+    const cookieValue = document.cookie.split('; ').find((row) => row.startsWith('_csrf'))
+
+    if (cookieValue === undefined) {
+      setSnackOpen(true)
+      return
+    }
+
+    try {
+      await axios.delete('/api/article/delete', {
+        params: { articleId: +articleId }
+      })
+      history.push('/' + article.user.codename)
     } catch (error) {
       console.log(error)
     }
@@ -157,6 +180,9 @@ const ArticlePage = () => {
           <Button onClick={editHandler} variant="contained" color="primary">
             編集
           </Button>
+          <Button onClick={deleteHandler} variant="contained" color="primary">
+            削除
+          </Button>
         </div>
       )
     } else {
@@ -164,8 +190,20 @@ const ArticlePage = () => {
     }
   }
 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setSnackOpen(false)
+  }
+
   let renderComponent = (
     <Fragment>
+      <Snackbar open={snackOpen} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          不正な操作です
+        </Alert>
+      </Snackbar>
       <Box>
         <Card className={classes.editor}>
           <CardHeader

@@ -3,18 +3,17 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 
 export const initialState = {
-  id: 0,
-  toFollow: [{ name: '', avatarUrl: '', introduction: '', codename: '' }],
-  fromFollow: [{ name: '', avatarUrl: '', introduction: '', codename: '' }]
+  follower: [{ name: '', avatarUrl: '', introduction: '', codename: '' }],
+  followee: [{ name: '', avatarUrl: '', introduction: '', codename: '' }]
 }
 
-export const fetchFollow = createAsyncThunk('/api/followList', async (fromUserId: number) => {
-  const response = await axios.get('/api/followList', { params: { fromUserId } })
-  return response.data
+export const fetchFollower = createAsyncThunk('/api/followerList', async (userId: number) => {
+  const { data } = await axios.get('/api/followerList', { params: { userId } })
+  return data
 })
-export const fetchFollowee = createAsyncThunk('/api/followeeList', async (toUserId: number) => {
-  const response = await axios.get('/api/followeeList', { params: { toUserId } })
-  return response.data
+export const fetchFollowee = createAsyncThunk('/api/followeeList', async (userId: number) => {
+  const { data } = await axios.get('/api/followeeList', { params: { userId } })
+  return data
 })
 
 const followReducer = createSlice({
@@ -22,30 +21,30 @@ const followReducer = createSlice({
   initialState: initialState,
   reducers: {
     followInit: (state, action: PayloadAction) => ({
-      ...state
+      ...initialState
     })
   },
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchFollow.fulfilled, (state, response) => ({
+      .addCase(fetchFollower.fulfilled, (state, response) => ({
         ...state,
-        toFollow: response.payload
+        follower: [...state.follower, ...response.payload]
       }))
 
-      .addCase(fetchFollow.pending, (state) => ({
-        ...initialState,
+      .addCase(fetchFollower.pending, (state) => ({
+        ...state,
         loading: true
       }))
-      .addCase(fetchFollow.rejected, (state) => console.log(state))
+      .addCase(fetchFollower.rejected, (state) => console.log(state))
     builder
       .addCase(fetchFollowee.fulfilled, (state, response) => ({
         ...state,
-        fromFollow: response.payload
+        followee: [...state.followee, ...response.payload]
       }))
 
       .addCase(fetchFollowee.pending, (state) => ({
-        ...initialState,
+        ...state,
         loading: true
       }))
       .addCase(fetchFollowee.rejected, (state) => console.log(state))

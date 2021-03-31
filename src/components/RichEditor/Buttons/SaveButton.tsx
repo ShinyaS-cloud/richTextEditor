@@ -4,15 +4,18 @@ import { Button } from '@material-ui/core'
 
 import { convertToRaw, EditorState } from 'draft-js'
 import axios from 'axios'
+import { useHistory } from 'react-router'
 
 type Props = {
   editorState: EditorState
   category: number
   title: string
   articleId: string
+  codename: string
 }
 
 const SaveButton: React.FC<Props> = (props) => {
+  const history = useHistory()
   const save = async () => {
     const contentState = props.editorState.getCurrentContent()
     const content = convertToRaw(contentState)
@@ -25,7 +28,9 @@ const SaveButton: React.FC<Props> = (props) => {
       }
     }
     try {
+      console.log(props.codename)
       await axios.post('/api/save', saveContent)
+      history.push('/' + props.codename)
     } catch (error) {
       console.log(error)
     }

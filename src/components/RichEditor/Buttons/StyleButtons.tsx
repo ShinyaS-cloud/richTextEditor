@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment } from 'react'
+import React from 'react'
 import { EditorState, RichUtils } from 'draft-js'
-import { IconButton } from '@material-ui/core'
+import { Box, IconButton, makeStyles } from '@material-ui/core'
 import {
   FormatBold,
   Code,
@@ -29,9 +29,10 @@ const StyleButtons: React.FC<Props> = (props) => {
   const inlineChangeButton = (type: string) => {
     props.setEditorState(RichUtils.toggleInlineStyle(props.editorState, type))
   }
+  const classes = useStyles()
 
   return (
-    <Fragment>
+    <Box className={classes.root}>
       <IconButton key="BOLD" onClick={() => inlineChangeButton('BOLD')}>
         <FormatBold />
       </IconButton>
@@ -47,8 +48,15 @@ const StyleButtons: React.FC<Props> = (props) => {
       <IconButton key="UNDERLINE" onClick={() => inlineChangeButton('UNDERLINE')}>
         <FormatUnderlined />
       </IconButton>{' '}
-    </Fragment>
+    </Box>
   )
 }
+
+const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  }
+})
 
 export default StyleButtons

@@ -10,18 +10,13 @@ export const initialState = {
   headerUrl: '',
   codename: '',
   isFollow: false,
-  toFollowCount: 0,
-  fromFollowCount: 0
+  followerCount: 0,
+  followeeCount: 0
 }
 
-type argType = {
-  codename: string
-  authUserId: number
-}
-
-export const fetchProfile = createAsyncThunk('/api/profile', async (arg: argType) => {
+export const fetchProfile = createAsyncThunk('/api/profile', async (codename: string) => {
   const { data } = await axios.get('/api/profile', {
-    params: { ...arg }
+    params: { codename }
   })
   return data
 })
@@ -31,7 +26,7 @@ const userReducer = createSlice({
   initialState: initialState,
   reducers: {
     userInit: (state, action: PayloadAction) => ({
-      ...state
+      ...initialState
     })
   },
 

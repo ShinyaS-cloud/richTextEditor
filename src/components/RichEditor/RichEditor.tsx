@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import {
   DefaultDraftBlockRenderMap,
   DraftStyleMap,
@@ -9,17 +9,19 @@ import {
   CompositeDecorator,
   RichUtils,
   convertToRaw,
-  convertFromRaw,
-  SelectionState
+  convertFromRaw
 } from 'draft-js'
 import {
   Box,
+  Button,
   Divider,
+  Drawer,
   FormControl,
   makeStyles,
   MenuItem,
   Select,
-  TextField
+  TextField,
+  useMediaQuery
 } from '@material-ui/core'
 import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
@@ -81,11 +83,6 @@ const RichEditor: React.FC<UserProps> = (props) => {
 
   const classes = useStyle()
   const article = useSelector((state) => state.articleReducer.article)
-
-  // eslint-disable-next-line no-unused-vars
-  const [composition, setComposition] = useState(false)
-  // eslint-disable-next-line no-unused-vars
-  const [compositionColor, setCompositionColor] = useState([''])
 
   const contentState = convertFromRaw(article.content)
   const [editorState, setEditorState] = useState(
@@ -237,67 +234,76 @@ const RichEditor: React.FC<UserProps> = (props) => {
     )
   }
 
-  const [start, setStart] = useState(0)
+  const urlComponent = (
+    <Fragment>
+      <Box style={{ marginBottom: 10 }}>
+        Select some text, then use the buttons to add or remove links on the selected text.
+      </Box>
+      <Box>
+        <button onMouseDown={promptForLink} style={{ marginRight: 10 }}>
+          Add Link
+        </button>
+        <button onMouseDown={removeLink}>Remove Link</button>
+        {urlInput}
+      </Box>
+    </Fragment>
+  )
 
-  const COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
-  const onChangeHandler = () => {
-    const currentInlineStyle = editorState.getCurrentInlineStyle()
-    const start = editorState.getSelection().getStartOffset()
-    setStart(start)
-    const findColor = COLORS.filter((c) => currentInlineStyle.has(c))
-    if (findColor.length) {
-      setCompositionColor(findColor)
-      console.log('ifCompositionColor', compositionColor)
+  const match = useMediaQuery('(min-width:600px)')
+  const [open, setOpen] = useState(false)
+  const toggleDrawer = (b: boolean) => (e: any) => {
+    if (
+      e.type === 'keydown' &&
+      ((e as React.KeyboardEvent).key === 'Tab' || (e as React.KeyboardEvent).key === 'Shift')
+    ) {
+      return
+    }
+    setOpen(b)
+  }
+  const ButtonColorLinks = () => {
+    if (!match) {
+      return (
+        <Fragment>
+          <Button onClick={toggleDrawer(true)}>anchor</Button>
+          <Drawer
+            open={open}
+            onClose={toggleDrawer(false)}
+            anchor="bottom"
+            className={classes.buttonContainer}
+          >
+            <StyleButtons editorState={editorState} setEditorState={setEditorState} />
+            <Divider />
+            <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
+            <Divider />
+            <ColorButtons editorState={editorState} setEditorState={setEditorState} />
+            <Divider />
+            {urlComponent}
+          </Drawer>
+        </Fragment>
+      )
+    } else {
+      return (
+        <Fragment>
+          <Box className={classes.buttonContainer}>
+            <StyleButtons editorState={editorState} setEditorState={setEditorState} />
+            <Divider />
+            <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
+            <Divider />
+            <ColorButtons editorState={editorState} setEditorState={setEditorState} />
+            <Divider />
+            {urlComponent}
+          </Box>
+          <Box className={classes.dummyButtonContainer} />
+        </Fragment>
+      )
     }
   }
 
-  const offChangeHandler = () => {
-    const end = editorState.getSelection().getStartOffset()
-    
-  }
-
-  // const COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
-  // const onChangeHandler = (e: EditorState) => {
-  //   const findColor = COLORS.filter((c) => e.getCurrentInlineStyle().has(c))
-  //   if (composition) {
-  //     console.log('findColor', findColor)
-  //     if (findColor.length) {
-  //       // setCompositionColor(findColor[0])
-  //       console.log('ifCompositionColor', compositionColor)
-  //       return
-  //     }
-  //   }
-  //   console.log('compositionColor', compositionColor)
-  //   setEditorState(e)
-  // }
-
   return (
     <Box className={classes.root}>
-      <Box className={classes.buttonContainer}>
-        <StyleButtons editorState={editorState} setEditorState={setEditorState} />
-        <Divider />
-        <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
-        <Divider />
-        <ColorButtons editorState={editorState} setEditorState={setEditorState} />
-        <Divider />
-        <Box style={{ marginBottom: 10 }}>
-          Select some text, then use the buttons to add or remove links on the selected text.
-        </Box>
-        <Box>
-          <button onMouseDown={promptForLink} style={{ marginRight: 10 }}>
-            Add Link
-          </button>
-          <button onMouseDown={removeLink}>Remove Link</button>
-          {urlInput}
-        </Box>
-      </Box>
-      <Box className={classes.dummyButtonContainer} />
+      <ButtonColorLinks />
 
-      <Box
-        className={classes.editor}
-        onCompositionStart={onChangeHandler}
-        onClick={() => ref.current?.focus()}
-      >
+      <Box className={classes.editor} onClick={() => ref.current?.focus()}>
         <Editor
           customStyleMap={customStyleMap}
           editorState={editorState}
@@ -323,6 +329,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
             title={title}
             category={category}
             articleId={props.match.params.articleId}
+            codename={article.user.codename}
           />
         </Box>
       </Box>

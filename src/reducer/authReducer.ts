@@ -10,7 +10,7 @@ export const initialState = {
   avatarUrl: '',
   headerUrl: '',
   authUserId: 0,
-  isLogedIn: false
+  isLoggedIn: false
 }
 
 export const fetchUser = createAsyncThunk('/api/current_user', async () => {
@@ -23,7 +23,7 @@ const authReducer = createSlice({
   initialState: initialState,
   reducers: {
     userInit: (state, action: PayloadAction) => ({
-      ...state
+      ...initialState
     })
   },
 

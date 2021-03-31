@@ -14,7 +14,7 @@ import {
   Typography
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchProfile } from '../../reducer/userReducer'
+import userReducer, { fetchProfile } from '../../reducer/userReducer'
 import { useParams } from 'react-router'
 
 import FavoriteList from './FavoriteList'
@@ -31,9 +31,6 @@ const UserPage = () => {
   const user = useSelector((state) => state.userReducer)
   const authUser = useSelector((state) => state.authReducer)
   const [value, setValue] = useState(0)
-  const [followCount, setFollowCount] = useState(user.toFollowCount)
-
-  const [followeeCount, setFolloweeCount] = useState(user.fromFollowCount)
   const [followState, setFollowState] = useState(user.isFollow)
 
   const history = useHistory()
@@ -59,8 +56,6 @@ const UserPage = () => {
       if (!data) {
         history.push('/login')
       } else {
-        setFollowCount(data.followCount)
-        setFolloweeCount(data.followeeCount)
         setFollowState(data.isFollow)
       }
     } catch (error) {
@@ -75,9 +70,9 @@ const UserPage = () => {
       case 1:
         return <FavoriteList />
       case 2:
-        return <FollowList type={'to'} />
+        return <FollowList type={true} />
       case 3:
-        return <FollowList type={'from'} />
+        return <FollowList type={false} />
       default:
         return <UserArticleList />
     }
@@ -90,8 +85,12 @@ const UserPage = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchProfile({ codename: param.codename, authUserId: authUser.id }))
-  }, [dispatch, param, authUser])
+    dispatch(fetchProfile(param.codename))
+    return () => {
+      dispatch(userReducer.actions.userInit())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch])
 
   return (
     <div className={classes.root}>
@@ -111,10 +110,10 @@ const UserPage = () => {
             {followButtonOption}
           </Button>
           <Typography className={classes.follower} variant="inherit" component="h3">
-            {'フォロー：' + followCount}
+            {'フォローしている：' + user.followerCount}
           </Typography>
           <Typography className={classes.follower} variant="inherit" component="h3">
-            {'フォロワー：' + followeeCount}
+            {'フォローされている：' + user.followeeCount}
           </Typography>
         </CardContent>
         <CardContent>
@@ -127,8 +126,8 @@ const UserPage = () => {
             <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
               <Tab label={user.codename + 'の記事'} {...a11yProps(0)} />
               <Tab label="お気に入り" {...a11yProps(1)} />
-              <Tab label="フォロー" {...a11yProps(2)} />
-              <Tab label="フォロワー" {...a11yProps(3)} />
+              <Tab label="フォローしている" {...a11yProps(2)} />
+              <Tab label="フォローされている" {...a11yProps(3)} />
             </Tabs>
           </AppBar>
         </div>

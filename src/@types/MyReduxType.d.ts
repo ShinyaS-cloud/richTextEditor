@@ -58,13 +58,12 @@ type MyState = {
     headerUrl: string
     codename: string
     isFollow: boolean
-    toFollowCount: number
-    fromFollowCount: number
+    followerCount: number
+    followeeCount: number
   }
   followReducer: {
-    id: number
-    toFollow: { name: string; avatarUrl: string; introduction: string; codename: string }[]
-    fromFollow: { name: string; avatarUrl: string; introduction: string; codename: string }[]
+    follower: { name: string; avatarUrl: string; introduction: string; codename: string }[]
+    followee: { name: string; avatarUrl: string; introduction: string; codename: string }[]
   }
   commentReducer: {
     commentArray: {

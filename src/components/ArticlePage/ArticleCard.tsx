@@ -73,6 +73,8 @@ const ArticleCard: React.FC<Props> = (props) => {
       console.log(error)
     }
   }
+  const articleTitle = article.title === null ? null : article.title.slice(0, 40) + '...'
+  const articleAbstract = article.abstract === null ? null : article.abstract.slice(0, 200) + '...'
 
   const favoriteColor = favoriteState ? 'error' : 'inherit'
 
@@ -106,7 +108,7 @@ const ArticleCard: React.FC<Props> = (props) => {
             <MoreVertIcon />
           </IconButton>
         }
-        title={article.title}
+        title={articleTitle}
         subheader={article.createdAt}
         className={classes.cardHeader}
       />
@@ -120,7 +122,7 @@ const ArticleCard: React.FC<Props> = (props) => {
       </CardActionArea>
       <CardContent className={classes.abstract}>
         <Typography variant="body2" color="textSecondary" component="p">
-          {article.abstract}
+          {articleAbstract}
         </Typography>
       </CardContent>
       <Box className={classes.buttonActions}>
@@ -150,13 +152,20 @@ const ArticleCard: React.FC<Props> = (props) => {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      maxWidth: 345,
-      marginTop: '1.5rem',
-      marginBottom: '1.5rem',
+      minWidth: theme.spacing(37),
+      maxWidth: theme.spacing(43),
+      minHeight: theme.spacing(50),
+      marginTop: theme.spacing(3),
+      marginBottom: theme.spacing(3),
+      marginRight: theme.spacing(1),
+      marginLeft: theme.spacing(1),
       flexGrow: 1
     },
     cardHeader: {
       height: '20%'
+    },
+    cardAction: {
+      height: '56.25%'
     },
     media: {
       height: '56.25%',
