@@ -36,7 +36,9 @@ const FollowList: React.FC<Props> = (props) => {
   const userBox = (a: any) => {
     return (
       <Paper key={a.codename} className={classes.content}>
-        <Avatar className={classes.avatar} src={process.env.PUBLIC_URL + '/' + a.avatarUrl} />
+        <a href={'/' + a.codename}>
+          <Avatar aria-label="recipe" src={process.env.PUBLIC_URL + '/' + a.avatarUrl} />
+        </a>
         <Box>
           <Typography variant="h5" component="h5">
             {a.name}
@@ -72,8 +74,7 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(5)
   },
 
-  codename: {
-  }
+  codename: {}
 }))
 
 export default FollowList
