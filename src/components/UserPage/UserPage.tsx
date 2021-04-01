@@ -17,8 +17,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import userReducer, { fetchProfile } from '../../reducer/userReducer'
 import { useParams } from 'react-router'
 
-import FavoriteList from './FavoriteList'
-import UserArticleList from './UserArticleList'
+import UserArticleList from '../UtilComponent/ArticleListComponent'
 import qs from 'qs'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
@@ -66,15 +65,15 @@ const UserPage = () => {
   const RenderComponent = () => {
     switch (value) {
       case 0:
-        return <UserArticleList />
+        return <UserArticleList type="user" />
       case 1:
-        return <FavoriteList />
+        return <UserArticleList type="favorite" />
       case 2:
         return <FollowList type={true} />
       case 3:
         return <FollowList type={false} />
       default:
-        return <UserArticleList />
+        return <UserArticleList type="user" />
     }
   }
 

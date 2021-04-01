@@ -19,7 +19,6 @@ import ShareIcon from '@material-ui/icons/Share'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { Box, CardActionArea, Chip } from '@material-ui/core'
 import axios from 'axios'
-import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
 type Props = {
@@ -42,7 +41,6 @@ const categories = ['未分類', 'ペット', 'スポーツ', '小説', 'IT', '�
 
 const ArticleCard: React.FC<Props> = (props) => {
   const classes = useStyles()
-  const userId = useSelector((state) => state.authReducer.id)
   const article = props.article
   const [favoriteCount, setFavoriteCount] = useState(article.favoriteCount)
   const [favoriteState, setFavoriteState] = useState(props.article.isFavorite)
@@ -61,7 +59,7 @@ const ArticleCard: React.FC<Props> = (props) => {
     try {
       const { data } = await axios.post(
         '/api/favorite',
-        qs.stringify({ userId, articleId: article.id })
+        qs.stringify({ articleId: article.id })
       )
       if (!data) {
         history.push('/login')

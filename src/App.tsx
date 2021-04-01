@@ -7,13 +7,14 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import RichEditor from './components/RichEditor/RichEditor'
 
 import Signup from './components/Login/Signup'
-import Posts from './components/ArticlePage/ArticleList'
+
 import Login from './components/Login/Login'
 import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 import ArticlePage from './components/ArticlePage/ArticlePage'
 import UserPage from './components/UserPage/UserPage'
+import ArticleListComponent from './components/UtilComponent/ArticleListComponent'
 
 axios.defaults.withCredentials = true
 
@@ -52,7 +53,7 @@ const App: React.FC = () => {
           <Layout>
             <Switch>
               <Redirect exact from="/" to="/home" />
-              <Route path="/home" exact component={Posts} />
+              <Route path="/home" exact render={() => <ArticleListComponent type="category" />} />
               <Route path="/edit/:codename/:articleId" component={RichEditor} />
               <Route path="/:codename/:articleId" component={ArticlePage} />
               <Route path="/signup" component={Signup} />
