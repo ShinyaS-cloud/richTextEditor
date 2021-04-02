@@ -9,7 +9,7 @@ import { AppBar, Box, makeStyles, Tab, Tabs } from '@material-ui/core'
 import MyCircular from './myCircular'
 
 type Props = {
-  type: 'user' | 'favorite' | 'category'
+  type: 'user' | 'favorite' | 'category' | 'comment'
 }
 
 const ArticleListComponent: React.FC<Props> = (props) => {

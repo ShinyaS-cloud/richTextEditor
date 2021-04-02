@@ -22,8 +22,12 @@ const VerticalTabs: React.FC<Props> = (props) => {
     try {
       dispatch(articleReducer.actions.articleInit())
       const { data } = await axios.get('/api/newpost')
-      const { articleId, codename } = data
-      history.push('/edit/' + codename + '/' + articleId)
+      if (data.authorizationRequired) {
+        history.push('/login')
+      } else {
+        const { articleId, codename } = data
+        history.push('/edit/' + codename + '/' + articleId)
+      }
     } catch (err) {
       console.log(err)
     }

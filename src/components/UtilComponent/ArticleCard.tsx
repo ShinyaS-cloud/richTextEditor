@@ -57,11 +57,8 @@ const ArticleCard: React.FC<Props> = (props) => {
 
   const favoriteHandler = async () => {
     try {
-      const { data } = await axios.post(
-        '/api/favorite',
-        qs.stringify({ articleId: article.id })
-      )
-      if (!data) {
+      const { data } = await axios.post('/api/favorite', qs.stringify({ articleId: article.id }))
+      if (data.authorizationRequired) {
         history.push('/login')
       } else {
         setFavoriteCount(data.favoriteCount)

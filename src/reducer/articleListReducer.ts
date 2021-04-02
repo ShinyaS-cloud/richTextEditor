@@ -39,7 +39,7 @@ type argType = {
   categoryNumber: number
   userId: number
   next: number
-  type: 'user' | 'favorite' | 'category'
+  type: 'user' | 'favorite' | 'category' | 'comment'
 }
 
 export const fetchArticleList = createAsyncThunk('/api/articleList/', async (arg: argType) => {
@@ -58,7 +58,6 @@ export const fetchArticleList = createAsyncThunk('/api/articleList/', async (arg
       }
     })
 
-    console.log(data)
     data.map((r: typeof initialState.article[0]) => {
       r.createdAt = translateDate(r.createdAt)
       r.updatedAt = translateDate(r.updatedAt)

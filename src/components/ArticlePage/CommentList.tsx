@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchComment } from '../../reducer/commentReducer'
 import { Box, Button, Collapse, TextField } from '@material-ui/core'
 import axios from 'axios'
+import { useHistory } from 'react-router'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,6 +38,7 @@ const CommentList: React.FC<Props> = (props) => {
   const stateComment = useSelector((state) => state.commentReducer.commentArray)
   const comment = stateComment.slice(1)
   const dispatch = useDispatch()
+  const history = useHistory()
 
   useEffect(() => {
     dispatch(fetchComment(props.articleId))
@@ -54,9 +56,14 @@ const CommentList: React.FC<Props> = (props) => {
 
   const deleteHandler = async (comment: any) => {
     try {
-      await axios.delete('/api/comment/delete', {
+      const { data } = await axios.delete('/api/comment/delete', {
         params: { commentId: comment.comment.id }
       })
+      if (data.authorizationRequired) {
+        history.push('/home')
+      } else {
+        return
+      }
     } catch (error) {
       console.log(error)
     }

@@ -122,10 +122,15 @@ const ArticlePage = () => {
     }
 
     try {
-      await axios.delete('/api/article/delete', {
+      const { data } = await axios.delete('/api/article/delete', {
         params: { articleId: +articleId }
       })
-      history.push('/' + article.user.codename)
+      if (data.authorizationRequired) {
+        setSnackOpen(true)
+        return
+      } else {
+        history.push('/' + article.user.codename)
+      }
     } catch (error) {
       console.log(error)
     }
