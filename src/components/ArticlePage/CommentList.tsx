@@ -24,7 +24,10 @@ const useStyles = makeStyles((theme: Theme) =>
     inline: {
       display: 'inline'
     },
-    title: { padding: theme.spacing(2) }
+    title: { padding: theme.spacing(2) },
+    textField: {
+      width: '100%'
+    }
   })
 )
 
@@ -44,11 +47,11 @@ const CommentList: React.FC<Props> = (props) => {
     dispatch(fetchComment(props.articleId))
   }, [dispatch, props.articleId])
 
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(-1)
 
   const editHandler = async (comment: any) => {
     try {
-      setExpanded(true)
+      setExpanded(comment.comment.id)
     } catch (error) {
       console.log(error)
     }
@@ -57,7 +60,7 @@ const CommentList: React.FC<Props> = (props) => {
   const deleteHandler = async (comment: any) => {
     try {
       const { data } = await axios.delete('/api/comment/delete', {
-        params: { commentId: comment.comment.id }
+        params: { commentId: comment.id }
       })
       if (data.authorizationRequired) {
         history.push('/home')
@@ -67,6 +70,10 @@ const CommentList: React.FC<Props> = (props) => {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const sendHandler = async (comment: any) => {
+    setExpanded(-1)
   }
 
   type editProps = {
@@ -137,17 +144,17 @@ const CommentList: React.FC<Props> = (props) => {
               }
             />
             <EditButton comment={c} />
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-              <TextField
-                id="filled-multiline-static"
-                label="Multiline"
-                multiline
-                rows={4}
-                defaultValue="Default Value"
-                variant="filled"
-              />
-            </Collapse>
           </ListItem>
+          <Collapse in={expanded === c.comment.id} timeout="auto" unmountOnExit>
+            <TextField
+              className={classes.textField}
+              id="filled-multiline-static"
+              defaultValue={c.comment.comment}
+              multiline
+              rows={4}
+            />
+            <Button onClick={() => sendHandler(c)}>送信</Button>
+          </Collapse>
           <Divider />
         </div>
       )
