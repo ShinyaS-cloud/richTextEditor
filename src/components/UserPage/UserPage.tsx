@@ -17,8 +17,6 @@ const UserPage = () => {
   const user = useSelector((state) => state.userReducer)
   const [value, setValue] = useState(0)
 
-  console.log(user)
-
   const param = useParams<Params>()
   const dispatch = useDispatch()
 

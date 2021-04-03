@@ -37,7 +37,7 @@ type Props = {
     user: { codename: string; avatarUrl: string }
   }
 }
-const categories = ['未分類', 'ペット', 'スポーツ', '小説', 'IT', 'フード']
+const categories = ['ペット', 'スポーツ', '小説', 'IT', 'フード', '未分類']
 
 const ArticleCard: React.FC<Props> = (props) => {
   const classes = useStyles()

@@ -90,7 +90,7 @@ const ArticleListComponent: React.FC<Props> = (props) => {
         'aria-controls': `scrollable-auto-tabpanel-${index}`
       }
     }
-    const categoriesJa = ['未分類', 'ペット', 'スポーツ', '小説', 'IT', 'フード']
+    const categoriesJa = ['ペット', 'スポーツ', '小説', 'IT', 'フード', '未分類']
     return (
       <div>
         <AppBar position="static" color="default">
