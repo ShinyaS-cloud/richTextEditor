@@ -66,13 +66,13 @@ const UserPage = () => {
               value={value}
               onChange={handleChange}
               variant="scrollable"
-              scrollButtons="auto"
+              scrollButtons="on"
               aria-label="simple tabs example"
             >
               <Tab label={user.name + 'の記事'} {...a11yProps(0)} />
               <Tab label="お気に入り" {...a11yProps(1)} />
-              <Tab label="フォローしている" {...a11yProps(2)} />
-              <Tab label="フォローされている" {...a11yProps(3)} />
+              <Tab label="フォロー" {...a11yProps(2)} />
+              <Tab label="フォロワー" {...a11yProps(3)} />
               <Tab label="コメントを付けた記事" {...a11yProps(4)} />
             </Tabs>
           </AppBar>
@@ -86,7 +86,13 @@ const UserPage = () => {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '70%',
-    margin: '0 auto'
+    margin: '0 auto',
+    [theme.breakpoints.between('xs', 'sm')]: {
+      width: '95%'
+    },
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: '80%'
+    }
   },
   avatar: {
     width: theme.spacing(15),

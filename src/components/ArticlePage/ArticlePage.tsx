@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment, useEffect, useState } from 'react'
 import {
@@ -6,13 +7,12 @@ import {
   Button,
   Card,
   CardHeader,
-  CircularProgress,
   IconButton,
   makeStyles,
   Snackbar,
   Typography
 } from '@material-ui/core'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import {
   CompositeDecorator,
   ContentBlock,
@@ -25,8 +25,8 @@ import {
 import Immutable from 'immutable'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { red } from '@material-ui/core/colors'
-import { fetchArticle } from '../../reducer/articleReducer'
-import { useParams } from 'react-router'
+import { translateDate, initialState } from '../UtilComponent/articleUtils'
+
 import {
   handleStrategy,
   hashtagStrategy,
@@ -38,14 +38,9 @@ import { Link, findLinkEntities } from '../RichEditor/Decorators/LinkDecorator'
 
 import CommentList from './CommentList'
 
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { Alert } from '@material-ui/lab'
-
-/**
- * paramsの型
- */
-type thisPageParams = { articleId: string }
 
 /**
  * custom block の定義
@@ -85,51 +80,75 @@ const ArticlePage = () => {
   ])
 
   const classes = useStyle()
-  const dispatch = useDispatch()
-  const loading = useSelector((state) => state.articleReducer.loading)
-  const article = useSelector((state) => state.articleReducer.article)
   const auth = useSelector((state) => state.authReducer)
   const history = useHistory()
 
-  const contentState = convertFromRaw(article.content)
+  const location = useLocation()
+  const pathname = location.pathname.split('/')
+  const articleId = pathname[2]
+  const codename = pathname[1]
 
-  // eslint-disable-next-line no-unused-vars
-  const dummyHandler = (a: EditorState) => {}
-
-  const { articleId } = useParams<thisPageParams>()
+  const [article, setArticle] = useState(initialState)
+  const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
+  const {
+    id,
+    title,
+    imageUrl,
+    category,
+    content,
+    userId,
+    createdAt,
+    updatedAt,
+    isFavorite,
+    favoriteCount,
+    isPublic,
+    user
+  } = article
 
   const [snackOpen, setSnackOpen] = useState(false)
 
+  const fetch = async (articleId: number) => {
+    try {
+      const { data } = await axios.get('/api/article', {
+        params: { id: articleId }
+      })
+      data.createdAt = translateDate(data.createdAt)
+      data.updatedAt = translateDate(data.updatedAt)
+      return data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchArticle = async () => {
+    const article = await fetch(+articleId)
+    const contentState = convertFromRaw(article.content)
+    setEditorState(EditorState.createWithContent(contentState, compositeDecorator))
+    setArticle(article)
+  }
   useEffect(() => {
-    dispatch(fetchArticle(+articleId))
+    fetchArticle()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const editHandler = async () => {
     try {
-      history.push('/edit/' + article.user.codename + '/' + articleId)
+      history.push('/edit/' + codename + '/' + articleId)
     } catch (error) {
       console.log(error)
     }
   }
 
   const deleteHandler = async () => {
-    const cookieValue = document.cookie.split('; ').find((row) => row.startsWith('_csrf'))
-
-    if (cookieValue === undefined) {
-      setSnackOpen(true)
-      return
-    }
-
     try {
       const { data } = await axios.delete('/api/article/delete', {
-        params: { articleId: +articleId }
+        data: { articleId: +articleId }
       })
       if (data.authorizationRequired) {
         setSnackOpen(true)
         return
       } else {
-        history.push('/' + article.user.codename)
+        history.push('/' + codename)
       }
     } catch (error) {
       console.log(error)
@@ -151,11 +170,11 @@ const ArticlePage = () => {
   }
 
   const AvatarArea = (
-    <a href={'/' + article.user.codename}>
+    <a href={'/' + codename}>
       <Avatar
         aria-label="recipe"
         className={classes.avatar}
-        src={process.env.PUBLIC_URL + '/' + article.user.avatarUrl}
+        src={process.env.PUBLIC_URL + '/' + user.avatarUrl}
       />
     </a>
   )
@@ -165,13 +184,11 @@ const ArticlePage = () => {
     </IconButton>
   )
 
-  const Title: any = article.title
-
   const EditorComponent: any = (
     <Editor
       customStyleMap={customStyleMap}
-      editorState={EditorState.createWithContent(contentState, compositeDecorator)}
-      onChange={dummyHandler}
+      editorState={editorState}
+      onChange={setEditorState}
       blockRenderMap={extendedBlockRenderMap}
       blockStyleFn={myBlockStyleFn}
       readOnly={true}
@@ -179,7 +196,7 @@ const ArticlePage = () => {
   )
 
   const EditButton: React.FC = () => {
-    if (auth.id === article.userId) {
+    if (auth.id === userId) {
       return (
         <div>
           <Button onClick={editHandler} variant="contained" color="primary">
@@ -202,7 +219,7 @@ const ArticlePage = () => {
     setSnackOpen(false)
   }
 
-  let renderComponent = (
+  const renderComponent = (
     <Fragment>
       <Snackbar open={snackOpen} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
@@ -215,11 +232,11 @@ const ArticlePage = () => {
             className={classes.header}
             avatar={AvatarArea}
             action={Action}
-            title={Title}
-            subheader={article.createdAt}
+            title={title}
+            subheader={createdAt}
           />
           <Typography className={classes.title} variant="h3">
-            {Title}
+            {title}
           </Typography>
           {EditorComponent}
         </Card>
@@ -232,13 +249,6 @@ const ArticlePage = () => {
       </Box>
     </Fragment>
   )
-  if (loading) {
-    renderComponent = (
-      <div className={classes.circular}>
-        <CircularProgress size="5rem" />
-      </div>
-    )
-  }
 
   return <div className={classes.root}>{renderComponent}</div>
 }
@@ -292,7 +302,13 @@ const useStyle = makeStyles((theme) => ({
     minHeight: '50rem',
     padding: '3rem 2rem',
     fontSize: ' 18px ',
-    cursor: 'text'
+    cursor: 'text',
+    [theme.breakpoints.between('xs', 'sm')]: {
+      width: '95%'
+    },
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: '80%'
+    }
   },
   avatar: {
     backgroundColor: red[500]

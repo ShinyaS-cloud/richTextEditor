@@ -11,15 +11,19 @@ import {
   convertToRaw,
   convertFromRaw
 } from 'draft-js'
+import EditIcon from '@material-ui/icons/Edit'
 import {
   Box,
   Button,
   Divider,
-  Drawer,
+  Fab,
   FormControl,
+  IconButton,
   makeStyles,
   MenuItem,
+  Paper,
   Select,
+  Slide,
   TextField,
   useMediaQuery
 } from '@material-ui/core'
@@ -30,10 +34,12 @@ import SaveButton from './Buttons/SaveButton'
 import { handleStrategy, hashtagStrategy, HandleSpan, HashtagSpan } from './Decorators/HashTag'
 import { Link, findLinkEntities } from './Decorators/LinkDecorator'
 import Immutable from 'immutable'
-import { RouteComponentProps, useParams } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchArticle } from '../../reducer/articleReducer'
+import { RouteComponentProps, useLocation } from 'react-router-dom'
+import { translateDate } from '../UtilComponent/articleUtils'
 import axios from 'axios'
+import { useTheme } from '@material-ui/core/styles'
+import { HighlightOff } from '@material-ui/icons'
+import ImageComponent from './ImageComponent/ImageComponent'
 
 const myCustomBlock = Immutable.Map({
   right: {
@@ -54,7 +60,6 @@ type UserProps = RouteComponentProps<{
 /**
  * paramsの型
  */
-type thisPageParams = { articleId: string }
 
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
@@ -77,19 +82,19 @@ const RichEditor: React.FC<UserProps> = (props) => {
   /**
    * states
    */
-  const { articleId } = useParams<thisPageParams>()
 
-  const dispatch = useDispatch()
+  const location = useLocation()
+  const pathname = location.pathname.split('/')
+  const articleId = pathname[3]
+  const codename = pathname[2]
 
   const classes = useStyle()
-  const article = useSelector((state) => state.articleReducer.article)
 
-  const contentState = convertFromRaw(article.content)
-  const [editorState, setEditorState] = useState(
-    EditorState.createWithContent(contentState, compositeDecorator)
-  )
-  const [title, setTitle] = useState(article.title)
-  const [category, setCategory] = useState(article.category)
+  const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
+  const [title, setTitle] = useState('')
+  const [category, setCategory] = useState(0)
+  const contentState = editorState.getCurrentContent()
+
   const refEditorState = useRef(editorState)
   const refTitle = useRef(title)
   const refCategory = useRef(category)
@@ -98,8 +103,32 @@ const RichEditor: React.FC<UserProps> = (props) => {
 
   const ref = useRef<Editor>(null)
 
+  /**
+   * ここからredux-toolkit使わないパターン
+   */
+
+  const fetch = async (articleId: number) => {
+    try {
+      const { data } = await axios.get('/api/article', {
+        params: { id: articleId }
+      })
+      data.createdAt = translateDate(data.createdAt)
+      data.updatedAt = translateDate(data.updatedAt)
+      return data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchArticle = async () => {
+    const article = await fetch(+articleId)
+    const contentState = convertFromRaw(article.content)
+    setEditorState(EditorState.createWithContent(contentState, compositeDecorator))
+    setCategory(article.category)
+    setTitle(article.title)
+  }
   useEffect(() => {
-    dispatch(fetchArticle(+articleId))
+    fetchArticle()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -131,7 +160,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
     }
     const saveTime = setInterval(() => {
       save()
-    }, 10000)
+    }, 5000)
     return () => {
       clearInterval(saveTime)
       save()
@@ -156,7 +185,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
     }
   }
 
-  const categories = ['pet', 'sports', 'novel', 'IT', 'food']
+  const categories = ['ペット', 'スポーツ', '小説', 'IT', 'フード', '未分類']
 
   const Selects = categories.map((c) => {
     const index = categories.indexOf(c)
@@ -236,9 +265,6 @@ const RichEditor: React.FC<UserProps> = (props) => {
 
   const urlComponent = (
     <Fragment>
-      <Box style={{ marginBottom: 10 }}>
-        Select some text, then use the buttons to add or remove links on the selected text.
-      </Box>
       <Box>
         <button onMouseDown={promptForLink} style={{ marginRight: 10 }}>
           Add Link
@@ -249,36 +275,44 @@ const RichEditor: React.FC<UserProps> = (props) => {
     </Fragment>
   )
 
-  const match = useMediaQuery('(min-width:600px)')
+  /**
+   * Drawer
+   */
+
+  const theme = useTheme()
+
+  const match = useMediaQuery(theme.breakpoints.between('md', 'xl'))
   const [open, setOpen] = useState(false)
-  const toggleDrawer = (b: boolean) => (e: any) => {
-    if (
-      e.type === 'keydown' &&
-      ((e as React.KeyboardEvent).key === 'Tab' || (e as React.KeyboardEvent).key === 'Shift')
-    ) {
-      return
-    }
-    setOpen(b)
+  const toggleDrawer = () => {
+    setOpen((b) => !b)
   }
+
   const ButtonColorLinks = () => {
     if (!match) {
       return (
         <Fragment>
-          <Button onClick={toggleDrawer(true)}>anchor</Button>
-          <Drawer
-            open={open}
-            onClose={toggleDrawer(false)}
-            anchor="bottom"
-            className={classes.buttonContainer}
+          <Fab
+            className={classes.floatButton}
+            onMouseDown={toggleDrawer}
+            color="secondary"
+            aria-label="edit"
           >
-            <StyleButtons editorState={editorState} setEditorState={setEditorState} />
-            <Divider />
-            <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
-            <Divider />
-            <ColorButtons editorState={editorState} setEditorState={setEditorState} />
-            <Divider />
-            {urlComponent}
-          </Drawer>
+            <EditIcon />
+          </Fab>
+          <Slide direction="up" in={open} mountOnEnter unmountOnExit>
+            <Paper className={classes.buttonCard}>
+              <IconButton onMouseDown={toggleDrawer}>
+                <HighlightOff />
+              </IconButton>
+              <StyleButtons editorState={editorState} setEditorState={setEditorState} />
+              <Divider />
+              <BlockTagButtons editorState={editorState} setEditorState={setEditorState} />
+              <Divider />
+              <ColorButtons editorState={editorState} setEditorState={setEditorState} />
+              <Divider />
+              {urlComponent}
+            </Paper>
+          </Slide>
         </Fragment>
       )
     } else {
@@ -323,14 +357,18 @@ const RichEditor: React.FC<UserProps> = (props) => {
             {Selects}
           </Select>
         </FormControl>
+        <Button>公開</Button>
         <Box className={classes.saveButton}>
           <SaveButton
             editorState={editorState}
             title={title}
             category={category}
             articleId={props.match.params.articleId}
-            codename={article.user.codename}
+            codename={codename}
           />
+        </Box>
+        <Box>
+          <ImageComponent />
         </Box>
       </Box>
       <Box className={classes.dummyFormContainer} />
@@ -366,10 +404,26 @@ const customStyleMap: DraftStyleMap = {
 const buttonContainerWidth = '15%'
 const formContainerWidth = '20%'
 /// style
-const useStyle = makeStyles({
+const useStyle = makeStyles((theme) => ({
   root: { display: 'flex' },
-  buttonContainer: { padding: '0 1rem', width: buttonContainerWidth, position: 'fixed' },
-  dummyButtonContainer: { flexBasis: buttonContainerWidth },
+  floatButton: {
+    position: 'fixed'
+  },
+  buttonContainer: {
+    padding: '0 1rem',
+    width: buttonContainerWidth,
+    position: 'fixed'
+  },
+  dummyButtonContainer: {
+    flexBasis: buttonContainerWidth,
+    [theme.breakpoints.between('xs', 'sm')]: {
+      flexBasis: '0%'
+    }
+  },
+  buttonCard: {
+    position: 'fixed',
+    bottom: theme.spacing(2)
+  },
   formContainer: { padding: '0 1rem', width: formContainerWidth, position: 'fixed', right: 0 },
   dummyFormContainer: { flexBasis: formContainerWidth },
   editor: {
@@ -382,7 +436,13 @@ const useStyle = makeStyles({
     fontSize: ' 18px ',
     cursor: 'text',
     flex: '1',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    [theme.breakpoints.between('xs', 'sm')]: {
+      width: '95%'
+    },
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: '80%'
+    }
   },
   text: {
     textAlign: 'center'
@@ -406,7 +466,7 @@ const useStyle = makeStyles({
   left: {
     textAlign: 'left'
   }
-})
+}))
 
 const styles = {
   handle: {

@@ -4,7 +4,6 @@ import { EditorState, RichUtils } from 'draft-js'
 import { Box, IconButton, makeStyles, Menu, MenuItem } from '@material-ui/core'
 import {
   FormatQuote,
-  Code,
   FormatListBulleted,
   FormatListNumbered,
   FormatAlignLeft,
@@ -93,9 +92,6 @@ const BlockTagButtons: React.FC<Props> = (props) => {
       </Menu>
       <IconButton key="blockquote" onMouseDown={(e) => blockChangeButton(e, 'blockquote')}>
         <FormatQuote />
-      </IconButton>
-      <IconButton key="code-block" onMouseDown={(e) => blockChangeButton(e, 'code-block')}>
-        <Code />
       </IconButton>
       <IconButton
         key="unordered-list-item"

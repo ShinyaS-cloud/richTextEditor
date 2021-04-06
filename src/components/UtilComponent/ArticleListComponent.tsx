@@ -100,7 +100,7 @@ const ArticleListComponent: React.FC<Props> = (props) => {
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
-            scrollButtons="auto"
+            scrollButtons='on'
             aria-label="scrollable auto tabs example"
           >
             <Tab label={categoriesJa[0]} {...a11yProps(0)} />

@@ -59,7 +59,7 @@ const ColorButtons: React.FC<Props> = (props) => {
     if (!currentStyle.has(toggledColor)) {
       nextEditorState = RichUtils.toggleInlineStyle(nextEditorState, toggledColor)
     }
-    console.log('nextEditorStateInlineStyle', nextEditorState.getCurrentInlineStyle().toJS())
+
     props.setEditorState(nextEditorState)
   }
 

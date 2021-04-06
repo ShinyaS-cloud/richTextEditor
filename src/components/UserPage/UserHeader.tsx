@@ -48,26 +48,35 @@ const UserHeader = () => {
 
   return (
     <Box>
-      <CardMedia component="img" height="300" src={user.headerUrl} />
+      <CardMedia className={classes.header} component="img" height="300" src={user.headerUrl} />
       <CardContent className={classes.cardContent}>
-        <Avatar className={classes.avatar} src={process.env.PUBLIC_URL + '/' + user.avatarUrl} />
-        <Box>
-          <Typography variant="h5" component="h3">
-            {user.name}
-          </Typography>
-          <Typography className={classes.codename} variant="inherit" component="h3">
-            @{user.codename}
-          </Typography>
+        <Box className={classes.nameAvatarComponent}>
+          <Avatar className={classes.avatar} src={process.env.PUBLIC_URL + '/' + user.avatarUrl} />
+          <Box>
+            <Typography className={classes.name} variant="h5" component="h3">
+              {user.name}
+            </Typography>
+            <Typography className={classes.codename} variant="inherit" component="h3">
+              @{user.codename}
+            </Typography>
+          </Box>
         </Box>
-        <Button className={followButtonClass} variant="contained" onClick={toggleFollowHandler}>
-          {followButtonOption}
-        </Button>
-        <Typography className={classes.follower} variant="inherit" component="h3">
-          {'フォローしているユーザー：' + user.followerCount}
-        </Typography>
-        <Typography className={classes.follower} variant="inherit" component="h3">
-          {'フォローされているユーザー：' + followeeCount}
-        </Typography>
+
+        <Box className={classes.followerComponent}>
+          <Box>
+            <Button className={followButtonClass} variant="contained" onClick={toggleFollowHandler}>
+              {followButtonOption}
+            </Button>
+          </Box>
+          <Box className={classes.followCounter}>
+            <Typography className={classes.follower} variant="inherit" component="h3">
+              {'フォロー：' + user.followerCount}
+            </Typography>
+            <Typography className={classes.follower} variant="inherit" component="h3">
+              {'フォロワー：' + followeeCount}
+            </Typography>
+          </Box>
+        </Box>
       </CardContent>
       <CardContent>
         <Typography color="textSecondary" component="p">
@@ -79,35 +88,99 @@ const UserHeader = () => {
 }
 
 const useStyles = makeStyles((theme) => ({
+  header: {
+    [theme.breakpoints.between('sm', 'md')]: {
+      height: theme.spacing(40)
+    },
+    [theme.breakpoints.between('xs', 'sm')]: {
+      height: theme.spacing(24)
+    }
+  },
   avatar: {
     width: theme.spacing(15),
     height: theme.spacing(15),
-    top: -theme.spacing(9)
+    top: -theme.spacing(9),
+    [theme.breakpoints.between('sm', 'md')]: {
+      width: theme.spacing(14),
+      height: theme.spacing(14),
+      top: -theme.spacing(8)
+    },
+    [theme.breakpoints.between('xs', 'sm')]: {
+      width: theme.spacing(12),
+      height: theme.spacing(12),
+      top: -theme.spacing(7)
+    }
   },
   cardContent: {
     display: 'flex',
-    maxHeight: theme.spacing(13)
+    maxHeight: theme.spacing(13),
+
+    justifyContent: 'space-between'
+  },
+  nameAvatarComponent: {
+    display: 'flex'
   },
   codename: {
     color: 'gray'
+  },
+  name: {
+    [theme.breakpoints.between('sm', 'md')]: {
+      fontSize: '20px'
+    },
+    [theme.breakpoints.between('xs', 'sm')]: {
+      fontSize: '15px'
+    }
+  },
+  followerComponent: {
+    display: 'flex',
+    [theme.breakpoints.between('sm', 'md')]: {
+      display: 'flex'
+    },
+    [theme.breakpoints.between('xs', 'sm')]: {
+      display: 'inline'
+    }
+  },
+  followCounter: {
+    display: 'flex'
   },
   follower: {
     color: 'gray',
     marginTop: theme.spacing(2),
     marginLeft: theme.spacing(3),
-    marginRight: theme.spacing(3)
+    marginRight: theme.spacing(3),
+    [theme.breakpoints.between('sm', 'md')]: {
+      marginTop: theme.spacing(2),
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1)
+    },
+    [theme.breakpoints.between('xs', 'sm')]: {
+      marginTop: theme.spacing(2),
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+      fontSize: '12px'
+    }
   },
   followButtonOn: {
     top: theme.spacing(1),
     height: theme.spacing(5),
     marginLeft: theme.spacing(3),
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.secondary.main,
+    [theme.breakpoints.between('xs', 'sm')]: {
+      height: theme.spacing(4),
+      marginLeft: theme.spacing(1),
+      fontSize: '12px'
+    }
   },
   followButtonOff: {
     top: theme.spacing(1),
     height: theme.spacing(5),
     marginLeft: theme.spacing(3),
-    backgroundColor: theme.palette.grey[100]
+    backgroundColor: theme.palette.grey[100],
+    [theme.breakpoints.between('xs', 'sm')]: {
+      height: theme.spacing(4),
+      marginLeft: theme.spacing(1),
+      fontSize: '12px'
+    }
   }
 }))
 

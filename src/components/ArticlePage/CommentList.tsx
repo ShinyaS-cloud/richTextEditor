@@ -10,26 +10,11 @@ import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchComment } from '../../reducer/commentReducer'
-import { Box, Button, Collapse, TextField } from '@material-ui/core'
+import { Box, Button, Snackbar, TextField } from '@material-ui/core'
 import axios from 'axios'
 import { useHistory } from 'react-router'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '60%',
-      minHeight: theme.spacing(50),
-      backgroundColor: theme.palette.background.paper
-    },
-    inline: {
-      display: 'inline'
-    },
-    title: { padding: theme.spacing(2) },
-    textField: {
-      width: '100%'
-    }
-  })
-)
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 
 type Props = {
   articleId: number
@@ -40,6 +25,9 @@ const CommentList: React.FC<Props> = (props) => {
   const auth = useSelector((state) => state.authReducer)
   const stateComment = useSelector((state) => state.commentReducer.commentArray)
   const comment = stateComment.slice(1)
+  const [open, setOpen] = useState(false)
+  const [alertNumber, setAlertNumber] = useState(0)
+  const [commentValue, setCommentValue] = useState('')
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -47,33 +35,99 @@ const CommentList: React.FC<Props> = (props) => {
     dispatch(fetchComment(props.articleId))
   }, [dispatch, props.articleId])
 
-  const [expanded, setExpanded] = useState(-1)
-
-  const editHandler = async (comment: any) => {
-    try {
-      setExpanded(comment.comment.id)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   const deleteHandler = async (comment: any) => {
     try {
       const { data } = await axios.delete('/api/comment/delete', {
-        params: { commentId: comment.id }
+        data: { commentId: comment.comment.id }
       })
       if (data.authorizationRequired) {
-        history.push('/home')
-      } else {
-        return
+        return history.push('/home')
       }
+
+      dispatch(fetchComment(props.articleId))
     } catch (error) {
       console.log(error)
     }
   }
 
-  const sendHandler = async (comment: any) => {
-    setExpanded(-1)
+  const postForm = async () => {
+    try {
+      const formData = { comment: commentValue, articleId: props.articleId }
+      if (commentValue === '') {
+        setAlertNumber(2)
+        setOpen(true)
+        return
+      }
+      const { data } = await axios.post('/api/comment', formData)
+      if (data.success) {
+        setAlertNumber(1)
+        setOpen(true)
+        setCommentValue('')
+        dispatch(fetchComment(props.articleId))
+      } else {
+        setAlertNumber(0)
+        setOpen(true)
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  const commentChangeHandler = (e: any) => {
+    setCommentValue(e.target.value)
+  }
+
+  /**
+   * snackbar
+   */
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setOpen(false)
+  }
+
+  const Alert = (props: AlertProps) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />
+  }
+
+  const AlertComponent = () => {
+    switch (alertNumber) {
+      case 0:
+        return (
+          <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              投稿できませんでした
+            </Alert>
+          </Snackbar>
+        )
+      case 1:
+        return (
+          <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success">
+              投稿しました
+            </Alert>
+          </Snackbar>
+        )
+      case 2:
+        return (
+          <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              コメントを記入してください
+            </Alert>
+          </Snackbar>
+        )
+
+      default:
+        return (
+          <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              コメントを記入してください
+            </Alert>
+          </Snackbar>
+        )
+    }
   }
 
   type editProps = {
@@ -93,9 +147,6 @@ const CommentList: React.FC<Props> = (props) => {
     if (auth.codename === props.comment.user.codename) {
       return (
         <div>
-          <Button onClick={() => editHandler(props.comment)} variant="contained" color="primary">
-            編集
-          </Button>
           <Button onClick={() => deleteHandler(props.comment)} variant="contained" color="primary">
             削除
           </Button>
@@ -145,16 +196,6 @@ const CommentList: React.FC<Props> = (props) => {
             />
             <EditButton comment={c} />
           </ListItem>
-          <Collapse in={expanded === c.comment.id} timeout="auto" unmountOnExit>
-            <TextField
-              className={classes.textField}
-              id="filled-multiline-static"
-              defaultValue={c.comment.comment}
-              multiline
-              rows={4}
-            />
-            <Button onClick={() => sendHandler(c)}>送信</Button>
-          </Collapse>
           <Divider />
         </div>
       )
@@ -163,13 +204,72 @@ const CommentList: React.FC<Props> = (props) => {
 
   return (
     <Box className={classes.root}>
+      <AlertComponent />
+
       <Typography component="h5" variant="h5" className={classes.title} color="textPrimary">
         コメント
       </Typography>
       <Divider />
       <List>{commentRenderComponent}</List>
+      <TextField
+        className={classes.text}
+        variant="outlined"
+        margin="normal"
+        multiline
+        rows={4}
+        required
+        value={commentValue}
+        onChange={commentChangeHandler}
+        fullWidth
+        id="text"
+        name="comment"
+      />
+
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        onClick={postForm}
+        className={classes.submit}
+      >
+        投稿
+      </Button>
     </Box>
   )
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: '60%',
+      minHeight: theme.spacing(50),
+      backgroundColor: theme.palette.background.paper,
+      [theme.breakpoints.between('xs', 'sm')]: {
+        width: '95%'
+      },
+      [theme.breakpoints.between('sm', 'lg')]: {
+        width: '80%'
+      }
+    },
+    inline: {
+      display: 'inline'
+    },
+    title: { padding: theme.spacing(2) },
+    textField: {
+      width: '100%'
+    },
+    form: {
+      width: '100%', // Fix IE 11 issue.
+      marginTop: theme.spacing(1)
+    },
+    text: {
+      height: theme.spacing(10)
+    },
+    submit: {
+      margin: theme.spacing(3, 0, 2)
+    }
+  })
+)
 
 export default CommentList

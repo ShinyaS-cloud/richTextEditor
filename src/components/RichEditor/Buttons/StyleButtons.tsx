@@ -2,13 +2,7 @@
 import React from 'react'
 import { EditorState, RichUtils } from 'draft-js'
 import { Box, IconButton, makeStyles } from '@material-ui/core'
-import {
-  FormatBold,
-  Code,
-  FormatItalic,
-  FormatStrikethrough,
-  FormatUnderlined
-} from '@material-ui/icons'
+import { FormatBold, FormatItalic, FormatStrikethrough, FormatUnderlined } from '@material-ui/icons'
 // import {
 //   FormatBold,
 //   Code,
@@ -35,9 +29,6 @@ const StyleButtons: React.FC<Props> = (props) => {
     <Box className={classes.root}>
       <IconButton key="BOLD" onClick={() => inlineChangeButton('BOLD')}>
         <FormatBold />
-      </IconButton>
-      <IconButton key="CODE" onClick={() => inlineChangeButton('CODE')}>
-        <Code />
       </IconButton>
       <IconButton key="ITALIC" onClick={() => inlineChangeButton('ITALIC')}>
         <FormatItalic />

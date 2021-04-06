@@ -5,8 +5,6 @@ import { Divider, Drawer, List, ListItem, ListItemText } from '@material-ui/core
 import { Link, useHistory } from 'react-router-dom'
 import { Create } from '@material-ui/icons'
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
-import articleReducer from '../../reducer/articleReducer'
 
 interface Props {
   open: boolean
@@ -16,12 +14,10 @@ interface Props {
 const VerticalTabs: React.FC<Props> = (props) => {
   const classes = useStyles()
   const history = useHistory()
-  const dispatch = useDispatch()
 
   const newArticleHandler = async () => {
     try {
-      dispatch(articleReducer.actions.articleInit())
-      const { data } = await axios.get('/api/newpost')
+      const { data } = await axios.post('/api/newpost')
       if (data.authorizationRequired) {
         history.push('/login')
       } else {
