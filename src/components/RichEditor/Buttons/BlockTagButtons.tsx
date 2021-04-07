@@ -10,16 +10,6 @@ import {
   FormatAlignCenter,
   FormatAlignRight
 } from '@material-ui/icons'
-// import {
-//   Code,
-//   FormatAlignCenter,
-//   FormatAlignLeft,
-//   FormatAlignRight,
-//   FormatListBulleted,
-//   FormatListNumbered,
-//   FormatQuote,
-//   Title
-// } from '@material-ui/icons'
 
 type Props = {
   editorState: EditorState
@@ -34,16 +24,6 @@ const headingType = [
   'header-five',
   'header-six'
 ]
-
-// const blockType = [
-//   'blockquote',
-//   'code-block',
-//   'unordered-list-item',
-//   'ordered-list-item',
-//   'left',
-//   'center',
-//   'right'
-// ]
 
 const BlockTagButtons: React.FC<Props> = (props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)

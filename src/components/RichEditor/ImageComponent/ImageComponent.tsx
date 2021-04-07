@@ -1,103 +1,77 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
-import Draft from 'draft-js'
+// import { EditorState, Modifier } from 'draft-js'
+import { EditorState, RichUtils } from 'draft-js'
+// import { AtomicBlockUtils, EditorState, RichUtils } from 'draft-js'
 
-const { AtomicBlockUtils, Editor, EditorState, convertToRaw } = Draft
+type Props = {
+  editorState: EditorState
+  setEditorState: React.Dispatch<React.SetStateAction<EditorState>>
+}
 
-const ImageComponent = () => {
+const ImageComponent: React.FC<Props> = (props) => {
   const classes = useStyles()
 
-  const [editorState, setEditorState] = useState(EditorState.createEmpty())
-  const [showURLInput, setShowURLInput] = useState(false)
-  const [urlValue, setUrlValue] = useState('')
-  const [urlType, setUrlType] = useState('')
+  const [showURLInputImage, setShowURLInputImage] = useState(false)
+  const [urlValueImage, setUrlValueImage] = useState('')
 
-  const logState = () => {
-    const content = editorState.getCurrentContent()
-    console.log(convertToRaw(content))
-  }
-  const onURLChange = (e: any) => setUrlValue(e.target.value)
-
-  // const handleKeyCommand = (command: any, editorState: any) => {
-  //   const newState = RichUtils.handleKeyCommand(editorState, command)
-  //   if (newState) {
-  //     setEditorState(newState)
-  //     return true
-  //   }
-  //   return false
-  // }
+  const onURLChange = (e: any) => setUrlValueImage(e.target.value)
 
   const confirmMedia = (e: any) => {
     e.preventDefault()
-    const contentState = editorState.getCurrentContent()
-    const contentStateWithEntity = contentState.createEntity(urlType, 'IMMUTABLE', {
-      src: urlValue
-    })
-    const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
-    const newEditorState = EditorState.set(editorState, { currentContent: contentStateWithEntity })
+    const contentState = props.editorState.getCurrentContent()
 
-    // The third parameter here is a space string, not an empty string
-    // If you set an empty string, you will get an error: Unknown DraftEntity key: null
-    setEditorState(AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, ' '))
-    setShowURLInput(false)
-    setUrlValue('')
+    const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', {
+      src: urlValueImage
+    })
+
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+    const newEditorState = EditorState.set(props.editorState, {
+      currentContent: contentStateWithEntity
+    })
+    props.setEditorState(
+      RichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey)
+    )
+    // const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+
+    // const newEditorState = EditorState.set(props.editorState, {
+    //   currentContent: contentStateWithEntity
+    // })
+
+    // // The third parameter here is a space string, not an empty string
+    // // If you set an empty string, you will get an error: Unknown DraftEntity key: null
+    // props.setEditorState(AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, ' '))
+
+    setShowURLInputImage(false)
+    setUrlValueImage('')
   }
 
-  const onURLInputKeyDown = (e: any) => {
+  const addImage = () => {
+    setShowURLInputImage(true)
+    setUrlValueImage('')
+  }
+
+  const onMediaInputKeyDown = (e: any) => {
     if (e.which === 13) {
       confirmMedia(e)
     }
   }
 
-  const promptForMedia = (type: any) => {
-    setShowURLInput(true)
-    setUrlValue('')
-    setUrlType(type)
-  }
-
-  const addImage = () => {
-    promptForMedia('image')
-  }
-
   let urlInput
-  if (showURLInput) {
+  if (showURLInputImage) {
     urlInput = (
       <div className={classes.urlInputContainer}>
         <input
           onChange={onURLChange}
           className={classes.urlInput}
           type="text"
-          value={urlValue}
-          onKeyDown={onURLInputKeyDown}
+          value={urlValueImage}
+          onKeyDown={onMediaInputKeyDown}
         />
         <button onMouseDown={confirmMedia}>Confirm</button>
       </div>
     )
-  }
-  const mediaBlockRenderer = (block: any) => {
-    if (block.getType() === 'atomic') {
-      return {
-        component: Media,
-        editable: false
-      }
-    }
-
-    return null
-  }
-
-  const Image = (props: any) => {
-    return <img src={props.src} className={classes.media} />
-  }
-
-  const Media = (props: any) => {
-    const entity = props.contentState.getEntity(props.block.getEntityAt(0))
-    const { src } = entity.getData()
-    // const type = entity.getType()
-
-    const media = <Image src={src} />
-
-    return media
   }
 
   return (
@@ -117,15 +91,6 @@ const ImageComponent = () => {
         </button>
       </div>
       {urlInput}
-      <div className={classes.editor} onClick={focus}>
-        <Editor
-          blockRendererFn={mediaBlockRenderer}
-          editorState={editorState}
-          onChange={setEditorState}
-          placeholder="Enter some text..."
-        />
-      </div>
-      <input onClick={logState} className={classes.button} type="button" value="Log State" />
     </div>
   )
 }
