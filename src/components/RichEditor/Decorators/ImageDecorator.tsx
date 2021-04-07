@@ -1,21 +1,31 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
+import { ContentBlock, ContentState } from 'draft-js'
 
 /**
  * Image
  */
 
-export const findImageEntities = (contentBlock: any, callback: any, contentState: any) => {
+export const findImageEntities = (
+  contentBlock: ContentBlock,
+  callback: any,
+  contentState: ContentState
+) => {
   contentBlock.findEntityRanges((character: any) => {
     const entityKey = character.getEntity()
-    console.log(entityKey)
     return entityKey !== null && contentState.getEntity(entityKey).getType() === 'IMAGE'
   }, callback)
 }
 
 export const Image = (props: any) => {
   const { src } = props.contentState.getEntity(props.entityKey).getData()
-  return <img src={src} style={styles.image} />
+  return (
+    <div>
+      <p> </p>
+      <img src={src} style={styles.image} />
+      <p> </p>
+    </div>
+  )
 }
 
 const styles = {

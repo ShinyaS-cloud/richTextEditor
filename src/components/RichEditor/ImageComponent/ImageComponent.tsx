@@ -15,11 +15,11 @@ const ImageComponent: React.FC<Props> = (props) => {
 
   const [showURLInputImage, setShowURLInputImage] = useState(false)
   const [urlValueImage, setUrlValueImage] = useState('')
-
   const onURLChange = (e: any) => setUrlValueImage(e.target.value)
 
   const confirmMedia = (e: any) => {
     e.preventDefault()
+
     const contentState = props.editorState.getCurrentContent()
 
     const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', {
@@ -33,15 +33,6 @@ const ImageComponent: React.FC<Props> = (props) => {
     props.setEditorState(
       RichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey)
     )
-    // const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
-
-    // const newEditorState = EditorState.set(props.editorState, {
-    //   currentContent: contentStateWithEntity
-    // })
-
-    // // The third parameter here is a space string, not an empty string
-    // // If you set an empty string, you will get an error: Unknown DraftEntity key: null
-    // props.setEditorState(AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, ' '))
 
     setShowURLInputImage(false)
     setUrlValueImage('')

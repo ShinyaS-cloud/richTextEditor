@@ -20,40 +20,6 @@ type Props = {
 const EditorComponent: React.FC<Props> = (props) => {
   const classes = useStyles()
   const ref = useRef<Editor>(null)
-  // const srcMap: any = []
-  // const editorState = props.editorState
-  // const entityKey = props.editorState.getCurrentContent().getLastCreatedEntityKey()
-
-  /**
-   * Mediaの処理
-   */
-
-  // const Media = (props: any) => {
-  //   console.log(props.block.toJS())
-  //   const entityKey = props.block.toJS().characterList[0].entity
-
-  //   console.log(entityKey)
-
-  //   const entity = props.contentState.getEntity(entityKey)
-  //   const { src } = entity.getData()
-  //   const media = <img src={src} className={classes.image} />
-  //   return media
-
-  //   // const { src } = editorState.getCurrentContent().getEntity(entityKey).getData()
-  //   // console.log(src)
-  //   // const media = <img src={src} className={classes.image} />
-  // }
-
-  // const mediaBlockRenderer = (block: any) => {
-  //   if (block.getType() === 'atomic') {
-  //     return {
-  //       component: Media,
-  //       editable: false
-  //     }
-  //   }
-
-  //   return null
-  // }
 
   const myBlockStyleFn = (contentBlock: ContentBlock) => {
     const type = contentBlock.getType()
