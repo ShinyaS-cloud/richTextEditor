@@ -29,6 +29,7 @@ import { useTheme } from '@material-ui/core/styles'
 import { HighlightOff } from '@material-ui/icons'
 
 import EditorComponent from './ImageEditor.jsx'
+// import Dropzone from 'react-dropzone'
 
 type UserProps = RouteComponentProps<{
   articleId: string
@@ -54,10 +55,18 @@ const RichEditor: React.FC<UserProps> = (props) => {
   // const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState(0)
+  const [abstract, setAbstract] = useState('')
+  // const [imageUrl, setImageUrl] = useState<any>([''])
+  const [isPublic, setIsPublic] = useState(false)
+  // eslint-disable-next-line no-unused-vars
+  const [isUpLoading, setIsUpLoading] = useState(false)
 
   const refEditorState = useRef(editorState)
   const refTitle = useRef(title)
   const refCategory = useRef(category)
+  const refAbstract = useRef(abstract)
+  // const refImageUrl = useRef(imageUrl)
+  const refIsPublic = useRef(isPublic)
 
   /**
    * ここからarticleを非同期で持ってくる処理
@@ -83,6 +92,8 @@ const RichEditor: React.FC<UserProps> = (props) => {
     // setEditorState(EditorState.createWithContent(contentState, compositeDecorator))
     setCategory(article.category)
     setTitle(article.title)
+    setAbstract(article.abstract)
+    setIsPublic(article.isPublic)
   }
   useEffect(() => {
     fetchArticle()
@@ -93,7 +104,10 @@ const RichEditor: React.FC<UserProps> = (props) => {
     refEditorState.current = editorState
     refCategory.current = category
     refTitle.current = title
-  }, [category, editorState, title])
+    refAbstract.current = abstract
+    // refImageUrl.current = imageUrl
+    refIsPublic.current = isPublic
+  }, [abstract, category, editorState, isPublic, title])
 
   useEffect(() => {
     const save = async () => {
@@ -104,9 +118,13 @@ const RichEditor: React.FC<UserProps> = (props) => {
           articleId: +articleId,
           title: refTitle.current,
           category: refCategory.current,
+          abstract: refAbstract.current,
+          // imageUrl: refImageUrl.current,
+          isPublic: refIsPublic.current,
           content: content
         }
       }
+      console.log(saveContent)
       console.log('save')
 
       try {
@@ -127,6 +145,8 @@ const RichEditor: React.FC<UserProps> = (props) => {
 
   const valueChangeHandler = (e: any) => setTitle(e.target.value)
   const categoryChangeHandler = (e: any) => setCategory(e.target.value)
+  const abstractChangeHandler = (e: any) => setAbstract(e.target.value)
+  const isPublicChangeHandler = () => setIsPublic(!isPublic)
 
   const categories = ['ペット', 'スポーツ', '小説', 'IT', 'フード', '未分類']
 
@@ -200,6 +220,38 @@ const RichEditor: React.FC<UserProps> = (props) => {
     }
   }
 
+  // const uploadImage = async (file: any) => {
+  //   const res = await axios.get('/upload', {
+  //     params: {
+  //       filename: file.name,
+  //       filetype: file.type
+  //     }
+  //   })
+  //   const options = {
+  //     headers: {
+  //       'Content-Type': file.type
+  //     }
+  //   }
+  //   const res1 = await axios.put(res.data.url, file, options)
+  //   const { name } = res1.config.data
+  //   return {
+  //     name,
+  //     isUploading: true,
+  //     url: `https://[バケット名を入れてください].s3.amazonaws.com/${file.name}`
+  //   }
+  // }
+
+  // const handleOnDrop = (files: any) => {
+  //   setIsUpLoading(true)
+
+  //   Promise.all(files.map((file: any) => uploadImage(file)))
+  //     .then((images) => {
+  //       setIsUpLoading(false)
+  //       setImageUrl(images)
+  //     })
+  //     .catch((e) => console.log(e))
+  // }
+
   return (
     <Box className={classes.root}>
       <ButtonColorLinks />
@@ -209,18 +261,43 @@ const RichEditor: React.FC<UserProps> = (props) => {
       <Box className={classes.formContainer}>
         <p>タイトル</p>
         <TextField className={classes.textItems} value={title} onChange={valueChangeHandler} />
+        <p>概略</p>
+        <TextField
+          className={classes.textItems}
+          value={abstract}
+          onChange={abstractChangeHandler}
+        />
+        <p>アイキャッチ</p>
+        {/* <Dropzone onDrop={handleOnDrop} accept="image/*">
+          {({ getRootProps, getInputProps }) => (
+            <section>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <p>ここにファイルをドロップしてください</p>
+              </div>
+            </section>
+          )}
+        </Dropzone> */}
         <p>カテゴリー</p>
         <FormControl className={classes.textItems}>
           <Select value={category} onChange={categoryChangeHandler}>
             {Selects}
           </Select>
         </FormControl>
-        <Button>公開</Button>
         <Box className={classes.saveButton}>
+          <Button
+            variant="contained"
+            color={isPublic ? 'secondary' : 'default'}
+            onClick={isPublicChangeHandler}
+          >
+            公開
+          </Button>
           <SaveButton
             editorState={editorState}
             title={title}
             category={category}
+            abstract={abstract}
+            isPublic={isPublic}
             articleId={props.match.params.articleId}
             codename={codename}
           />

@@ -12,6 +12,8 @@ type Props = {
   title: string
   articleId: string
   codename: string
+  abstract: string
+  isPublic: boolean
 }
 
 const SaveButton: React.FC<Props> = (props) => {
@@ -24,6 +26,8 @@ const SaveButton: React.FC<Props> = (props) => {
         articleId: +props.articleId,
         title: props.title,
         category: props.category,
+        abstract: props.abstract,
+        isPublic: props.isPublic,
         content: content
       }
     }
