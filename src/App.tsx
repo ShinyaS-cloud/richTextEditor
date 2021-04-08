@@ -15,7 +15,6 @@ import axios from 'axios'
 import ArticlePage from './components/ArticlePage/ArticlePage'
 import UserPage from './components/UserPage/UserPage'
 import ArticleListComponent from './components/UtilComponent/ArticleListComponent'
-import ImageComponent from './components/RichEditor/ImageComponent/ImageComponent'
 
 axios.defaults.withCredentials = true
 
@@ -55,11 +54,10 @@ const App: React.FC = () => {
             <Switch>
               <Redirect exact from="/" to="/home" />
               <Route path="/home" exact render={() => <ArticleListComponent type="category" />} />
-              <Route path="/edit/:codename/:articleId" component={RichEditor} />
-              <Route path="/:codename/:articleId" component={ArticlePage} />
               <Route path="/signup" exact component={Signup} />
               <Route path="/login" exact component={Login} />
-              <Route path="/test" exact component={ImageComponent} />
+              <Route path="/edit/:codename/:articleId" component={RichEditor} />
+              <Route path="/:codename/:articleId" component={ArticlePage} />
               <Route path="/:codename" exact component={UserPage} />
             </Switch>
           </Layout>

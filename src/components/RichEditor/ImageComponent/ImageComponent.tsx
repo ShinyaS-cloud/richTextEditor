@@ -22,7 +22,7 @@ const ImageComponent: React.FC<Props> = (props) => {
 
     const contentState = props.editorState.getCurrentContent()
 
-    const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', {
+    const contentStateWithEntity = contentState.createEntity('IMAGE', 'MUTABLE', {
       src: urlValueImage
     })
 

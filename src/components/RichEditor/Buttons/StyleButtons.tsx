@@ -27,16 +27,16 @@ const StyleButtons: React.FC<Props> = (props) => {
 
   return (
     <Box className={classes.root}>
-      <IconButton key="BOLD" onClick={() => inlineChangeButton('BOLD')}>
+      <IconButton key="BOLD" onMouseDown={() => inlineChangeButton('BOLD')}>
         <FormatBold />
       </IconButton>
-      <IconButton key="ITALIC" onClick={() => inlineChangeButton('ITALIC')}>
+      <IconButton key="ITALIC" onMouseDown={() => inlineChangeButton('ITALIC')}>
         <FormatItalic />
       </IconButton>
-      <IconButton key="STRIKETHROUGH" onClick={() => inlineChangeButton('STRIKETHROUGH')}>
+      <IconButton key="STRIKETHROUGH" onMouseDown={() => inlineChangeButton('STRIKETHROUGH')}>
         <FormatStrikethrough />
       </IconButton>
-      <IconButton key="UNDERLINE" onClick={() => inlineChangeButton('UNDERLINE')}>
+      <IconButton key="UNDERLINE" onMouseDown={() => inlineChangeButton('UNDERLINE')}>
         <FormatUnderlined />
       </IconButton>{' '}
     </Box>

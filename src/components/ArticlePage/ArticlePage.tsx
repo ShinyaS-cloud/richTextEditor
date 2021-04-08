@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import {
-  CompositeDecorator,
+  // CompositeDecorator,
   ContentBlock,
   convertFromRaw,
   DefaultDraftBlockRenderMap,
@@ -27,14 +27,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { red } from '@material-ui/core/colors'
 import { translateDate, initialState } from '../UtilComponent/articleUtils'
 
-import {
-  handleStrategy,
-  hashtagStrategy,
-  HandleSpan,
-  HashtagSpan
-} from '../RichEditor/Decorators/HashTag'
-
-import { Link, findLinkEntities } from '../RichEditor/Decorators/LinkDecorator'
+import EditorComponent from '../RichEditor/ImageEditor'
 
 import CommentList from './CommentList'
 
@@ -64,21 +57,6 @@ const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
  */
 
 const ArticlePage = () => {
-  const compositeDecorator = new CompositeDecorator([
-    {
-      strategy: handleStrategy,
-      component: HandleSpan
-    },
-    {
-      strategy: hashtagStrategy,
-      component: HashtagSpan
-    },
-    {
-      strategy: findLinkEntities,
-      component: Link
-    }
-  ])
-
   const classes = useStyle()
   const auth = useSelector((state) => state.authReducer)
   const history = useHistory()
@@ -89,7 +67,7 @@ const ArticlePage = () => {
   const codename = pathname[1]
 
   const [article, setArticle] = useState(initialState)
-  const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const {
     id,
     title,
@@ -123,7 +101,7 @@ const ArticlePage = () => {
   const fetchArticle = async () => {
     const article = await fetch(+articleId)
     const contentState = convertFromRaw(article.content)
-    setEditorState(EditorState.createWithContent(contentState, compositeDecorator))
+    setEditorState(EditorState.createWithContent(contentState))
     setArticle(article)
   }
   useEffect(() => {
@@ -155,20 +133,6 @@ const ArticlePage = () => {
     }
   }
 
-  const myBlockStyleFn = (contentBlock: ContentBlock) => {
-    const type = contentBlock.getType()
-    switch (type) {
-      case 'right':
-        return classes[type]
-      case 'center':
-        return classes[type]
-      case 'left':
-        return classes[type]
-      default:
-        return type
-    }
-  }
-
   const AvatarArea = (
     <a href={'/' + codename}>
       <Avatar
@@ -182,17 +146,6 @@ const ArticlePage = () => {
     <IconButton aria-label="settings">
       <MoreVertIcon />
     </IconButton>
-  )
-
-  const EditorComponent: any = (
-    <Editor
-      customStyleMap={customStyleMap}
-      editorState={editorState}
-      onChange={setEditorState}
-      blockRenderMap={extendedBlockRenderMap}
-      blockStyleFn={myBlockStyleFn}
-      readOnly={true}
-    />
   )
 
   const EditButton: React.FC = () => {
@@ -218,6 +171,7 @@ const ArticlePage = () => {
     }
     setSnackOpen(false)
   }
+  const props = { editorState, setEditorState }
 
   const renderComponent = (
     <Fragment>
@@ -227,19 +181,18 @@ const ArticlePage = () => {
         </Alert>
       </Snackbar>
       <Box>
-        <Card className={classes.editor}>
-          <CardHeader
-            className={classes.header}
-            avatar={AvatarArea}
-            action={Action}
-            title={title}
-            subheader={createdAt}
-          />
-          <Typography className={classes.title} variant="h3">
-            {title}
-          </Typography>
-          {EditorComponent}
-        </Card>
+        <CardHeader
+          className={classes.header}
+          avatar={AvatarArea}
+          action={Action}
+          title={title}
+          subheader={createdAt}
+        />
+        <Typography className={classes.title} variant="h3">
+          {title}
+        </Typography>
+
+        <EditorComponent {...props} readOnly={true} />
         <div className={classes.button}>
           <EditButton />
         </div>
@@ -253,33 +206,6 @@ const ArticlePage = () => {
   return <div className={classes.root}>{renderComponent}</div>
 }
 
-/**
- * customStyleMap
- */
-const customStyleMap: DraftStyleMap = {
-  red: {
-    color: 'rgba(255, 0, 0, 1.0)'
-  },
-  orange: {
-    color: 'rgba(255, 127, 0, 1.0)'
-  },
-  yellow: {
-    color: 'rgba(180, 180, 0, 1.0)'
-  },
-  green: {
-    color: 'rgba(0, 180, 0, 1.0)'
-  },
-  blue: {
-    color: 'rgba(0, 0, 255, 1.0)'
-  },
-  indigo: {
-    color: 'rgba(75, 0, 130, 1.0)'
-  },
-  violet: {
-    color: 'rgba(127, 0, 255, 1.0)'
-  }
-}
-
 const useStyle = makeStyles((theme) => ({
   root: {
     overflowY: 'scroll',
@@ -287,22 +213,9 @@ const useStyle = makeStyles((theme) => ({
   },
   header: {
     margin: '0 auto',
-    backgroundColor: 'white'
-  },
-  title: {
-    margin: '0 auto',
-    textAlign: 'center',
-    backgroundColor: 'white'
-  },
-  editor: {
-    width: '60%',
-    boxShadow: '0 1px 2px #eee',
-    margin: '0 auto',
-    marginTop: theme.spacing(1),
-    minHeight: '50rem',
-    padding: '3rem 2rem',
-    fontSize: ' 18px ',
-    cursor: 'text',
+    backgroundColor: 'white',
+    marginTop: theme.spacing(3),
+    width: '65%',
     [theme.breakpoints.between('xs', 'sm')]: {
       width: '95%'
     },
@@ -310,6 +223,19 @@ const useStyle = makeStyles((theme) => ({
       width: '80%'
     }
   },
+  title: {
+    margin: '0 auto',
+    textAlign: 'center',
+    backgroundColor: 'white',
+    width: '65%',
+    [theme.breakpoints.between('xs', 'sm')]: {
+      width: '95%'
+    },
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: '80%'
+    }
+  },
+
   avatar: {
     backgroundColor: red[500]
   },
@@ -320,21 +246,9 @@ const useStyle = makeStyles((theme) => ({
   comment: {
     display: 'flex',
     justifyContent: 'center',
-    marginTop: theme.spacing(5)
-  },
-  circular: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(1)
-  },
-  right: {
-    textAlign: 'right'
-  },
-  center: {
-    textAlign: 'center'
-  },
-  left: {
-    textAlign: 'left'
+    margin: '0 auto',
+    marginTop: theme.spacing(5),
+    maxWidth: '80%'
   }
 }))
 

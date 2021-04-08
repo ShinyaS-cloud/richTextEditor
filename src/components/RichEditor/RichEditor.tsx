@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment, useEffect, useRef, useState } from 'react'
-import { EditorState, CompositeDecorator, convertToRaw, convertFromRaw } from 'draft-js'
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
 import EditIcon from '@material-ui/icons/Edit'
 import {
   Box,
@@ -21,18 +21,14 @@ import StyleButtons from './Buttons/StyleButtons'
 import BlockTagButtons from './Buttons/BlockTagButtons'
 import ColorButtons from './Buttons/ColorButtons'
 import SaveButton from './Buttons/SaveButton'
-import { handleStrategy, hashtagStrategy, HandleSpan, HashtagSpan } from './Decorators/HashTag'
-import { Link, findLinkEntities } from './Decorators/LinkDecorator'
-import { Image, findImageEntities } from './Decorators/ImageDecorator'
 
 import { RouteComponentProps, useLocation } from 'react-router-dom'
 import { translateDate } from '../UtilComponent/articleUtils'
 import axios from 'axios'
 import { useTheme } from '@material-ui/core/styles'
 import { HighlightOff } from '@material-ui/icons'
-import ImageComponent from './ImageComponent/ImageComponent'
-import UrlComponent from './ImageComponent/Link'
-import EditorComponent from './EditorComponent'
+
+import EditorComponent from './ImageEditor.jsx'
 
 type UserProps = RouteComponentProps<{
   articleId: string
@@ -43,25 +39,6 @@ type UserProps = RouteComponentProps<{
  */
 
 const RichEditor: React.FC<UserProps> = (props) => {
-  const compositeDecorator = new CompositeDecorator([
-    {
-      strategy: handleStrategy,
-      component: HandleSpan
-    },
-    {
-      strategy: hashtagStrategy,
-      component: HashtagSpan
-    },
-    {
-      strategy: findLinkEntities,
-      component: Link
-    },
-    {
-      strategy: findImageEntities,
-      component: Image
-    }
-  ])
-
   /**
    * states
    */
@@ -73,7 +50,8 @@ const RichEditor: React.FC<UserProps> = (props) => {
 
   const classes = useStyle()
 
-  const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  // const [editorState, setEditorState] = useState(EditorState.createEmpty(compositeDecorator))
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState(0)
 
@@ -101,7 +79,8 @@ const RichEditor: React.FC<UserProps> = (props) => {
   const fetchArticle = async () => {
     const article = await fetch(+articleId)
     const contentState = convertFromRaw(article.content)
-    setEditorState(EditorState.createWithContent(contentState, compositeDecorator))
+    setEditorState(EditorState.createWithContent(contentState))
+    // setEditorState(EditorState.createWithContent(contentState, compositeDecorator))
     setCategory(article.category)
     setTitle(article.title)
   }
@@ -200,9 +179,6 @@ const RichEditor: React.FC<UserProps> = (props) => {
               <Divider />
               <ColorButtons {...editorStateProps} />
               <Divider />
-              <UrlComponent {...editorStateProps} />
-              <Divider />
-              <ImageComponent {...editorStateProps} />
             </Paper>
           </Slide>
         </Fragment>
@@ -217,9 +193,6 @@ const RichEditor: React.FC<UserProps> = (props) => {
             <Divider />
             <ColorButtons {...editorStateProps} />
             <Divider />
-            <UrlComponent {...editorStateProps} />
-            <Divider />
-            <ImageComponent {...editorStateProps} />
           </Box>
           <Box className={classes.dummyButtonContainer} />
         </Fragment>
@@ -231,7 +204,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
     <Box className={classes.root}>
       <ButtonColorLinks />
 
-      <EditorComponent {...editorStateProps} />
+      <EditorComponent {...editorStateProps} readOnly={false} />
 
       <Box className={classes.formContainer}>
         <p>タイトル</p>
