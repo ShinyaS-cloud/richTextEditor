@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState } from 'react'
-import Navigation from '../Navigation/Navigation'
+import React from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
 import Header from './Header'
@@ -10,14 +9,13 @@ type Props = { children: React.ReactNode }
 
 const Layout: React.FC<Props> = (props) => {
   const classes = useStyles()
-  const [open, setOpen] = useState(false)
+
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
-        <Header open={open} openHandler={setOpen} />
+        <Header />
       </Box>
       <Box className={classes.mainContainer}>
-        <Navigation open={open} openHandler={setOpen} />
         <main className={classes.mainPanel}>{props.children}</main>
       </Box>
     </Box>

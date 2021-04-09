@@ -15,7 +15,6 @@ import Typography from '@material-ui/core/Typography'
 import { red } from '@material-ui/core/colors'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 
-import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { Box, CardActionArea, Chip } from '@material-ui/core'
 import axios from 'axios'
 import { useHistory } from 'react-router'
@@ -96,11 +95,6 @@ const ArticleCard: React.FC<Props> = (props) => {
               src={process.env.PUBLIC_URL + '/' + article.user.avatarUrl}
             />
           </a>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
         }
         title={articleTitle}
         subheader={article.createdAt}

@@ -7,20 +7,26 @@ import {
   CardContent,
   CardMedia,
   makeStyles,
+  Snackbar,
   Typography
 } from '@material-ui/core'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import qs from 'qs'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
+import { Alert } from '@material-ui/lab'
+import authReducer from '../../reducer/authReducer'
 
 const UserHeader = () => {
   const classes = useStyles()
   const user = useSelector((state) => state.userReducer)
+  const auth = useSelector((state) => state.authReducer)
+  const dispatch = useDispatch()
 
   const [followState, setFollowState] = useState(false)
   const [followeeCount, setFolloweeCount] = useState(0)
+  const [snackOpen, setSnackOpen] = useState(false)
 
   const history = useHistory()
   useEffect(() => {
@@ -43,11 +49,80 @@ const UserHeader = () => {
     }
   }
 
+  const editHandler = async () => {
+    try {
+      history.push('/edit/' + user.codename)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const deleteHandler = async () => {
+    try {
+      const { data } = await axios.delete('/api/user/delete')
+      if (data.authorizationRequired) {
+        setSnackOpen(true)
+        return
+      } else {
+        dispatch(authReducer.actions.userInit)
+        history.push('/home')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const newArticleHandler = async () => {
+    try {
+      const { data } = await axios.post('/api/newpost')
+      if (data.authorizationRequired) {
+        history.push('/login')
+      } else {
+        const { articleId, codename } = data
+        history.push('/edit/' + codename + '/' + articleId)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const EditButton: React.FC = () => {
+    if (auth.id === user.id) {
+      return (
+        <div>
+          <Button onClick={newArticleHandler} variant="contained" color="primary">
+            新規記事作成
+          </Button>
+          <Button onClick={editHandler} variant="contained" color="primary">
+            ユーザー編集
+          </Button>
+          <Button onClick={deleteHandler} variant="contained" color="primary">
+            ユーザー削除
+          </Button>
+        </div>
+      )
+    } else {
+      return <div></div>
+    }
+  }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setSnackOpen(false)
+  }
+
   const followButtonOption = followState ? 'フォロー解除' : 'フォロー'
   const followButtonClass = followState ? classes.followButtonOff : classes.followButtonOn
 
   return (
     <Box>
+      <Snackbar open={snackOpen} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          不正な操作です
+        </Alert>
+      </Snackbar>
       <CardMedia className={classes.header} component="img" height="300" src={user.headerUrl} />
       <CardContent className={classes.cardContent}>
         <Box className={classes.nameAvatarComponent}>
@@ -62,6 +137,9 @@ const UserHeader = () => {
           </Box>
         </Box>
 
+        <Box>
+          <EditButton />
+        </Box>
         <Box className={classes.followerComponent}>
           <Box>
             <Button className={followButtonClass} variant="contained" onClick={toggleFollowHandler}>

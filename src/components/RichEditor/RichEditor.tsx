@@ -124,7 +124,6 @@ const RichEditor: React.FC<UserProps> = (props) => {
           content: content
         }
       }
-      console.log(saveContent)
       console.log('save')
 
       try {

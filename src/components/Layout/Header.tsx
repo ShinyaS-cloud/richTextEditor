@@ -1,26 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment } from 'react'
-import {
-  AppBar,
-  Avatar,
-  Button,
-  IconButton,
-  makeStyles,
-  Theme,
-  Toolbar,
-  Typography
-} from '@material-ui/core'
-import { Menu } from '@material-ui/icons'
+import { AppBar, Avatar, Button, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core'
 
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-interface Props {
-  open: boolean
-  openHandler: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const Header: React.FC<Props> = (props) => {
+const Header = () => {
   const classes = useStyles()
   const authUser = useSelector((state) => state.authReducer)
   const renderContent = () => {
@@ -37,9 +22,14 @@ const Header: React.FC<Props> = (props) => {
       )
     } else {
       return (
-        <Button className={classes.loginButton} component={Link} to={'/login'}>
-          ログイン
-        </Button>
+        <Fragment>
+          <Button className={classes.loginButton} component={Link} to="/signup">
+            サインイン
+          </Button>
+          <Button className={classes.loginButton} component={Link} to={'/login'}>
+            ログイン
+          </Button>
+        </Fragment>
       )
     }
   }
@@ -48,15 +38,6 @@ const Header: React.FC<Props> = (props) => {
     <div className={classes.root}>
       <AppBar position="static" elevation={0} className={classes.appBar}>
         <Toolbar>
-          <IconButton
-            onClick={() => props.openHandler(!props.open)}
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-          >
-            <Menu />
-          </IconButton>
           <Typography variant="h6" className={classes.title}>
             <a href="/home" className={classes.titleDecoration}>
               Rich Text Editor

@@ -1,29 +1,17 @@
-/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment, useEffect, useState } from 'react'
 import {
   Avatar,
   Box,
   Button,
-  Card,
   CardHeader,
-  IconButton,
   makeStyles,
   Snackbar,
   Typography
 } from '@material-ui/core'
 import { useSelector } from 'react-redux'
-import {
-  // CompositeDecorator,
-  ContentBlock,
-  convertFromRaw,
-  DefaultDraftBlockRenderMap,
-  DraftStyleMap,
-  Editor,
-  EditorState
-} from 'draft-js'
-import Immutable from 'immutable'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
+import { convertFromRaw, EditorState } from 'draft-js'
+
 import { red } from '@material-ui/core/colors'
 import { translateDate, initialState } from '../UtilComponent/articleUtils'
 
@@ -34,23 +22,6 @@ import CommentList from './CommentList'
 import { useHistory, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { Alert } from '@material-ui/lab'
-
-/**
- * custom block の定義
- */
-const myCustomBlock = Immutable.Map({
-  right: {
-    element: 'div'
-  },
-  center: {
-    element: 'div'
-  },
-  left: {
-    element: 'div'
-  }
-})
-
-const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(myCustomBlock)
 
 /**
  * functional component 部分
@@ -69,17 +40,11 @@ const ArticlePage = () => {
   const [article, setArticle] = useState(initialState)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const {
-    id,
     title,
-    imageUrl,
-    category,
-    content,
+
     userId,
     createdAt,
-    updatedAt,
-    isFavorite,
-    favoriteCount,
-    isPublic,
+
     user
   } = article
 
@@ -142,11 +107,6 @@ const ArticlePage = () => {
       />
     </a>
   )
-  const Action: any = (
-    <IconButton aria-label="settings">
-      <MoreVertIcon />
-    </IconButton>
-  )
 
   const EditButton: React.FC = () => {
     if (auth.id === userId) {
@@ -184,7 +144,6 @@ const ArticlePage = () => {
         <CardHeader
           className={classes.header}
           avatar={AvatarArea}
-          action={Action}
           title={title}
           subheader={createdAt}
         />
