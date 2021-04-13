@@ -16,20 +16,9 @@ import ArticlePage from './components/ArticlePage/ArticlePage'
 import UserPage from './components/UserPage/UserPage'
 import ArticleListComponent from './components/UtilComponent/ArticleListComponent'
 import UserEditPage from './components/UserPage/UserEditPage'
-import Amplify from 'aws-amplify'
-Amplify.configure({
-  API: {
-    endpoints: [
-      {
-        name: 'AmplifyTest',
-        endpoint: 'https://38f3e4ecij.execute-api.ap-northeast-1.amazonaws.com',
-        region: 'ap-northeast-1'
-      }
-    ]
-  }
-})
 
 axios.defaults.withCredentials = true
+axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL
 
 const App: React.FC = () => {
   const dispatch = useDispatch()
