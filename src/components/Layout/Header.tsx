@@ -26,9 +26,6 @@ const Header = () => {
     } else {
       return (
         <Fragment>
-          {/* <Button className={classes.loginButton} component={Link} to="/signup">
-            サインイン
-          </Button> */}
           <Button className={classes.loginButton} component={Link} to={'/signup'}>
             サインイン
           </Button>

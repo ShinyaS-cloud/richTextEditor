@@ -65,6 +65,9 @@ const ArticlePage = () => {
 
   const fetchArticle = async () => {
     const article = await fetch(+articleId)
+    if (!article) {
+      history.push('/')
+    }
     const contentState = convertFromRaw(article.content)
     setEditorState(EditorState.createWithContent(contentState))
     setArticle(article)
