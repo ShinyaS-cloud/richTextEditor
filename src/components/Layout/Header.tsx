@@ -15,7 +15,10 @@ const Header = () => {
           <a href={'/' + authUser.codename}>
             <Avatar aria-label="recipe" src={process.env.PUBLIC_URL + '/' + authUser.avatarUrl} />
           </a>
-          <Button className={classes.loginButton} href={'/api/logout'}>
+          <Button
+            className={classes.loginButton}
+            href={process.env.REACT_APP_API_BASE_URL + '/api/logout'}
+          >
             ログアウト
           </Button>
         </Fragment>
@@ -23,7 +26,10 @@ const Header = () => {
     } else {
       return (
         <Fragment>
-          <Button className={classes.loginButton} component={Link} to="/signup">
+          {/* <Button className={classes.loginButton} component={Link} to="/signup">
+            サインイン
+          </Button> */}
+          <Button className={classes.loginButton} component={Link} to={'/signup'}>
             サインイン
           </Button>
           <Button className={classes.loginButton} component={Link} to={'/login'}>

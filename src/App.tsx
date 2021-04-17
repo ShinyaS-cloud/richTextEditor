@@ -17,10 +17,8 @@ import UserPage from './components/UserPage/UserPage'
 import ArticleListComponent from './components/UtilComponent/ArticleListComponent'
 import UserEditPage from './components/UserPage/UserEditPage'
 
-axios.defaults.withCredentials = true
-axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL
-
 const App: React.FC = () => {
+  axios.defaults.withCredentials = true
   const dispatch = useDispatch()
   const auth = useSelector((state) => state.authReducer)
   const user = useSelector((state) => state.userReducer)
@@ -29,6 +27,7 @@ const App: React.FC = () => {
     const getCsrfToken = async () => {
       try {
         const { data } = await axios.get('/api/csrfToken')
+        console.log(data)
         axios.defaults.headers.common['X-CSRF-Token'] = data.csrfToken
       } catch (error) {
         console.log(error)

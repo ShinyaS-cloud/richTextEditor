@@ -52,7 +52,7 @@ const SignUp = () => {
 
   const postForm = async () => {
     try {
-      const { data } = await axios.post('/api/signup', formData)
+      const { data } = await axios.post('/auth/cognito', formData)
       if (data) {
         location.href = '/edit/' + data.codename
       } else {

@@ -96,7 +96,7 @@ const LogIn = () => {
           Log in
         </Typography>
         <Divider className={classes.divider} />
-        <a href="/auth/google">
+        <a href={process.env.REACT_APP_API_BASE_URL + '/auth/google'}>
           <img
             src={image}
             alt="googleLoginButton"
