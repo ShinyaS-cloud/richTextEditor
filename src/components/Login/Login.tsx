@@ -26,7 +26,7 @@ const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <a href="/">Your Website</a> {new Date().getFullYear()}
+      <a href="/">RichTextEditor</a> {new Date().getFullYear()}
       {'.'}
     </Typography>
   )

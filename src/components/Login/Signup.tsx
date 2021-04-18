@@ -19,7 +19,7 @@ const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <a href="#">Your Website</a> {new Date().getFullYear()}
+      <a href="/">Rich Text Editor</a> {new Date().getFullYear()}
       {'.'}
     </Typography>
   )
@@ -52,7 +52,7 @@ const SignUp = () => {
 
   const postForm = async () => {
     try {
-      const { data } = await axios.post('/auth/cognito', formData)
+      const { data } = await axios.post('/api/signup', formData)
       if (data) {
         location.href = '/edit/' + data.codename
       } else {
