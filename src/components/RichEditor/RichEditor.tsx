@@ -29,7 +29,7 @@ import { useTheme } from '@material-ui/core/styles'
 import { HighlightOff } from '@material-ui/icons'
 
 import EditorComponent from './ImageEditor.jsx'
-// import Dropzone from 'react-dropzone'
+import Dropzone from 'react-dropzone'
 
 type UserProps = RouteComponentProps<{
   articleId: string
@@ -56,7 +56,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState(0)
   const [abstract, setAbstract] = useState('')
-  // const [imageUrl, setImageUrl] = useState<any>([''])
+  const [imageUrl, setImageUrl] = useState<any>([''])
   const [isPublic, setIsPublic] = useState(false)
   // eslint-disable-next-line no-unused-vars
   const [isUpLoading, setIsUpLoading] = useState(false)
@@ -65,7 +65,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
   const refTitle = useRef(title)
   const refCategory = useRef(category)
   const refAbstract = useRef(abstract)
-  // const refImageUrl = useRef(imageUrl)
+  const refImageUrl = useRef(imageUrl)
   const refIsPublic = useRef(isPublic)
 
   /**
@@ -105,9 +105,9 @@ const RichEditor: React.FC<UserProps> = (props) => {
     refCategory.current = category
     refTitle.current = title
     refAbstract.current = abstract
-    // refImageUrl.current = imageUrl
+    refImageUrl.current = imageUrl
     refIsPublic.current = isPublic
-  }, [abstract, category, editorState, isPublic, title])
+  }, [abstract, category, editorState, imageUrl, isPublic, title])
 
   useEffect(() => {
     const save = async () => {
@@ -119,7 +119,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
           title: refTitle.current,
           category: refCategory.current,
           abstract: refAbstract.current,
-          // imageUrl: refImageUrl.current,
+          imageUrl: refImageUrl.current,
           isPublic: refIsPublic.current,
           content: content
         }
@@ -219,37 +219,37 @@ const RichEditor: React.FC<UserProps> = (props) => {
     }
   }
 
-  // const uploadImage = async (file: any) => {
-  //   const res = await axios.get('/upload', {
-  //     params: {
-  //       filename: file.name,
-  //       filetype: file.type
-  //     }
-  //   })
-  //   const options = {
-  //     headers: {
-  //       'Content-Type': file.type
-  //     }
-  //   }
-  //   const res1 = await axios.put(res.data.url, file, options)
-  //   const { name } = res1.config.data
-  //   return {
-  //     name,
-  //     isUploading: true,
-  //     url: `https://[バケット名を入れてください].s3.amazonaws.com/${file.name}`
-  //   }
-  // }
+  const uploadImage = async (file: any) => {
+    const res = await axios.get('/upload', {
+      params: {
+        filename: file.name,
+        filetype: file.type
+      }
+    })
+    const options = {
+      headers: {
+        'Content-Type': file.type
+      }
+    }
+    const res1 = await axios.put(res.data.url, file, options)
+    const { name } = res1.config.data
+    return {
+      name,
+      isUploading: true,
+      url: `https://rich-text-editor-bucket.s3.amazonaws.com/${file.name}`
+    }
+  }
 
-  // const handleOnDrop = (files: any) => {
-  //   setIsUpLoading(true)
+  const handleOnDrop = (files: any) => {
+    setIsUpLoading(true)
 
-  //   Promise.all(files.map((file: any) => uploadImage(file)))
-  //     .then((images) => {
-  //       setIsUpLoading(false)
-  //       setImageUrl(images)
-  //     })
-  //     .catch((e) => console.log(e))
-  // }
+    Promise.all(files.map((file: any) => uploadImage(file)))
+      .then((images) => {
+        setIsUpLoading(false)
+        setImageUrl(images)
+      })
+      .catch((e) => console.log(e))
+  }
 
   return (
     <Box className={classes.root}>
@@ -267,7 +267,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
           onChange={abstractChangeHandler}
         />
         <p>アイキャッチ</p>
-        {/* <Dropzone onDrop={handleOnDrop} accept="image/*">
+        <Dropzone onDrop={handleOnDrop} accept="image/*">
           {({ getRootProps, getInputProps }) => (
             <section>
               <div {...getRootProps()}>
@@ -276,7 +276,7 @@ const RichEditor: React.FC<UserProps> = (props) => {
               </div>
             </section>
           )}
-        </Dropzone> */}
+        </Dropzone>
         <p>カテゴリー</p>
         <FormControl className={classes.textItems}>
           <Select value={category} onChange={categoryChangeHandler}>
