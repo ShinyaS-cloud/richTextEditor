@@ -28,13 +28,28 @@ const UserEditPage = () => {
   const [openLogin, setOpenLogin] = useState(false)
   const [formData, setFormData] = useState({ email: '', password: '', name: '', introduction: '' })
 
-  const postForm = async () => {
-    const url = location.pathname === '/signup' ? '/signup' : '/userEdit'
+  const postFormSignup = async () => {
     try {
-      const { data } = await axios.post('/api' + url, formData)
+      const { data } = await axios.post('/api/signup', formData)
       if (data.error) {
         setOpenLogin(true)
       } else if (data && !data.error) {
+        await axios.post('/api/login', {
+          email: formData.email,
+          password: formData.password
+        })
+        history.push('/' + data.codename)
+      } else {
+        setOpen(true)
+      }
+    } catch (error) {
+      console.log('postForm', error.message)
+    }
+  }
+  const postForm = async () => {
+    try {
+      const { data } = await axios.post('/api/userEdit', formData)
+      if (data) {
         history.push('/' + data.codename)
       } else {
         setOpen(true)
@@ -81,6 +96,36 @@ const UserEditPage = () => {
         <Typography component="h1" variant="h5">
           編集
         </Typography>
+      )
+    }
+  }
+
+  const SubmitButton = () => {
+    if (location.pathname === '/signup') {
+      return (
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          onClick={postFormSignup}
+          className={classes.submit}
+        >
+          送信
+        </Button>
+      )
+    } else {
+      return (
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          onClick={postForm}
+          className={classes.submit}
+        >
+          送信
+        </Button>
       )
     }
   }
@@ -162,16 +207,7 @@ const UserEditPage = () => {
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={postForm}
-              className={classes.submit}
-            >
-              送信
-            </Button>
+            <SubmitButton />
           </div>
         </Container>
       </Paper>
