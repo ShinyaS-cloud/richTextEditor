@@ -32,7 +32,7 @@ const UserEditPage = () => {
     try {
       const { data } = await axios.post('/api/userEdit', formData)
       if (data) {
-        history.push('/' + user.codename)
+        history.push('/' + data.codename)
       } else {
         setOpen(true)
       }
