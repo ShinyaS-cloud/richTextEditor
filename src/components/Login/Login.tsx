@@ -17,7 +17,7 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 
 import normalGoogleButton from '../../assets/btn_google_signin_light_normal_web.png'
-import pressGoogleButton from '../../assets/btn_google_signin_light_pressed_web.png'
+
 import { Divider, Snackbar } from '@material-ui/core'
 import axios from 'axios'
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
@@ -34,15 +34,21 @@ const Copyright = () => {
 
 const LogIn = () => {
   const classes = useStyles()
-  const [image, setImage] = useState(normalGoogleButton)
+
   const [open, setOpen] = useState(false)
   const { handleSubmit, register, errors } = useForm()
 
-  const onMouseDownHandler = () => {
-    setImage(pressGoogleButton)
-  }
-  const onMouseUpHandler = () => {
-    setImage(normalGoogleButton)
+  const googleLoginHandler = async () => {
+    try {
+      const { data } = await axios.get('/auth/google')
+      if (data) {
+        location.href = '/edit/' + data.codename
+      } else {
+        setOpen(true)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   /**
@@ -96,14 +102,9 @@ const LogIn = () => {
           Log in
         </Typography>
         <Divider className={classes.divider} />
-        <a href={process.env.REACT_APP_API_BASE_URL + '/auth/google'}>
-          <img
-            src={image}
-            alt="googleLoginButton"
-            onMouseDown={onMouseDownHandler}
-            onMouseUp={onMouseUpHandler}
-          />
-        </a>
+        <Button onClick={googleLoginHandler}>
+          <img src={normalGoogleButton} alt="googleLoginButton" />
+        </Button>
         <Divider className={classes.divider} />
 
         <form onSubmit={handleSubmit((data) => postForm(data))} className={classes.form}>

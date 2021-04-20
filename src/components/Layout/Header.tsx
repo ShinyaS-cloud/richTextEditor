@@ -4,10 +4,20 @@ import { AppBar, Avatar, Button, makeStyles, Theme, Toolbar, Typography } from '
 
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 const Header = () => {
   const classes = useStyles()
   const authUser = useSelector((state) => state.authReducer)
+
+  const logout = async () => {
+    try {
+      await axios.get('/api/logout')
+      location.href = '/home'
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const renderContent = () => {
     if (authUser.isLoggedIn) {
       return (
@@ -15,10 +25,7 @@ const Header = () => {
           <a href={'/' + authUser.codename}>
             <Avatar aria-label="recipe" src={process.env.PUBLIC_URL + '/' + authUser.avatarUrl} />
           </a>
-          <Button
-            className={classes.loginButton}
-            href={process.env.REACT_APP_API_BASE_URL + '/api/logout'}
-          >
+          <Button className={classes.loginButton} onClick={logout}>
             ログアウト
           </Button>
         </Fragment>
