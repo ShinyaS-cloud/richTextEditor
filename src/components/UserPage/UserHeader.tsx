@@ -65,7 +65,7 @@ const UserHeader = () => {
         return
       } else {
         dispatch(authReducer.actions.userInit)
-        history.push('/home')
+        location.href = '/home'
       }
     } catch (error) {
       console.log(error)

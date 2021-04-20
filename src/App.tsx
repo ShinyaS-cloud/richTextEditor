@@ -6,8 +6,6 @@ import Layout from './components/Layout/Layout'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import RichEditor from './components/RichEditor/RichEditor'
 
-import Signup from './components/Login/Signup'
-
 import Login from './components/Login/Login'
 import { fetchUser } from './reducer/authReducer'
 import { useSelector, useDispatch } from 'react-redux'
@@ -67,7 +65,7 @@ const App: React.FC = () => {
             <Switch>
               <Redirect exact from="/" to="/home" />
               <Route path="/home" exact render={() => <ArticleListComponent type="category" />} />
-              <Route path="/signup" exact component={Signup} onEnter={isLoginHandler} />
+              <Route path="/signup" exact component={UserEditPage} onEnter={isLoginHandler} />
               <Route path="/login" exact component={Login} onEnter={isLoginHandler} />
               <Route
                 path="/edit/:codename/:articleId"
