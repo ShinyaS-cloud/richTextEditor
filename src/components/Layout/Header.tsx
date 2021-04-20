@@ -3,16 +3,19 @@ import React, { Fragment } from 'react'
 import { AppBar, Avatar, Button, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core'
 
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
+import authReducer from '../../reducer/authReducer'
 
 const Header = () => {
   const classes = useStyles()
   const authUser = useSelector((state) => state.authReducer)
+  const dispatch = useDispatch()
 
   const logout = async () => {
     try {
       await axios.get('/api/logout')
+      dispatch(authReducer.actions.userInit())
       location.href = '/home'
     } catch (error) {
       console.log(error)
