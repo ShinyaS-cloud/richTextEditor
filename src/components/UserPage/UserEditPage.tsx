@@ -29,9 +29,9 @@ const UserEditPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '', name: '', introduction: '' })
 
   const postForm = async () => {
-    const url = location.pathname === 'signup' ? 'signup' : 'userEdit'
+    const url = location.pathname === '/signup' ? '/signup' : '/userEdit'
     try {
-      const { data } = await axios.post('/api/' + url, formData)
+      const { data } = await axios.post('/api' + url, formData)
       if (data.error) {
         setOpenLogin(true)
       } else if (data && !data.error) {
