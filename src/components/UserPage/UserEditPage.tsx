@@ -25,13 +25,16 @@ const UserEditPage = () => {
   const location = useLocation()
 
   const [open, setOpen] = useState(false)
+  const [openLogin, setOpenLogin] = useState(false)
   const [formData, setFormData] = useState({ email: '', password: '', name: '', introduction: '' })
 
   const postForm = async () => {
     const url = location.pathname === 'signup' ? 'signup' : 'userEdit'
     try {
       const { data } = await axios.post('/api/' + url, formData)
-      if (data) {
+      if (data.error) {
+        setOpenLogin(true)
+      } else if (data && !data.error) {
         history.push('/' + data.codename)
       } else {
         setOpen(true)
@@ -50,6 +53,7 @@ const UserEditPage = () => {
       return
     }
     setOpen(false)
+    setOpenLogin(false)
   }
 
   const emailChangeHandler = (e: any) => {
@@ -88,6 +92,11 @@ const UserEditPage = () => {
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
               メールアドレスかパスワードが間違っています
+            </Alert>
+          </Snackbar>
+          <Snackbar open={openLogin} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              すでにサインインしています
             </Alert>
           </Snackbar>
           <div className={classes.paper}>
