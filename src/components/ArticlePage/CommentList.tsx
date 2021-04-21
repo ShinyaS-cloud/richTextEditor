@@ -168,7 +168,7 @@ const CommentList: React.FC<Props> = (props) => {
           <ListItem alignItems="center">
             <ListItemAvatar>
               <a href={'/' + c.user.codename}>
-                <Avatar aria-label="recipe" src={process.env.PUBLIC_URL + '/' + c.user.avatarUrl} />
+                <Avatar aria-label="recipe" src={c.user.avatarUrl} />
               </a>
             </ListItemAvatar>
             <ListItemText
