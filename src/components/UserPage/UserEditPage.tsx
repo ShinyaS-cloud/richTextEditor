@@ -6,7 +6,6 @@ import {
   Container,
   Grid,
   makeStyles,
-  Paper,
   Snackbar,
   TextField,
   Typography
@@ -26,6 +25,7 @@ const UserEditPage = () => {
 
   const [open, setOpen] = useState(false)
   const [openLogin, setOpenLogin] = useState(false)
+  const [openValid, setOpenValid] = useState(false)
   const [formData, setFormData] = useState({
     codename: '',
     email: '',
@@ -44,33 +44,42 @@ const UserEditPage = () => {
   }, [])
 
   const postFormSignup = async () => {
-    try {
-      const { data } = await axios.post('/api/signup', formData)
-      if (data.error) {
-        setOpenLogin(true)
-      } else if (data && !data.error) {
-        await axios.post('/api/login', {
-          email: formData.email,
-          password: formData.password
-        })
-        location.href = '/' + data.codename
-      } else {
-        setOpen(true)
+    if (formData.codename.length && formData.email.length && formData.password.length) {
+      try {
+        const { data } = await axios.post('/api/signup', formData)
+        if (data.error) {
+          setOpenLogin(true)
+        } else if (data && !data.error) {
+          await axios.post('/api/login', {
+            email: formData.email,
+            password: formData.password
+          })
+          location.href = '/' + data.codename
+        } else {
+          setOpen(true)
+        }
+      } catch (error) {
+        console.log('postForm', error.message)
       }
-    } catch (error) {
-      console.log('postForm', error.message)
+    } else {
+      setOpenValid(true)
     }
   }
+
   const postForm = async () => {
-    try {
-      const { data } = await axios.post('/api/userEdit', formData)
-      if (data) {
-        location.href = '/' + data.codename
-      } else {
-        setOpen(true)
+    if (formData.codename.length && formData.email.length && formData.password.length) {
+      try {
+        const { data } = await axios.post('/api/userEdit', formData)
+        if (data) {
+          location.href = '/' + data.codename
+        } else {
+          setOpen(true)
+        }
+      } catch (error) {
+        console.log('postForm', error.message)
       }
-    } catch (error) {
-      console.log('postForm', error.message)
+    } else {
+      setOpenValid(true)
     }
   }
 
@@ -84,6 +93,7 @@ const UserEditPage = () => {
     }
     setOpen(false)
     setOpenLogin(false)
+    setOpenValid(false)
   }
 
   const emailChangeHandler = (e: any) => {
@@ -150,98 +160,98 @@ const UserEditPage = () => {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.card}>
-        <Container component="main" maxWidth="xs">
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error">
-              メールアドレスかパスワードが間違っています
-            </Alert>
-          </Snackbar>
-          <Snackbar open={openLogin} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error">
-              すでにサインインしています
-            </Alert>
-          </Snackbar>
-          <div className={classes.paper}>
-            <Avatar
-              className={classes.avatar}
-              src={process.env.PUBLIC_URL + '/' + user.avatarUrl}
-            />
-            <Title />
+      <Container component="main" maxWidth="xs">
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+            メールアドレスかパスワードが間違っています
+          </Alert>
+        </Snackbar>
+        <Snackbar open={openLogin} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+            すでにサインインしています
+          </Alert>
+        </Snackbar>
+        <Snackbar open={openValid} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+            すべての項目を記入してください
+          </Alert>
+        </Snackbar>
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar} src={process.env.PUBLIC_URL + '/' + user.avatarUrl} />
+          <Title />
 
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="name"
-                  label="name"
-                  type="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={nameChangeHandler}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="codename"
-                  label="codename"
-                  type="codename"
-                  name="codename"
-                  value={formData.codename}
-                  onChange={codenameChangeHandler}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="introduction"
-                  label="introduction"
-                  type="introduction"
-                  name="introduction"
-                  value={formData.introduction}
-                  onChange={introductionChangeHandler}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={emailChangeHandler}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  value={formData.password}
-                  onChange={passwordChangeHandler}
-                />
-              </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="name"
+                label="name"
+                type="name"
+                name="name"
+                value={formData.name}
+                onChange={nameChangeHandler}
+              />
             </Grid>
-            <SubmitButton />
-          </div>
-        </Container>
-      </Paper>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="codename"
+                label="codename"
+                type="codename"
+                name="codename"
+                value={formData.codename}
+                onChange={codenameChangeHandler}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="introduction"
+                label="introduction"
+                type="introduction"
+                name="introduction"
+                value={formData.introduction}
+                onChange={introductionChangeHandler}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                type="email"
+                name="email"
+                autoComplete="email"
+                value={formData.email}
+                onChange={emailChangeHandler}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={formData.password}
+                onChange={passwordChangeHandler}
+              />
+            </Grid>
+          </Grid>
+          <SubmitButton />
+        </div>
+      </Container>
     </div>
   )
 }

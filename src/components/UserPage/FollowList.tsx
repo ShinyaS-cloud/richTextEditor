@@ -37,7 +37,7 @@ const FollowList: React.FC<Props> = (props) => {
     return (
       <Paper key={a.codename} className={classes.content}>
         <a href={'/' + a.codename}>
-          <Avatar aria-label="recipe" src={process.env.PUBLIC_URL + '/' + a.avatarUrl} />
+          <Avatar aria-label="recipe" src={a.avatarUrl} />
         </a>
         <Box>
           <Typography variant="h5" component="h5">

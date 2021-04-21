@@ -103,11 +103,7 @@ const ArticlePage = () => {
 
   const AvatarArea = (
     <a href={'/' + codename}>
-      <Avatar
-        aria-label="recipe"
-        className={classes.avatar}
-        src={process.env.PUBLIC_URL + '/' + user.avatarUrl}
-      />
+      <Avatar aria-label="recipe" className={classes.avatar} src={user.avatarUrl} />
     </a>
   )
 

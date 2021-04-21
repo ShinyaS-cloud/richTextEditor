@@ -90,10 +90,7 @@ const ArticleCard: React.FC<Props> = (props) => {
       <CardHeader
         avatar={
           <a href={'/' + article.user.codename}>
-            <Avatar
-              aria-label="recipe"
-              src={process.env.PUBLIC_URL + '/' + article.user.avatarUrl}
-            />
+            <Avatar aria-label="recipe" src={article.user.avatarUrl} />
           </a>
         }
         title={articleTitle}
