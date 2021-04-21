@@ -126,7 +126,7 @@ const UserHeader = () => {
       <CardMedia className={classes.header} component="img" height="300" src={user.headerUrl} />
       <CardContent className={classes.cardContent}>
         <Box className={classes.nameAvatarComponent}>
-          <Avatar className={classes.avatar} src={process.env.PUBLIC_URL + '/' + user.avatarUrl} />
+          <Avatar className={classes.avatar} src={user.avatarUrl} />
           <Box>
             <Typography className={classes.name} variant="h5" component="h3">
               {user.name}

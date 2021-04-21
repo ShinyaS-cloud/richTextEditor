@@ -26,7 +26,7 @@ const Header = () => {
       return (
         <Fragment>
           <a href={'/' + authUser.codename}>
-            <Avatar aria-label="recipe" src={process.env.PUBLIC_URL + '/' + authUser.avatarUrl} />
+            <Avatar aria-label="recipe" src={authUser.avatarUrl} />
           </a>
           <Button className={classes.loginButton} onClick={logout}>
             ログアウト

@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Avatar,
   Button,
@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 
-import { useHistory, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import { Alert } from '@material-ui/lab'
 
 import axios from 'axios'
@@ -21,12 +21,27 @@ import axios from 'axios'
 const UserEditPage = () => {
   const classes = useStyles()
   const user = useSelector((state) => state.userReducer)
-  const history = useHistory()
-  const location = useLocation()
+
+  const pathLocation = useLocation()
 
   const [open, setOpen] = useState(false)
   const [openLogin, setOpenLogin] = useState(false)
-  const [formData, setFormData] = useState({ email: '', password: '', name: '', introduction: '' })
+  const [formData, setFormData] = useState({
+    codename: '',
+    email: '',
+    password: '',
+    name: '',
+    introduction: ''
+  })
+
+  const fetchUserInfo = async () => {
+    const { data } = await axios.get('/api/userEdit')
+    setFormData({ ...data })
+  }
+
+  useEffect(() => {
+    fetchUserInfo()
+  }, [])
 
   const postFormSignup = async () => {
     try {
@@ -38,7 +53,7 @@ const UserEditPage = () => {
           email: formData.email,
           password: formData.password
         })
-        history.push('/' + data.codename)
+        location.href = '/' + data.codename
       } else {
         setOpen(true)
       }
@@ -50,7 +65,7 @@ const UserEditPage = () => {
     try {
       const { data } = await axios.post('/api/userEdit', formData)
       if (data) {
-        history.push('/' + data.codename)
+        location.href = '/' + data.codename
       } else {
         setOpen(true)
       }
@@ -83,9 +98,12 @@ const UserEditPage = () => {
   const nameChangeHandler = (e: any) => {
     setFormData({ ...formData, name: e.target.value })
   }
+  const codenameChangeHandler = (e: any) => {
+    setFormData({ ...formData, codename: e.target.value })
+  }
 
   const Title = () => {
-    if (location.pathname === '/signup') {
+    if (pathLocation.pathname === '/signup') {
       return (
         <Typography component="h1" variant="h5">
           サインイン
@@ -101,7 +119,7 @@ const UserEditPage = () => {
   }
 
   const SubmitButton = () => {
-    if (location.pathname === '/signup') {
+    if (pathLocation.pathname === '/signup') {
       return (
         <Button
           type="submit"
@@ -163,6 +181,19 @@ const UserEditPage = () => {
                   name="name"
                   value={formData.name}
                   onChange={nameChangeHandler}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="codename"
+                  label="codename"
+                  type="codename"
+                  name="codename"
+                  value={formData.codename}
+                  onChange={codenameChangeHandler}
                 />
               </Grid>
               <Grid item xs={12}>
