@@ -37,7 +37,7 @@
 
 - aws RDS
 
-#　機能詳細
+# 機能詳細
 
 - email:admin@email/password:password でテストユーザーにログインできます。
 
